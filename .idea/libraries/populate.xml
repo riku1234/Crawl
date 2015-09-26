@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="populate">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../populate/out/artifacts/populate_jar/populate.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
