@@ -1,5 +1,6 @@
 package actors;
 
+import akka.actor.ActorRef;
 import akka.routing.Router;
 import org.jsoup.nodes.Document;
 
@@ -20,4 +21,5 @@ public class Info {
 
     public static Router workerrouter;
     public static Router iorouter;
+    public static ActorRef perfActor;
 }

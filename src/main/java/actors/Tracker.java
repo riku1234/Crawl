@@ -50,7 +50,7 @@ public class Tracker extends UntypedActor {
                 ioroutees.add(new ActorRefRoutee(iochild));
             }
             Info.iorouter = new Router(new SmallestMailboxRoutingLogic(), ioroutees);
-
+            Info.perfActor = getContext().actorOf(Props.create(Perf.class).withDispatcher("PerfDispatcher"), "Perf");
             currentIndex = ((Commands.StartCommand)message).j;
             startTime = System.currentTimeMillis();
             //Info.iorouter.route(message, getSelf());
@@ -234,6 +234,8 @@ public class Tracker extends UntypedActor {
 
     private void restart() {
         Info.numMessages = 0;
+        System.out.println("Perf: Success = " + Perf.success_count + " Failure = " + Perf.failure_count);
+        Perf.success_count = 0; Perf.failure_count = 0;
         if(currentIndex >= Info.numFiles) {
             System.out.println("All the Details have been saved. Exiting Actor System.");
             //getParent().tell(Commands.getCommandsInstance().new QuitCommand(), getSelf());

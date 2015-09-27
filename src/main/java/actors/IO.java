@@ -16,8 +16,10 @@ public class IO extends UntypedActor{
     private Document getDocument(String link, Boolean forceful) {
         try {
             Document document = Jsoup.connect(link).timeout(10000).get();
+            Info.perfActor.tell("Success", getSelf());
             return document;
         } catch(IOException e) {
+            Info.perfActor.tell("Failure", getSelf());
             if(forceful)
                 return getDocument(link, true);
             else
