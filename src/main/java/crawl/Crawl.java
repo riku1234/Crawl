@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
-
+/*
 class MyComparator implements Comparator<JSONObject> { // Comparator to Sort Date objects
     public int compare(JSONObject a, JSONObject b) {
         Date date_a = (Date)a.get("Date");
@@ -30,7 +30,7 @@ class MyComparator implements Comparator<JSONObject> { // Comparator to Sort Dat
             return 1;
     }
 }
-
+*/
 
 public class Crawl {
 
