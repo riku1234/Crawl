@@ -1,38 +1,24 @@
 package crawl;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
 import actors.Info;
-import actors.Parent;
 import actors.Tracker;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import command.Commands;
-import fourfourtwo.Helper;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
+import fourfourtwo.Persistence;
+import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import fourfourtwo.Persistence;
-import java.text.DateFormat;
+import java.io.IOException;
 import java.text.ParseException;
+import java.util.*;
 
-import org.json.simple.JSONObject;
-import scala.concurrent.Await;
 
-import javax.print.Doc;
-
-class MyExceptionHandler extends IOException {
-
-}
-
-class MyComparator implements Comparator<JSONObject> { /* Comparator to Sort Date objects */
+class MyComparator implements Comparator<JSONObject> { // Comparator to Sort Date objects
     public int compare(JSONObject a, JSONObject b) {
         Date date_a = (Date)a.get("Date");
         Date date_b = (Date)b.get("Date");
@@ -45,47 +31,15 @@ class MyComparator implements Comparator<JSONObject> { /* Comparator to Sort Dat
     }
 }
 
+
 public class Crawl {
 
-    //HashMap<Integer, String> players;
-    //public static String season=""; public static String FFT_match_id = ""; public static Date match_date;
-    //ArrayList<String> blackLists = new ArrayList<String>(); /* Blacklist for Faulty links */
-
-    //private static volatile Crawl oneCrawl = null;
-
-    public Crawl() {
-        //players = new HashMap<Integer, String>();
-    }
-/*
-    public static Crawl getCrawlInstance() {
-        if(oneCrawl == null) {
-            synchronized (Crawl.class) {
-                if(oneCrawl == null)
-                    oneCrawl = new Crawl();
-            }
-        }
-        return oneCrawl;
-    }
-*/
     public static void main(String[] args) throws IOException, ParseException, org.json.simple.parser.ParseException {
-        //System.out.println("Arguments - " + args.length);
-        //crawl.commands = new Commands();
-        //crawl.parent.tell(crawl.commands.new StartParentCommand(crawl), null);
-
         Persistence.createTables();
 
         final ActorSystem actorSystem = ActorSystem.create("Actor-System");
         final ActorRef tracker = actorSystem.actorOf(Props.create(Tracker.class).withDispatcher("TrackerDispatcher"), "Tracker");
         tracker.tell(new Commands().new StartCommand(0), null);
-
-        /* Blacklists begin ... */
-        //crawl.blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360636"); /* No Data */
-        //crawl.blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360805"); /* No Data */
-        //crawl.blackLists.add("http://www.fourfourtwo.com/statszone/21-2012/matches/459522"); /* No Data */
-        //crawl.blackLists.add("http://www.fourfourtwo.com/statszone/24-2014/matches/752029"); /* Header Problem, less tokens. */
-        //crawl.blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321742"); /* Subs mismatch */
-        //crawl.blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321900"); /* Subs missing */
-        /* Blacklists end ... */
 
         //ArrayList<String> FFTResultsPage = new ArrayList<String>();
 
@@ -172,84 +126,6 @@ public class Crawl {
         //System.exit(0);
 
 */
-        //Persistence.deleteMatch("321900");
-/*
-        JSONParser jsonParser = new JSONParser();
-        String prepend = "2010_380/";
-
-        for (int i = 0; i < 380; i++) {
-            JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader(prepend + i));
-            DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss zzz yyyy", Helper.getLocale((long) jsonObject.get("LeagueID")));
-            String gameLink = (String) jsonObject.get("GameLink");
-            //System.out.println("GameLink - " + gameLink);
-            if (crawl.isBlackListed(gameLink)) {
-                System.out.println("Game " + gameLink + " is Blacklisted. Skipping.");
-                continue;
-            }
-            Helper.setLeagueID((Long) jsonObject.get("LeagueID"));
-            Persistence.addLeague();
-            season = (String) jsonObject.get("Season");
-            match_date = df.parse((String) jsonObject.get("Date"));
-
-            if(!crawl.populateGameDetails(gameLink, (String) jsonObject.get("Stadium"))) {
-                System.out.println("Skipping Game - " + gameLink);
-                continue;
-            }
-
-            System.out.println("Starting Game - " + gameLink);
-            System.out.println("LeagueID - " + (Long) jsonObject.get("LeagueID") + " Season - " + season + " Date - " + match_date + " FFT ID - " + FFT_match_id);
-            String playerStatsPage = gameLink + "/player-stats#tabs-wrapper-anchor";
-            List<Elements> playerLinks = crawl.getPlayerStatsLink(playerStatsPage);
-
-            for (int j = 0; j < playerLinks.size(); j++) {
-                Boolean noTask = false;
-                switch (j) {
-                    case 0:
-                        //System.out.println("HOME TEAM DETAILS");
-                        break;
-                    case 1:
-                        //System.out.println("AWAY TEAM DETAILS");
-                        break;
-                    case 2:
-                        //System.out.println("HOME TEAM SUBS DETAILS");
-                        break;
-                    case 3:
-                        noTask = true;
-                        break;
-                    case 4:
-                        //System.out.println("AWAY TEAM SUBS DETAILS");
-                        break;
-                    case 5:
-                        noTask = true;
-                        break;
-                    default:
-                        crawl.cleanTerminate("Strange Error - Java - 2");
-                }
-
-                if (!noTask) {
-                    Elements temp = playerLinks.get(j);
-                    for (int k = 0; k < temp.size(); k++) {
-                        //System.out.println("GETTING PLAYER DETAILS FOR PLAYER#" + k);
-                        String playerLink = temp.get(k).attr("abs:href");
-                        crawl.getPlayerDetails(playerLink, j);
-                    }
-                }
-            }
-
-            for (int j = 0; j < playerLinks.get(2).size(); j++) {
-                String homeTeamSubInLink = playerLinks.get(2).get(j).attr("abs:href");
-                String homeTeamSubOutLink = playerLinks.get(3).get(j).attr("abs:href");
-                if (!crawl.addSubstitutions(homeTeamSubInLink, homeTeamSubOutLink))
-                    crawl.cleanTerminate("Substitutions could not be added. Error.");
-            }
-
-            //System.out.println("Game: " + gameLink + ", Match ID: " + FFT_match_id + " details saved.");
-            if(!Persistence.gameSaved(FFT_match_id))
-                crawl.cleanTerminate("Game Could not be Saved.");
-            FFT_match_id = "";
-            match_date = null;
-        }
-        */
     }
 
     public Document getDocument(String link) {
@@ -261,8 +137,6 @@ public class Crawl {
                     return document;
                 } catch (IOException e) {
                     int rand = (int) (Math.random() * 10000);
-                    //System.out.println("IO Exception. Trying again after " + rand + " ms.");
-                    //System.out.println(e.toString());
                     try {
                         Thread.sleep(rand);
                     } catch (InterruptedException ee) {
@@ -327,7 +201,6 @@ public class Crawl {
         Double away_team_possession = Double.parseDouble(new StringTokenizer(doc.select("div.summary-chart svg text").get(1).text(), "%").nextToken());
 
 
-        //System.out.println(home_team_name + "," + away_team_name + "," + full_time_score + "," + FFT_match_id + "," + season);
         if(!Persistence.addMatch(stadium, Info.match_date, home_team_name, away_team_name, full_time_score, Info.FFT_match_id, Info.season, home_team_possession, away_team_possession))
             cleanTerminate("Add Match failed in Persistance.");
         return true;
@@ -341,158 +214,6 @@ public class Crawl {
             gameLinks.add(elements.get(i).attr("abs:href"));
         }
         return gameLinks;
-    }
-*/
-/*
-    public void getPlayerDetails(String playerLink, int j) throws IOException {
-        String[] playerDetails = playerLink.split("/");
-        //String FFTmatchID = playerDetails[6], FFTplayerID = playerDetails[8];
-        Document doc = getDocument(playerLink);
-
-        ArrayList<String> penalties = penaltyDetails(playerLink.substring(0, playerLink.length() - 30) + "0_SHOT_09#tabs-wrapper-anchor");
-
-        ArrayList<String> shots = shotsDetails(playerLink);
-
-        ArrayList<String> freekick_shots = freekickShotsDetails(playerLink);
-
-        ArrayList<String> passes = passDetails(playerLink);
-
-        ArrayList<String> assists = assistDetails(playerLink);
-
-        ArrayList<String> receivedPasses = receivedPassDetails(playerLink);
-
-        ArrayList<String> chancesCreated = chancesCreatedDetails(playerLink);
-
-        String longpasses = getLongPassesDetails(playerLink);
-
-        String shortpasses = getShortPassesDetails(playerLink);
-
-        ArrayList<String> crosses = crossesDetails(playerLink);
-
-        ArrayList<String> takeOns = takeOnsDetails(playerLink);
-
-        ArrayList<String> corners = cornersDetails(playerLink);
-
-        ArrayList<String> offsidePasses = offsidePassesDetails(playerLink);
-
-        ArrayList<String> ballRecoveries = ballRecoveriesDetails(playerLink);
-
-        ArrayList<String> tackles = tacklesDetails(playerLink);
-
-        ArrayList<String> interceptions = interceptionsDetails(playerLink);
-
-        ArrayList<String> blocks = blocksDetails(playerLink);
-
-        ArrayList<String> clearances = clearancesDetails(playerLink);
-
-        ArrayList<String> aerial_duels = aerialDuelsDetails(playerLink);
-
-        ArrayList<String> blocked_crosses = blockedCrossesDetails(playerLink);
-
-        ArrayList<String> defensiveErrors = defensiveErrorsDetails(playerLink);
-
-        ArrayList<String> fouls = foulsDetails(playerLink);
-
-        //System.out.println("PLAYER DETAILS ACQUIRED ... SAVING ...");
-        if(!Persistence.addPlayer(doc.select("div.team-name").get(0).text(), doc.select("div#statzone_player_header h1").get(0).text(), FFTplayerID, FFTmatchID, match_date))
-            cleanTerminate("Add Player Failed in Persistence.");
-        switch(j) {
-            case 0:
-                if(!Persistence.addStartingXIs(FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-                    cleanTerminate("Add Starting XI Home Failed in Persistence.");
-                break;
-            case 1:
-                if(!Persistence.addStartingXIs(FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-                    cleanTerminate("Add Starting XI Away Failed in Persistence.");
-                break;
-            case 2:
-                if(!Persistence.addSUBs(FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-                    cleanTerminate("Add Subs Home Failed in Persistence.");
-                break;
-            case 4:
-                if(!Persistence.addSUBs(FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-                    cleanTerminate("Add Subs Away Failed in Persistence.");
-                break;
-            default:
-                cleanTerminate("Strange Error - Java - 1");
-        }
-
-        if(!Persistence.addPenalties(penalties, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add penalties Failed in Persistence.");
-
-        if(!Persistence.addShots(shots, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add shots Failed in Persistence.");
-
-        if(!Persistence.addFKShots(freekick_shots, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add FKshots Failed in Persistence.");
-
-        if(!Persistence.addPasses(passes, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add passes Failed in Persistence.");
-
-        if(!Persistence.addAssists(assists, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add assists Failed in Persistence.");
-
-        if(!Persistence.addReceivedPasses(receivedPasses, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add received passes Failed in Persistence.");
-
-        if (!Persistence.addChancesCreated(chancesCreated, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add chances created Failed in Persistence.");
-
-        if (!Persistence.addLongPasses(longpasses, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add long passes Failed in Persistence.");
-
-        if (!Persistence.addShortPasses(shortpasses, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add short passes Failed in Persistence.");
-
-        if (!Persistence.addCrosses(crosses, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add crosses Failed in Persistence.");
-
-        if (!Persistence.addTakeOns(takeOns, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add takeons Failed in Persistence.");
-
-        if (!Persistence.addCorners(corners, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add corners Failed in Persistence.");
-
-        if (!Persistence.addOffsidePasses(offsidePasses, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add offside passes Failed in Persistence.");
-
-        if (!Persistence.addBallRecoveries(ballRecoveries, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add ball recoveries Failed in Persistence.");
-
-        if (!Persistence.addTackles(tackles, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add tackles Failed in Persistence.");
-
-        if (!Persistence.addInterceptions(interceptions, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add interceptions Failed in Persistence.");
-
-        if (!Persistence.addBlocks(blocks, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add blocks Failed in Persistence.");
-
-        if (!Persistence.addClearances(clearances, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add clearances Failed in Persistence.");
-
-        if (!Persistence.addAerialDuels(aerial_duels, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add aerial duels Failed in Persistence.");
-
-        if (!Persistence.addBlockedCrosses(blocked_crosses, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add blocked crosses Failed in Persistence.");
-
-        if (!Persistence.addDefensiveErrors(defensiveErrors, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add defensive errors Failed in Persistence.");
-
-        if (!Persistence.addFouls(fouls, FFTmatchID, doc.select("div.team-name").get(0).text(), FFTplayerID, season))
-            cleanTerminate("Add fouls Failed in Persistence.");
-
-        //System.out.println("PLAYER DETAILS SAVED ...");
-    }
-*/
-    /*
-    public ArrayList<String> foulsDetails(String playerLink) throws IOException {
-        ArrayList<String> fouls = new ArrayList<String>();
-        addFoulsDetails(fouls, playerLink, 1);
-        addFoulsDetails(fouls, playerLink, 2);
-
-        return fouls;
     }
 */
 
@@ -513,15 +234,7 @@ public class Crawl {
         }
         return fouls;
     }
-/*
-    public ArrayList<String> defensiveErrorsDetails(String playerLink) throws IOException {
-        ArrayList<String> defensiveErrors = new ArrayList<String>();
-        addDefensiveErrorsDetails(defensiveErrors, playerLink, 1);
-        addDefensiveErrorsDetails(defensiveErrors, playerLink, 2);
 
-        return defensiveErrors;
-    }
-*/
     public ArrayList<String> defensiveErrorsDetails(Document doc, int leadingTo) throws IOException {
         Elements elements = doc.select("image");
         ArrayList<String> defensiveErrors = new ArrayList<>();
@@ -662,15 +375,7 @@ public class Crawl {
         }
         return tackles;
     }
-/*
-    public ArrayList<String> chancesCreatedDetails(String playerLink) throws IOException {
-        ArrayList<String> chancesCreated = new ArrayList<String>();
-        addChancesCreatedDetails(chancesCreated, playerLink, 1);
-        addChancesCreatedDetails(chancesCreated, playerLink, 2);
 
-        return chancesCreated;
-    }
-*/
     public ArrayList<String> chancesCreatedDetails(Document doc, int from) throws IOException {
         ArrayList<String> chancesCreated = new ArrayList<>();
         Elements elements = doc.select("line");
@@ -892,15 +597,7 @@ public class Crawl {
         }
         return receivedPasses;
     }
-/*
-    public ArrayList<String> assistDetails(String playerLink) throws IOException {
-        ArrayList<String> assists = new ArrayList<String>();
-        addAssistDetails(assists, playerLink, 1);
-        addAssistDetails(assists, playerLink, 2);
 
-        return assists;
-    }
-*/
     public ArrayList<String> assistDetails(Document doc, int from) throws IOException {
         ArrayList<String> assists = new ArrayList<>();
         Elements elements = doc.select("line");
@@ -919,17 +616,7 @@ public class Crawl {
         }
         return assists;
     }
-/*
-    public ArrayList<String> passDetails(String playerLink) throws IOException {
-        ArrayList<String> passes = new ArrayList<String>();
-        addPassDetails(passes, playerLink, 1);
-        addPassDetails(passes, playerLink, 2);
-        addPassDetails(passes, playerLink, 3);
-        addPassDetails(passes, playerLink, 4); // Free kick Passes
 
-        return passes;
-    }
-*/
     public ArrayList<String> passDetails(Document doc, int third) throws IOException {
         ArrayList<String> passes = new ArrayList<>();
         Elements elements = doc.select("line");
@@ -985,17 +672,7 @@ public class Crawl {
         }
         return freekick_shots;
     }
-/*
-    public ArrayList<String> shotsDetails(String playerLink) throws IOException {
-        ArrayList<String> shots = new ArrayList<String>();
-        addShotsDetails(shots, playerLink, 1);
-        addShotsDetails(shots, playerLink, 2);
-        addShotsDetails(shots, playerLink, 3);
-        addShotsDetails(shots, playerLink, 4);
-        addShotsDetails(shots, playerLink, 5); // Shots from set-play
-        return shots;
-    }
-*/
+
     public ArrayList<String> shotsDetails(Document doc, int part) throws IOException {
         ArrayList<String> shots = new ArrayList<>();
 
