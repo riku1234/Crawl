@@ -1,9 +1,7 @@
 package actors;
 
 import akka.actor.ActorRef;
-import akka.actor.Props;
 import akka.actor.UntypedActor;
-import akka.routing.*;
 import command.Commands;
 import crawl.Crawl;
 import fourfourtwo.Helper;
@@ -14,7 +12,6 @@ import org.json.simple.parser.ParseException;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -29,7 +26,6 @@ public class Parent extends UntypedActor{
     Commands commands = new Commands();
     Crawl crawl = new Crawl();
     ArrayList<String> blackLists = new ArrayList<String>();
-    //Router workerrouter;
 
     public Parent() {
         /* Add Blacklist Links */
@@ -39,9 +35,8 @@ public class Parent extends UntypedActor{
         blackLists.add("http://www.fourfourtwo.com/statszone/24-2014/matches/752029"); /* Header Problem, less tokens. */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321742"); /* Subs mismatch */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321900"); /* Subs missing */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360526"); /* Subs missing */
         /* End .... */
-        //crawl = crawl;
-        //commands = commands;
     }
 
     @Override
@@ -55,13 +50,10 @@ public class Parent extends UntypedActor{
 
     private void startProcess(ActorRef sender, int index) throws IOException, ParseException, java.text.ParseException {
         JSONParser jsonParser = new JSONParser();
-        //String prepend = "2010_380/";
 
-        //for (int i = 0; i < 380; i++) {
         JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader(Info.prepend + index));
         DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss zzz yyyy", Helper.getLocale((Long) jsonObject.get("LeagueID")));
         String gameLink = (String) jsonObject.get("GameLink");
-        //System.out.println("GameLink - " + gameLink);
         if (blackLists.contains(gameLink)) {
             System.out.println("Game " + gameLink + " is Blacklisted. Skipping.");
             sender.tell(commands.new SkipGameCommand(), getSelf());
@@ -79,7 +71,6 @@ public class Parent extends UntypedActor{
         }
 
         System.out.println("Starting Game - " + gameLink);
-        //System.out.println("LeagueID - " + (Long) jsonObject.get("LeagueID") + " Season - " + Info.season + " Date - " + Info.match_date + " FFT ID - " + Info.FFT_match_id);
         String playerStatsPage = gameLink + "/player-stats#tabs-wrapper-anchor";
         List<Elements> playerLinks = crawl.getPlayerStatsLink(playerStatsPage);
 
@@ -92,33 +83,12 @@ public class Parent extends UntypedActor{
 
         for (int j = 0; j < playerLinks.size(); j++) {
             Boolean noTask = false;
-            switch (j) {
-                case 0:
-                    //System.out.println("HOME TEAM DETAILS");
-                    break;
-                case 1:
-                    //System.out.println("AWAY TEAM DETAILS");
-                    break;
-                case 2:
-                    //System.out.println("HOME TEAM SUBS DETAILS");
-                    break;
-                case 3:
-                    noTask = true;
-                    break;
-                case 4:
-                    //System.out.println("AWAY TEAM SUBS DETAILS");
-                    break;
-                case 5:
-                    noTask = true;
-                    break;
-                default:
-                    crawl.cleanTerminate("Strange Error - Java - 2");
-            }
+            if(j == 3 || j == 5)
+                noTask = true;
 
             if (!noTask) {
                 Elements temp = playerLinks.get(j);
                 for (int k = 0; k < temp.size(); k++) {
-                    //System.out.println("GETTING PLAYER DETAILS FOR PLAYER#" + k);
                     String playerLink = temp.get(k).attr("abs:href");
                     this.getPlayerDetails(playerLink, j, sender);
                 }
@@ -174,11 +144,9 @@ public class Parent extends UntypedActor{
         Info.iorouter.route(commands.new ShotsCommand(playerDetailsObj, 2), self);
         Info.iorouter.route(commands.new ShotsCommand(playerDetailsObj, 3), self);
         Info.iorouter.route(commands.new ShotsCommand(playerDetailsObj, 4), self);
-        //Info.iorouter.route(commands.new ShotsCommand(playerDetailsObj, 5), self);
         Info.iorouter.route(commands.new PassesCommand(playerDetailsObj, 1), self);
         Info.iorouter.route(commands.new PassesCommand(playerDetailsObj, 2), self);
         Info.iorouter.route(commands.new PassesCommand(playerDetailsObj, 3), self);
-        //Info.iorouter.route(commands.new PassesCommand(playerDetailsObj, 4), self);
         Info.iorouter.route(commands.new AssistsCommand(playerDetailsObj, 1), self);
         Info.iorouter.route(commands.new AssistsCommand(playerDetailsObj, 2), self);
         Info.iorouter.route(commands.new ReceivedPassesCommand(playerDetailsObj), self);

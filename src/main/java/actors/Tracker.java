@@ -236,12 +236,13 @@ public class Tracker extends UntypedActor {
         Info.numMessages = 0;
         System.out.println("Perf: Success = " + Perf.success_count + " Failure = " + Perf.failure_count);
         Perf.success_count = 0; Perf.failure_count = 0;
-        if(currentIndex >= Info.numFiles) {
+        if(currentIndex == Info.numFiles - 1) {
             System.out.println("All the Details have been saved. Exiting Actor System.");
             //getParent().tell(Commands.getCommandsInstance().new QuitCommand(), getSelf());
             try {
                 Future<Boolean> stopped = gracefulStop(getSelf(), Duration.create(60, TimeUnit.SECONDS));
                 Await.result(stopped, Duration.create(60, TimeUnit.SECONDS));
+                System.exit(0);
             } catch (Exception e) {
                 System.out.println("Actors could not be killed within the timeout. Exiting.");
                 System.exit(0);

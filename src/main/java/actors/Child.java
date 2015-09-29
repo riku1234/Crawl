@@ -1,17 +1,8 @@
 package actors;
 
 import akka.actor.UntypedActor;
-import akka.dispatch.Dispatcher;
 import command.Commands;
 import crawl.Crawl;
-import fourfourtwo.Persistence;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by gsm on 9/11/15.
@@ -19,7 +10,6 @@ import java.util.ArrayList;
 
 public class Child extends UntypedActor{
     Crawl crawl = new Crawl();
-    //Commands commands = new Commands();
 
     public void onReceive(Object message) throws Exception {
         if(message instanceof Commands.ShotsCommand) {
