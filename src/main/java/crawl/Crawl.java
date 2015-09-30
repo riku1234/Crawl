@@ -1,10 +1,16 @@
 package crawl;
 
+import actors.Child;
+import actors.IO;
 import actors.Info;
 import actors.Tracker;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import akka.routing.ActorRefRoutee;
+import akka.routing.Routee;
+import akka.routing.Router;
+import akka.routing.SmallestMailboxRoutingLogic;
 import command.Commands;
 import fourfourtwo.Persistence;
 import org.json.simple.JSONObject;
@@ -35,12 +41,18 @@ class MyComparator implements Comparator<JSONObject> { // Comparator to Sort Dat
 public class Crawl {
 
     public static void main(String[] args) throws IOException, ParseException, org.json.simple.parser.ParseException {
-        Persistence.createTables();
-
         final ActorSystem actorSystem = ActorSystem.create("Actor-System");
-        final ActorRef tracker = actorSystem.actorOf(Props.create(Tracker.class).withDispatcher("TrackerDispatcher"), "Tracker");
-        tracker.tell(new Commands().new StartCommand(0), null);
+        if(args.length == 1 && args[0].equals("--io")) {
+            for(int i=0;i<10;i++) {
+                ActorRef iochild = actorSystem.actorOf(Props.create(IO.class).withDispatcher("IORemoteDispatcher"), "IO" + i);
+            }
+        }
+        else {
+            Persistence.createTables();
 
+            final ActorRef tracker = actorSystem.actorOf(Props.create(Tracker.class).withDispatcher("TrackerDispatcher"), "Tracker");
+            tracker.tell(new Commands().new StartCommand(0), null);
+        }
         //ArrayList<String> FFTResultsPage = new ArrayList<String>();
 
         /* English Premier League Begin ... */

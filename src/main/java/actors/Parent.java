@@ -9,6 +9,7 @@ import fourfourtwo.Persistence;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
@@ -18,6 +19,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by gsm on 9/10/15.
@@ -113,6 +118,7 @@ public class Parent extends UntypedActor{
     private void getPlayerDetails(String playerLink, int j, ActorRef sender) {
         String[] playerDetails = playerLink.split("/");
         Info.FFT_match_id = playerDetails[6]; String FFT_player_id = playerDetails[8];
+
         Document doc = crawl.getDocument(playerLink); String team_name = doc.select("div.team-name").get(0).text();
         Commands.PlayerDetails playerDetailsObj = commands.new PlayerDetails(playerLink, FFT_player_id, team_name);
 

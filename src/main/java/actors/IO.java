@@ -15,10 +15,10 @@ public class IO extends UntypedActor{
     private Document getDocument(String link) {
         try {
             Document document = Jsoup.connect(link).timeout(10000).get();
-            Info.perfActor.tell("Success", getSelf());
+            //Info.perfActor.tell("Success", getSelf());
             return document;
         } catch(IOException e) {
-            Info.perfActor.tell("Failure", getSelf());
+            //Info.perfActor.tell("Failure", getSelf());
             return null;
         }
     }
