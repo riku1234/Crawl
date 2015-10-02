@@ -9,6 +9,14 @@
     <version>1.0</version>
     <packaging>jar</packaging>
 
+    <distributionManagement>
+        <repository>
+            <id>localRepo</id>
+            <name>My Local Repo</name>
+            <url>file:/Users/gsm/.m2/repository/</url>
+        </repository>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>maven-repo</id>
@@ -19,6 +27,26 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>crawl.Crawl</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -50,8 +78,6 @@
                         <groupId>org.FA.maven</groupId>
                         <artifactId>populate</artifactId>
                         <version>1.0</version>
-                        <scope>system</scope>
-                        <systemPath>/Users/gsm/Documents/populate/target/populate-1.0.jar</systemPath>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -68,7 +94,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <outputDirectory>${project.basedir}/</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
                             <overWriteIfNewer>true</overWriteIfNewer>
@@ -80,11 +106,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <classpathPrefix>target/dependency/</classpathPrefix>
+                            <classpathPrefix>${project.basedir}/target/dependency/</classpathPrefix>
                             <mainClass>crawl.Crawl</mainClass>
                         </manifest>
                     </archive>
@@ -115,8 +142,6 @@
             <groupId>org.FA.maven</groupId>
             <artifactId>populate</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>/Users/gsm/Documents/populate/target/populate-1.0.jar</systemPath>
         </dependency>
 
         <dependency>

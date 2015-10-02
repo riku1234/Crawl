@@ -41,6 +41,7 @@ public class Parent extends UntypedActor{
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321742"); /* Subs mismatch */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321900"); /* Subs missing */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360526"); /* Subs missing */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360834"); /* Subs missing */
         /* End .... */
     }
 
@@ -61,6 +62,8 @@ public class Parent extends UntypedActor{
         String gameLink = (String) jsonObject.get("GameLink");
         if (blackLists.contains(gameLink)) {
             System.out.println("Game " + gameLink + " is Blacklisted. Skipping.");
+            String[] splits = gameLink.split("/");
+            Persistence.deleteMatch(splits[splits.length-1]);
             sender.tell(commands.new SkipGameCommand(), getSelf());
             return;
         }
