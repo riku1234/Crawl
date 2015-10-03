@@ -18,6 +18,9 @@
             <configuration>
               <transformers>
                 <transformer>
+                  <resource>reference.conf</resource>
+                </transformer>
+                <transformer>
                   <mainClass>crawl.RemoteMain</mainClass>
                 </transformer>
               </transformers>
