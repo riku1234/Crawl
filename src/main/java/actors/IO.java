@@ -24,10 +24,15 @@ public class IO extends UntypedActor{
     }
 
     public void onReceive(Object message) throws Exception {
-        ((Commands.Global) message).document = getDocument(((Commands.Global) message).commandLink);
-        if(((Commands.Global) message).document == null)
-            getSelf().tell(message, getSender());
-        else
-            Info.workerrouter.route(message, getSender());
+        if(message instanceof String) {
+            System.out.println("Actor " + this.toString() + " receiving message " + message);
+        }
+        else {
+            ((Commands.Global) message).document = getDocument(((Commands.Global) message).commandLink);
+            if (((Commands.Global) message).document == null)
+                getSelf().tell(message, getSender());
+            else
+                Info.workerrouter.route(message, getSender());
+        }
     }
 }

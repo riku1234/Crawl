@@ -12,8 +12,9 @@ public class RemoteMain {
     public static void main(String[] args) {
         final ActorSystem actorSystem = ActorSystem.create("Remote-Actor-System");
         //List<Routee> remoteioroutees = new ArrayList<Routee>();
-        for(int i=0;i<10;i++) {
+        for(int i=0;i<5;i++) {
             ActorRef child = actorSystem.actorOf(Props.create(IO.class).withDispatcher("RemoteIODispatcher"), "RemoteIO" + i);
+            System.out.println("Remote Actor " + child.toString() + " created.");
             //remoteioroutees.add(new ActorRefRoutee(child));
         }
         //Info.workerrouter = new Router(new SmallestMailboxRoutingLogic(), workerroutees);
