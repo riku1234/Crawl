@@ -21,7 +21,7 @@
                   <resource>reference.conf</resource>
                 </transformer>
                 <transformer>
-                  <mainClass>crawl.RemoteMain</mainClass>
+                  <mainClass>crawl.Crawl</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -55,7 +55,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          <mainClass>crawl.RemoteMain</mainClass>
+          <mainClass>crawl.Crawl</mainClass>
           <includeProjectDependencies>true</includeProjectDependencies>
           <includePluginDependencies>true</includePluginDependencies>
         </configuration>
@@ -87,7 +87,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>${project.basedir}/target/dependency/</classpathPrefix>
-              <mainClass>crawl.RemoteMain</mainClass>
+              <mainClass>crawl.Crawl</mainClass>
             </manifest>
           </archive>
         </configuration>
