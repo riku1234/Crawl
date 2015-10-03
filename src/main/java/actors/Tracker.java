@@ -58,7 +58,7 @@ public class Tracker extends UntypedActor {
 
             for(int i=0;i<5;i++) {
                 Timeout timeout = new Timeout(Duration.create(60, "seconds"));
-                ActorSelection actorSelection = getContext().actorSelection("akka.tcp://Remote-Actor-System@10.0.0.99:2552/user/RemoteIO" + i);
+                ActorSelection actorSelection = getContext().actorSelection("akka.tcp://Remote-Actor-System@169.254.135.56:2552/user/RemoteIO" + i);
                 actorSelection.tell("isActive", getSelf());
                 Future<ActorRef> future = actorSelection.resolveOne(timeout);
                 ActorRef actorRef = null;
