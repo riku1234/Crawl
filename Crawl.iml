@@ -23,5 +23,9 @@
     <orderEntry type="library" name="Maven: org.postgresql:postgresql:9.4-1201-jdbc41" level="project" />
     <orderEntry type="library" name="Maven: com.typesafe.slick:slick_2.10:2.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.4" level="project" />
+    <orderEntry type="library" name="Maven: com.typesafe.akka:akka-remote_2.10:2.3.14" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty:3.8.0.Final" level="project" />
+    <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:2.5.0" level="project" />
+    <orderEntry type="library" name="Maven: org.uncommons.maths:uncommons-maths:1.2.2a" level="project" />
   </component>
 </module>

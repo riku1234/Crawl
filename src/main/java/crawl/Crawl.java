@@ -42,17 +42,11 @@ public class Crawl {
 
     public static void main(String[] args) throws IOException, ParseException, org.json.simple.parser.ParseException {
         final ActorSystem actorSystem = ActorSystem.create("Actor-System");
-        if(args.length == 1 && args[0].equals("--io")) {
-            for(int i=0;i<10;i++) {
-                ActorRef iochild = actorSystem.actorOf(Props.create(IO.class).withDispatcher("IORemoteDispatcher"), "IO" + i);
-            }
-        }
-        else {
             Persistence.createTables();
 
             final ActorRef tracker = actorSystem.actorOf(Props.create(Tracker.class).withDispatcher("TrackerDispatcher"), "Tracker");
             tracker.tell(new Commands().new StartCommand(0), null);
-        }
+
         //ArrayList<String> FFTResultsPage = new ArrayList<String>();
 
         /* English Premier League Begin ... */

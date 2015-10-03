@@ -1,26 +1,28 @@
 package actors;
 
 import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
-import akka.pattern.AskTimeoutException;
 import akka.routing.ActorRefRoutee;
 import akka.routing.Routee;
 import akka.routing.Router;
 import akka.routing.SmallestMailboxRoutingLogic;
+import akka.util.Timeout;
 import command.Commands;
+import crawl.Crawl;
+import fourfourtwo.Persistence;
+import scala.concurrent.Await;
+import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
 
-//import java.util.concurrent.Future;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import crawl.Crawl;
-import fourfourtwo.Persistence;
-import scala.concurrent.duration.Duration;
-import scala.concurrent.Future;
 import static akka.pattern.Patterns.gracefulStop;
-import scala.concurrent.Await;
+
+//import java.util.concurrent.Future;
 
 /**
  * Created by gsm on 9/12/15.
@@ -31,6 +33,10 @@ public class Tracker extends UntypedActor {
     Commands commands = new Commands();
     Crawl crawl = new Crawl();
     static long startTime = -1;
+
+    private void onRemoteRouteeSuccess(ActorRef actorRef) {
+
+    }
 
     public void onReceive(Object message) throws Exception {
         if(message instanceof Commands.StartCommand) {
@@ -44,11 +50,24 @@ public class Tracker extends UntypedActor {
             }
             Info.workerrouter = new Router(new SmallestMailboxRoutingLogic(), workerroutees);
             List<Routee> ioroutees = new ArrayList<>();
-            for(int i=0;i<10;i++) {
+            for(int i=0;i<5;i++) {
                 ActorRef iochild = getContext().actorOf(Props.create(IO.class).withDispatcher("IODispatcher"), "IO" + i);
                 getContext().watch(iochild);
                 ioroutees.add(new ActorRefRoutee(iochild));
             }
+
+            for(int i=0;i<10;i++) {
+                Timeout timeout = new Timeout(Duration.create(60, "seconds"));
+                ActorSelection actorSelection = getContext().actorSelection("akka.tcp://Remote-Actor-System@enterprise.cise.ufl.edu:2552/user/RemoteIO" + i);
+                Future<ActorRef> future = actorSelection.resolveOne(timeout);
+                ActorRef actorRef = null;
+                actorRef = (ActorRef)Await.result(future, timeout.duration());
+                if(actorRef != null) {
+                    System.out.println("Remote Actor " + i + " found.");
+                    ioroutees.add(new ActorRefRoutee(actorRef));
+                }
+            }
+
             Info.iorouter = new Router(new SmallestMailboxRoutingLogic(), ioroutees);
             //Info.perfActor = getContext().actorOf(Props.create(Perf.class).withDispatcher("PerfDispatcher"), "Perf");
             currentIndex = ((Commands.StartCommand)message).j;
@@ -234,6 +253,12 @@ public class Tracker extends UntypedActor {
 
     private void restart() {
         Info.numMessages = 0;
+        System.out.println("Game: " + Info.FFT_match_id + " details saved.");
+
+        if (!Info.FFT_match_id.equals("") && !Persistence.gameSaved(Info.FFT_match_id))
+            crawl.cleanTerminate("Game Could not be Saved.");
+        Info.FFT_match_id = "";
+        Info.match_date = null;
         //System.out.println("Perf: Success = " + Perf.success_count + " Failure = " + Perf.failure_count);
         //Perf.success_count = 0; Perf.failure_count = 0;
         if(currentIndex == Info.numFiles - 1) {
@@ -249,12 +274,7 @@ public class Tracker extends UntypedActor {
             }
         }
         else {
-            System.out.println("Game: " + Info.FFT_match_id + " details saved.");
 
-            if (!Info.FFT_match_id.equals("") && !Persistence.gameSaved(Info.FFT_match_id))
-                crawl.cleanTerminate("Game Could not be Saved.");
-            Info.FFT_match_id = "";
-            Info.match_date = null;
             currentIndex++;
             long curTime = System.currentTimeMillis();
             System.out.println("Time Taken = " + (curTime - startTime));
