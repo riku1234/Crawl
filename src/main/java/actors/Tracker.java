@@ -1,9 +1,6 @@
 package actors;
 
-import akka.actor.ActorRef;
-import akka.actor.ActorSelection;
-import akka.actor.Props;
-import akka.actor.UntypedActor;
+import akka.actor.*;
 import akka.routing.ActorRefRoutee;
 import akka.routing.Routee;
 import akka.routing.Router;
@@ -50,15 +47,16 @@ public class Tracker extends UntypedActor {
             }
             Info.workerrouter = new Router(new SmallestMailboxRoutingLogic(), workerroutees);
             List<Routee> ioroutees = new ArrayList<>();
-            for(int i=0;i<5;i++) {
+            for(int i=0;i<10;i++) {
                 ActorRef iochild = getContext().actorOf(Props.create(IO.class).withDispatcher("IODispatcher"), "IO" + i);
                 getContext().watch(iochild);
                 ioroutees.add(new ActorRefRoutee(iochild));
             }
-
+/*
             for(int i=0;i<5;i++) {
                 Timeout timeout = new Timeout(Duration.create(60, "seconds"));
-                ActorSelection actorSelection = getContext().actorSelection("akka.tcp://Remote-Actor-System@169.254.135.56:2552/user/RemoteIO" + i);
+
+                ActorSelection actorSelection = getContext().actorSelection("akka.tcp://Remote-Actor-System@128.227.248.184:2552/user/RemoteIO" + i);
                 actorSelection.tell("isActive", getSelf());
                 Future<ActorRef> future = actorSelection.resolveOne(timeout);
                 ActorRef actorRef = null;
@@ -68,7 +66,7 @@ public class Tracker extends UntypedActor {
                     ioroutees.add(new ActorRefRoutee(actorRef));
                 }
             }
-
+*/
             Info.iorouter = new Router(new SmallestMailboxRoutingLogic(), ioroutees);
             //Info.perfActor = getContext().actorOf(Props.create(Perf.class).withDispatcher("PerfDispatcher"), "Perf");
             currentIndex = ((Commands.StartCommand)message).j;
