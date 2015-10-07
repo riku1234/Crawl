@@ -31,10 +31,6 @@ public class Tracker extends UntypedActor {
     Crawl crawl = new Crawl();
     static long startTime = -1;
 
-    private void onRemoteRouteeSuccess(ActorRef actorRef) {
-
-    }
-
     public void onReceive(Object message) throws Exception {
         if(message instanceof Commands.StartCommand) {
             System.out.println("Tracker Started ... Dispatcher = " + getContext().dispatcher().toString());
