@@ -1,16 +1,10 @@
 package crawl;
 
-import actors.Child;
-import actors.IO;
 import actors.Info;
 import actors.Tracker;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import akka.routing.ActorRefRoutee;
-import akka.routing.Routee;
-import akka.routing.Router;
-import akka.routing.SmallestMailboxRoutingLogic;
 import command.Commands;
 import fourfourtwo.Persistence;
 import org.json.simple.JSONObject;
@@ -19,7 +13,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import javax.net.ssl.HttpsURLConnection;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.*;
 
@@ -41,11 +40,11 @@ class MyComparator implements Comparator<JSONObject> { // Comparator to Sort Dat
 public class Crawl {
 
     public static void main(String[] args) throws IOException, ParseException, org.json.simple.parser.ParseException {
+        Persistence.createTables();
+        //Persistence.deleteMatch("321662");
         final ActorSystem actorSystem = ActorSystem.create("Actor-System");
-            Persistence.createTables();
-
-            final ActorRef tracker = actorSystem.actorOf(Props.create(Tracker.class).withDispatcher("TrackerDispatcher"), "Tracker");
-            tracker.tell(new Commands().new StartCommand(0), null);
+        final ActorRef tracker = actorSystem.actorOf(Props.create(Tracker.class).withDispatcher("TrackerDispatcher"), "Tracker");
+        tracker.tell(new Commands().new StartCommand(0), null);
 
         //ArrayList<String> FFTResultsPage = new ArrayList<String>();
 
@@ -135,14 +134,25 @@ public class Crawl {
     }
 
     public Document getDocument(String link) {
+
         synchronized (Crawl.class) {
             //System.out.println("Get Document called by " + Thread.currentThread().getName());
             while (true) {
                 try {
                     Document document = Jsoup.connect(link).timeout(10000).get();
+                    if(Info.fileWriter != null)
+                        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "Inside Crawl getDocument. Success. Size = " + document.toString().length()+ "\n");
+                    if(document.toString().length() < 150000) {
+                        System.out.println("FLAG --- SIZE LESS " + document.toString().length());
+                    }
+                    if(document.toString().length() < 100000) {
+                        System.out.println("Size less than 100000. Re-loading. Size = " + document.toString().length());
+                        throw new IOException();
+                    }
                     return document;
                 } catch (IOException e) {
                     int rand = (int) (Math.random() * 10000);
+
                     try {
                         Thread.sleep(rand);
                     } catch (InterruptedException ee) {
@@ -154,7 +164,7 @@ public class Crawl {
         }
     }
 
-    public Boolean addSubstitutions(String subInPlayerLink, String subOutPlayerLink) {
+    public Boolean addSubstitutions(String subInPlayerLink, String subOutPlayerLink) throws IOException {
         //System.out.println("Add Substitutions Called for Sub-In - " + subInPlayerLink + " Sub-Out - " + subOutPlayerLink);
         String[] subInDetails = subInPlayerLink.split("/");
         String[] subOutDetails = subOutPlayerLink.split("/");
@@ -164,7 +174,8 @@ public class Crawl {
 
         String game_id = subInDetails[6];
         String sub_in_id = subInDetails[8]; String sub_out_id = subOutDetails[8];
-
+        if(Info.fileWriter != null)
+            Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "Inside addSubstitutions. Persistence addSubstitutions called for GameID = " + game_id + " Sub-in ID = " + sub_in_id + " Sub-out ID = " + sub_out_id + "\n");
         return Persistence.addSubstitutions(game_id, sub_in_id, sub_out_id);
     }
 /*
@@ -205,7 +216,25 @@ public class Crawl {
         String full_time_score = doc.select("span.score").text();
         Double home_team_possession = Double.parseDouble(new StringTokenizer(doc.select("div.summary-chart svg text").get(0).text(), "%").nextToken());
         Double away_team_possession = Double.parseDouble(new StringTokenizer(doc.select("div.summary-chart svg text").get(1).text(), "%").nextToken());
+        Elements homeRedCardElements = doc.select("div.home span.red_card");
+        Elements awayRedCardElements = doc.select("div.away span.red_card");
 
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside populateGameDetails. GameLink = " + gameLink + " Stadium = " + stadium + "\n");
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "Inside populateGameDetails. Home Team = " + home_team_name + " Away Team = " + away_team_name + " FT Score = " + full_time_score + " Home Possession = " + home_team_possession + " Away Possession = " + away_team_possession + " Home Reds = " + homeRedCardElements.size() + " Away Reds = " + awayRedCardElements.size() + "\n");
+
+        for(int i=0;i<homeRedCardElements.size();i++) {
+            String text = homeRedCardElements.get(i).text();
+            String[] splits = text.split(" ");
+            Info.homeRedCards.put(splits[0].trim(), splits[1].trim());
+            System.out.println("Home Red added. Name = " + splits[0] + " Time = " + splits[1]);
+        }
+
+        for(int i=0;i<awayRedCardElements.size();i++) {
+            String text = awayRedCardElements.get(i).text();
+            String[] splits = text.split(" ");
+            Info.awayRedCards.put(splits[1].trim(), splits[0].trim());
+            System.out.println("Away Red added. Name = " + splits[1] + " Time = " + splits[0]);
+        }
 
         if(!Persistence.addMatch(stadium, Info.match_date, home_team_name, away_team_name, full_time_score, Info.FFT_match_id, Info.season, home_team_possession, away_team_possession))
             cleanTerminate("Add Match failed in Persistance.");
@@ -238,7 +267,23 @@ public class Crawl {
                 fouls.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside foulsDetails. No. of Fouls = " + fouls.size() + "\n");
         return fouls;
+    }
+
+    public ArrayList<String> redCardDetails(String gameLink) throws IOException {
+        ArrayList<String> redCards = new ArrayList<>();
+        Document doc = getDocument(gameLink);
+        Elements elements = doc.select("span.red_card");
+        for(int i=0;i<elements.size();i++) {
+            Element element = elements.get(i);
+            String text = element.text();
+            //String[] splits = text.split(" ");
+            //String time = splits[0].trim(); String player = splits[1].trim();
+            redCards.add(text);
+        }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside redCardDetails. No. of Red Cards = " + redCards.size() + "\n");
+        return redCards;
     }
 
     public ArrayList<String> defensiveErrorsDetails(Document doc, int leadingTo) throws IOException {
@@ -256,6 +301,7 @@ public class Crawl {
                 defensiveErrors.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside defensiveErrorsDetails. No. of defensiveErrors = " + defensiveErrors.size() + "\n");
         return defensiveErrors;
     }
 
@@ -274,6 +320,7 @@ public class Crawl {
                 blockedCrosses.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside blockedCrossesDetails. No. = " + blockedCrosses.size() + "\n");
         return blockedCrosses;
     }
 
@@ -297,6 +344,7 @@ public class Crawl {
                 aerial_duels.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside aerialDuelsDetails. No. = " + aerial_duels.size() + "\n");
         return aerial_duels;
     }
 
@@ -320,6 +368,7 @@ public class Crawl {
                 clearances.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside clearancesDetails. No. = " + clearances.size() + "\n");
         return clearances;
     }
 
@@ -338,6 +387,7 @@ public class Crawl {
                 blocks.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside blocksDetails. No. = " + blocks.size() + "\n");
         return blocks;
     }
 
@@ -356,6 +406,7 @@ public class Crawl {
                 interceptions.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside interceptionsDetails. No. = " + interceptions.size() + "\n");
         return interceptions;
     }
 
@@ -379,6 +430,7 @@ public class Crawl {
                 tackles.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside tacklesDetails. No. = " + tackles.size() + "\n");
         return tackles;
     }
 
@@ -398,6 +450,7 @@ public class Crawl {
                 chancesCreated.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside chancesCreatedDetails. No. = " + chancesCreated.size() + "\n");
         return chancesCreated;
     }
 
@@ -416,6 +469,7 @@ public class Crawl {
                 ballrecoveries.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside ballRecoveriesDetails. No. = " + ballrecoveries.size() + "\n");
         return ballrecoveries;
     }
 
@@ -435,6 +489,7 @@ public class Crawl {
                 offsidePasses.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside offsidePassesDetails. No. = " + offsidePasses.size() + "\n");
         return offsidePasses;
     }
 
@@ -465,6 +520,7 @@ public class Crawl {
                 corners.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside cornersDetails. No. = " + corners.size() + "\n");
         return corners;
     }
 
@@ -489,6 +545,7 @@ public class Crawl {
                 takeons.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside takeonsDetails. No. = " + takeons.size() + "\n");
         return takeons;
     }
 
@@ -519,6 +576,7 @@ public class Crawl {
                 crosses.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside crossesDetails. No. = " + crosses.size() + "\n");
         return crosses;
     }
 
@@ -546,6 +604,7 @@ public class Crawl {
             }
         }
         shortpasses = count + ";;" + success_count + ";;" + fail_count + ";;" + assist_count + ";;" + chances_count;
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside shortPassesDetails. Count = " + count + " Success = " + success_count + " Fail = " + fail_count + " Assists = " + assist_count + " Chances = " + chances_count + "\n");
         return shortpasses;
     }
 
@@ -573,6 +632,7 @@ public class Crawl {
             }
         }
         longpasses = count + ";;" + success_count + ";;" + fail_count + ";;" + assist_count + ";;" + chances_count;
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside longPassesDetails. Count = " + count + " Success = " + success_count + " Fail = " + fail_count + " Assists = " + assist_count + " Chances = " + chances_count + "\n");
         return longpasses;
     }
 
@@ -601,6 +661,7 @@ public class Crawl {
                 receivedPasses.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside receivedPassDetails. No. = " + receivedPasses.size() + "\n");
         return receivedPasses;
     }
 
@@ -620,6 +681,7 @@ public class Crawl {
                 assists.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside assistDetails. No. = " + assists.size() + "\n");
         return assists;
     }
 
@@ -648,6 +710,7 @@ public class Crawl {
                 passes.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Insidee passDetails. No. = " + passes.size() + "\n");
         return passes;
     }
 
@@ -676,6 +739,7 @@ public class Crawl {
                 freekick_shots.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside FKShotsDetails. No. = " + freekick_shots.size() + "\n");
         return freekick_shots;
     }
 
@@ -706,6 +770,7 @@ public class Crawl {
                 shots.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside shotsDetails. No. = " + shots.size() + "\n");
         return shots;
     }
 
@@ -733,6 +798,7 @@ public class Crawl {
                 penalties.add(output);
             }
         }
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside penaltyDetails. No. = " + penalties.size() + "\n");
         return penalties;
     }
 
@@ -762,14 +828,17 @@ public class Crawl {
         list.add(homeSUBSOUT);
         list.add(awaySUBSIN);
         list.add(awaySUBSOUT);
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside getPlayerStatsLink. Home XI = " + homeXIs.size() + " Away XI = " + awayXIs.size() + " Home Subs In = " + homeSUBSIN.size() + " Home Subs Out = " + homeSUBSOUT.size() + " Away Subs In = " + awaySUBSIN.size() + " Away Subs Out = " + awaySUBSOUT.size() + "\n");
         return list;
     }
 
-    public void cleanTerminate(String errorMessage) {
+    public void cleanTerminate(String errorMessage) throws IOException {
         System.out.println(errorMessage);
         System.out.println("Match ID: " + Info.FFT_match_id);
-        Persistence.deleteMatch(Info.FFT_match_id);
+        //Persistence.deleteMatch(Info.FFT_match_id);
         System.out.println("Record Deleted. Exiting.");
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside cleanTerminate." + "\n");
+        Info.fileWriter.flush(); Info.fileWriter.close();
         System.exit(1);
     }
 }

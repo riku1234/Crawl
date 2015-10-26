@@ -1,0 +1,413 @@
+
+START
+
+1445845152003 ==> Inside Crawl getDocument. Success. Size = 175779
+
+1445845152077 ==>  Inside populateGameDetails. GameLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034 Stadium = White Hart Lane London
+
+1445845152077 ==> Inside populateGameDetails. Home Team = Tottenham Hotspur Away Team = Birmingham City FT Score = 2 - 1 Home Possession = 68.6 Away Possession = 31.4 Home Reds = 0 Away Reds = 0
+
+1445845155702 ==> Inside Crawl getDocument. Success. Size = 163381
+
+1445845155727 ==>  Inside getPlayerStatsLink. Home XI = 11 Away XI = 11 Home Subs In = 2 Home Subs Out = 2 Away Subs In = 1 Away Subs Out = 1
+
+1445845155728 ==> Starting Game = http://www.fourfourtwo.com/statszone/8-2010/matches/322034 Date = Sun May 22 16:00:00 PDT 2011 Season = 2010 NumMessages = 825
+1445845159477 ==> Inside Crawl getDocument. Success. Size = 203987
+
+1445845162298 ==>  Inside IO getDocument. Success. Size = 189270
+
+1445845162309 ==>  Inside shotsDetails. No. = 0
+
+1445845162309 ==>  Inside onReceive of Child. SHOTS. Index = 1 Player Link = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur No. shots Complete = 0 Shots = 0
+
+1445845162865 ==>  Inside IO getDocument. Success. Size = 189264
+
+1445845162872 ==>  Inside shotsDetails. No. = 0
+
+1445845162872 ==>  Inside onReceive of Child. SHOTS. Index = 3 Player Link = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur No. shots Complete = 1 Shots = 0
+
+1445845162987 ==>  Inside IO getDocument. Success. Size = 189273
+
+1445845162993 ==>  Inside shotsDetails. No. = 0
+
+1445845162993 ==>  Inside onReceive of Child. SHOTS. Index = 4 Player Link = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur No. shots Complete = 2 Shots = 0
+
+1445845163431 ==> Inside Crawl getDocument. Success. Size = 218603
+
+1445845164130 ==>  Inside IO getDocument. Success. Size = 189269
+
+1445845164136 ==>  Inside shotsDetails. No. = 0
+
+1445845164136 ==>  Inside onReceive of Child. SHOTS. Index = 2 Player Link = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur No. shots Complete = 3 Shots = 0
+
+1445845164184 ==> 4th Shot Command Received for Player = 1708 Starting 5th.
+
+1445845164892 ==>  Inside IO getDocument. Success. Size = 189292
+
+1445845164901 ==>  Inside interceptionsDetails. No. = 0
+
+1445845164901 ==>  Inside onReceive of Child. INTERCEPTIONS. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Interceptions = 0
+
+1445845165130 ==>  Inside IO getDocument. Success. Size = 189294
+
+1445845165135 ==>  Inside blockedCrossesDetails. No. = 0
+
+1445845165135 ==>  Inside onReceive of Child. BLOCKEDCROSSES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur BlockedCrosses = 0
+
+1445845165207 ==>  Inside IO getDocument. Success. Size = 189389
+
+1445845165213 ==>  Inside clearancesDetails. No. = 0
+
+1445845165213 ==>  Inside onReceive of Child. CLEARANCES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Clearances = 0
+
+1445845165726 ==>  Inside IO getDocument. Success. Size = 189285
+
+1445845165731 ==>  Inside blocksDetails. No. = 0
+
+1445845165731 ==>  Inside onReceive of Child. BLOCKS. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Blocks = 0
+
+1445845166570 ==> Inside Crawl getDocument. Success. Size = 212504
+
+1445845166816 ==>  Inside IO getDocument. Success. Size = 189338
+
+1445845166821 ==>  Inside shotsDetails. No. = 0
+
+1445845166821 ==>  Inside onReceive of Child. SHOTS. Index = 1 Player Link = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur No. shots Complete = 0 Shots = 0
+
+1445845167010 ==>  Inside IO getDocument. Success. Size = 189391
+
+1445845167017 ==>  Inside aerialDuelsDetails. No. = 0
+
+1445845167017 ==>  Inside onReceive of Child. AERIALDUELS. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Aerial Duels = 0
+
+1445845167021 ==>  Inside IO getDocument. Success. Size = 189705
+
+1445845167028 ==>  Insidee passDetails. No. = 2
+
+1445845167028 ==>  Inside onReceive of Child. PASSES. Index = 1PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Passes = 2
+
+1445845167397 ==>  Inside IO getDocument. Success. Size = 189887
+
+1445845167402 ==>  Insidee passDetails. No. = 3
+
+1445845167402 ==>  Inside onReceive of Child. PASSES. Index = 2PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Passes = 3
+
+1445845168533 ==>  Inside IO getDocument. Success. Size = 190189
+
+1445845168544 ==>  Inside takeonsDetails. No. = 4
+
+1445845168544 ==>  Inside onReceive of Child. TAKEONS. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur TakeOns = 4
+
+1445845168653 ==>  Inside IO getDocument. Success. Size = 190939
+
+1445845168675 ==>  Insidee passDetails. No. = 9
+
+1445845168675 ==>  Inside onReceive of Child. PASSES. Index = 3PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Passes = 9
+
+1445845168720 ==> 3rd Pass Command Received for Player = 1708 Starting 4th.
+
+1445845169238 ==> Inside Crawl getDocument. Success. Size = 213815
+
+1445845169614 ==>  Inside IO getDocument. Success. Size = 189297
+
+1445845169625 ==>  Inside chancesCreatedDetails. No. = 0
+
+1445845169625 ==>  Inside onReceive of Child. CHANCESCREATED. Index = 1PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Chances = 0
+
+1445845169719 ==>  Inside IO getDocument. Success. Size = 189288
+
+1445845169731 ==>  Inside assistDetails. No. = 0
+
+1445845169731 ==>  Inside onReceive of Child. ASSISTS. Index = 2PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Assists = 0
+
+1445845171206 ==>  Inside IO getDocument. Success. Size = 189301
+
+1445845171212 ==>  Inside defensiveErrorsDetails. No. of defensiveErrors = 0
+
+1445845171212 ==>  Inside onReceive of Child. DEFENSIVEERRORS. Index = 2PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur DefensiveErrors = 0
+
+1445845171618 ==>  Inside IO getDocument. Success. Size = 189340
+
+1445845171623 ==>  Inside shotsDetails. No. = 0
+
+1445845171623 ==>  Inside onReceive of Child. SHOTS. Index = 1 Player Link = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/12679/OVERALL_02#tabs-wrapper-anchor Player ID = 12679 Team = Tottenham Hotspur No. shots Complete = 0 Shots = 0
+
+1445845171682 ==>  Inside IO getDocument. Success. Size = 190199
+
+1445845171703 ==>  Inside longPassesDetails. Count = 5 Success = 0 Fail = 5 Assists = 0 Chances = 0
+
+1445845171703 ==>  Inside onReceive of Child. LONGPASSES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur LongPasses = 5;;0;;5;;0;;0
+
+1445845172223 ==>  Inside IO getDocument. Success. Size = 190913
+
+1445845172235 ==>  Inside shortPassesDetails. Count = 9 Success = 9 Fail = 0 Assists = 0 Chances = 0
+
+1445845172235 ==>  Inside onReceive of Child. SHORTPASSES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur ShortPasses = 9;;9;;0;;0;;0
+
+1445845172768 ==>  Inside IO getDocument. Success. Size = 189937
+
+1445845172783 ==>  Inside interceptionsDetails. No. = 3
+
+1445845172783 ==>  Inside onReceive of Child. INTERCEPTIONS. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur Interceptions = 3
+
+1445845173230 ==>  Inside IO getDocument. Success. Size = 189378
+
+1445845173236 ==>  Inside takeonsDetails. No. = 0
+
+1445845173236 ==>  Inside onReceive of Child. TAKEONS. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur TakeOns = 0
+
+1445845173322 ==>  Inside IO getDocument. Success. Size = 189384
+
+1445845173329 ==>  Inside crossesDetails. No. = 0
+
+1445845173329 ==>  Inside onReceive of Child. CROSSES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Crosses = 0
+
+1445845174105 ==>  Inside IO getDocument. Success. Size = 189448
+
+1445845174114 ==>  Inside takeonsDetails. No. = 0
+
+1445845174114 ==>  Inside onReceive of Child. TAKEONS. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/12679/OVERALL_02#tabs-wrapper-anchor Player ID = 12679 Team = Tottenham Hotspur TakeOns = 0
+
+1445845174141 ==>  Inside IO getDocument. Success. Size = 189271
+
+1445845174192 ==>  Inside shotsDetails. No. = 0
+
+1445845174192 ==>  Inside onReceive of Child. SHOTS. Index = 5 Player Link = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur No. shots Complete = 4 Shots = 0
+
+1445845174318 ==> 5th Shot Command Received for Player = 1708 Starting Others.
+
+1445845174934 ==>  Inside IO getDocument. Success. Size = 189377
+
+1445845174954 ==>  Inside cornersDetails. No. = 0
+
+1445845174954 ==>  Inside onReceive of Child. CORNERS. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Corners = 0
+
+1445845174961 ==>  Inside IO getDocument. Success. Size = 190841
+
+1445845174975 ==>  Inside tacklesDetails. No. = 7
+
+1445845174975 ==>  Inside onReceive of Child. TACKLES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur Tackles = 7
+
+1445845175809 ==>  Inside IO getDocument. Success. Size = 189284
+
+1445845175820 ==>  Inside offsidePassesDetails. No. = 0
+
+1445845175820 ==>  Inside onReceive of Child. OFFSIDEPASSES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur OffsidePasses = 0
+
+1445845175881 ==>  Inside IO getDocument. Success. Size = 193057
+
+1445845175890 ==>  Insidee passDetails. No. = 21
+
+1445845175890 ==>  Inside onReceive of Child. PASSES. Index = 1PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur Passes = 21
+
+1445845176943 ==>  Inside IO getDocument. Success. Size = 189369
+
+1445845176960 ==>  Inside defensiveErrorsDetails. No. of defensiveErrors = 0
+
+1445845176960 ==>  Inside onReceive of Child. DEFENSIVEERRORS. Index = 1PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur DefensiveErrors = 0
+
+1445845176981 ==>  Inside IO getDocument. Success. Size = 196581
+
+1445845177031 ==>  Inside receivedPassDetails. No. = 42
+
+1445845177031 ==>  Inside onReceive of Child. RECEIVEDPASSES.PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/12679/OVERALL_02#tabs-wrapper-anchor Player ID = 12679 Team = Tottenham Hotspur ReceivedPasses = 42
+
+1445845177551 ==>  Inside IO getDocument. Success. Size = 191357
+
+1445845177562 ==>  Insidee passDetails. No. = 11
+
+1445845177562 ==>  Inside onReceive of Child. PASSES. Index = 3PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur Passes = 11
+
+1445845177742 ==>  Inside IO getDocument. Success. Size = 189878
+
+1445845177754 ==>  Insidee passDetails. No. = 3
+
+1445845177754 ==>  Inside onReceive of Child. PASSES. Index = 1PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1934/OVERALL_02#tabs-wrapper-anchor Player ID = 1934 Team = Tottenham Hotspur Passes = 3
+
+1445845178646 ==>  Inside IO getDocument. Success. Size = 189364
+
+1445845178652 ==>  Inside chancesCreatedDetails. No. = 0
+
+1445845178652 ==>  Inside onReceive of Child. CHANCESCREATED. Index = 2PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur Chances = 0
+
+1445845178770 ==>  Inside IO getDocument. Success. Size = 189480
+
+1445845178775 ==>  Inside ballRecoveriesDetails. No. = 1
+
+1445845178775 ==>  Inside onReceive of Child. BALLRECOVERIES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur BallRecoveries = 1
+
+1445845178827 ==> Inside Crawl getDocument. Success. Size = 219930
+
+1445845179478 ==>  Inside IO getDocument. Success. Size = 201119
+
+1445845179486 ==>  Inside receivedPassDetails. No. = 68
+
+1445845179486 ==>  Inside onReceive of Child. RECEIVEDPASSES.PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur ReceivedPasses = 68
+
+1445845179994 ==>  Inside IO getDocument. Success. Size = 189369
+
+1445845179999 ==>  Inside defensiveErrorsDetails. No. of defensiveErrors = 0
+
+1445845179999 ==>  Inside onReceive of Child. DEFENSIVEERRORS. Index = 2PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur DefensiveErrors = 0
+
+1445845180362 ==>  Inside IO getDocument. Success. Size = 189337
+
+1445845180368 ==>  Inside shotsDetails. No. = 0
+
+1445845180368 ==>  Inside onReceive of Child. SHOTS. Index = 2 Player Link = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur No. shots Complete = 1 Shots = 0
+
+1445845180567 ==>  Inside IO getDocument. Success. Size = 201167
+
+1445845180572 ==>  Inside shortPassesDetails. Count = 68 Success = 58 Fail = 9 Assists = 0 Chances = 1
+
+1445845180572 ==>  Inside onReceive of Child. SHORTPASSES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur ShortPasses = 68;;58;;9;;0;;1
+
+1445845181030 ==> Inside Crawl getDocument. Success. Size = 214521
+
+1445845181398 ==>  Inside IO getDocument. Success. Size = 189352
+
+1445845181403 ==>  Inside offsidePassesDetails. No. = 0
+
+1445845181403 ==>  Inside onReceive of Child. OFFSIDEPASSES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur OffsidePasses = 0
+
+1445845181411 ==>  Inside IO getDocument. Success. Size = 190931
+
+1445845181416 ==>  Inside ballRecoveriesDetails. No. = 8
+
+1445845181416 ==>  Inside onReceive of Child. BALLRECOVERIES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur BallRecoveries = 8
+
+1445845182263 ==>  Inside IO getDocument. Success. Size = 189552
+
+1445845182287 ==>  Inside chancesCreatedDetails. No. = 1
+
+1445845182287 ==>  Inside onReceive of Child. CHANCESCREATED. Index = 1PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur Chances = 1
+
+1445845182498 ==>  Inside IO getDocument. Success. Size = 189356
+
+1445845182505 ==>  Inside assistDetails. No. = 0
+
+1445845182505 ==>  Inside onReceive of Child. ASSISTS. Index = 2PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur Assists = 0
+
+1445845182962 ==> Inside Crawl getDocument. Success. Size = 208396
+
+1445845183464 ==>  Inside IO getDocument. Success. Size = 189301
+
+1445845183475 ==>  Inside defensiveErrorsDetails. No. of defensiveErrors = 0
+
+1445845183475 ==>  Inside onReceive of Child. DEFENSIVEERRORS. Index = 1PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur DefensiveErrors = 0
+
+1445845183571 ==>  Inside IO getDocument. Success. Size = 189277
+
+1445845183580 ==>  Inside foulsDetails. No. of Fouls = 0
+
+1445845183580 ==>  Inside onReceive of Child. FOULS. Index = 1PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Fouls = 0
+
+1445845183764 ==>  Inside IO getDocument. Success. Size = 189269
+
+1445845183775 ==>  Inside foulsDetails. No. of Fouls = 0
+
+1445845183775 ==>  Inside onReceive of Child. FOULS. Index = 2PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Fouls = 0
+
+1445845184481 ==>  Inside IO getDocument. Success. Size = 189827
+
+1445845184526 ==>  Inside aerialDuelsDetails. No. = 2
+
+1445845184526 ==>  Inside onReceive of Child. AERIALDUELS. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur Aerial Duels = 2
+
+1445845185265 ==>  Inside IO getDocument. Success. Size = 189795
+
+1445845185275 ==>  Inside crossesDetails. No. = 2
+
+1445845185275 ==>  Inside onReceive of Child. CROSSES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur Crosses = 2
+
+1445845185515 ==>  Inside IO getDocument. Success. Size = 192222
+
+1445845185529 ==>  Insidee passDetails. No. = 16
+
+1445845185529 ==>  Inside onReceive of Child. PASSES. Index = 3PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/12679/OVERALL_02#tabs-wrapper-anchor Player ID = 12679 Team = Tottenham Hotspur Passes = 16
+
+1445845185672 ==>  Inside IO getDocument. Success. Size = 189445
+
+1445845185682 ==>  Inside cornersDetails. No. = 0
+
+1445845185682 ==>  Inside onReceive of Child. CORNERS. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur Corners = 0
+
+1445845185956 ==>  Inside IO getDocument. Success. Size = 189357
+
+1445845185966 ==>  Inside assistDetails. No. = 0
+
+1445845185966 ==>  Inside onReceive of Child. ASSISTS. Index = 1PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur Assists = 0
+
+1445845186927 ==>  Inside IO getDocument. Success. Size = 189267
+
+1445845186938 ==>  Inside shotsDetails. No. = 0
+
+1445845186938 ==>  Inside onReceive of Child. SHOTS. Index = 4 Player Link = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1934/OVERALL_02#tabs-wrapper-anchor Player ID = 1934 Team = Tottenham Hotspur No. shots Complete = 0 Shots = 0
+
+1445845187274 ==>  Inside IO getDocument. Success. Size = 189339
+
+1445845187312 ==>  Inside shotsDetails. No. = 0
+
+1445845187312 ==>  Inside onReceive of Child. SHOTS. Index = 2 Player Link = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/12679/OVERALL_02#tabs-wrapper-anchor Player ID = 12679 Team = Tottenham Hotspur No. shots Complete = 1 Shots = 0
+
+1445845188303 ==>  Inside IO getDocument. Success. Size = 189719
+
+1445845188309 ==>  Inside foulsDetails. No. of Fouls = 2
+
+1445845188309 ==>  Inside onReceive of Child. FOULS. Index = 2PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur Fouls = 2
+
+1445845188369 ==>  Inside IO getDocument. Success. Size = 196359
+
+1445845188375 ==>  Insidee passDetails. No. = 40
+
+1445845188375 ==>  Inside onReceive of Child. PASSES. Index = 2PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/12679/OVERALL_02#tabs-wrapper-anchor Player ID = 12679 Team = Tottenham Hotspur Passes = 40
+
+1445845188789 ==>  Inside IO getDocument. Success. Size = 189543
+
+1445845188794 ==>  Insidee passDetails. No. = 1
+
+1445845188794 ==>  Inside onReceive of Child. PASSES. Index = 4PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1708/OVERALL_02#tabs-wrapper-anchor Player ID = 1708 Team = Tottenham Hotspur Passes = 1
+
+1445845189962 ==>  Inside IO getDocument. Success. Size = 189278
+
+1445845189967 ==>  Inside offsidePassesDetails. No. = 0
+
+1445845189967 ==>  Inside onReceive of Child. OFFSIDEPASSES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1934/OVERALL_02#tabs-wrapper-anchor Player ID = 1934 Team = Tottenham Hotspur OffsidePasses = 0
+
+1445845189974 ==>  Inside IO getDocument. Success. Size = 189291
+
+1445845189981 ==>  Inside chancesCreatedDetails. No. = 0
+
+1445845189981 ==>  Inside onReceive of Child. CHANCESCREATED. Index = 1PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1934/OVERALL_02#tabs-wrapper-anchor Player ID = 1934 Team = Tottenham Hotspur Chances = 0
+
+1445845190275 ==>  Inside IO getDocument. Success. Size = 190382
+
+1445845190278 ==>  Inside IO getDocument. Success. Size = 189362
+
+1445845190282 ==>  Inside aerialDuelsDetails. No. = 5
+
+1445845190282 ==>  Inside onReceive of Child. AERIALDUELS. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/12679/OVERALL_02#tabs-wrapper-anchor Player ID = 12679 Team = Tottenham Hotspur Aerial Duels = 5
+
+1445845190286 ==>  Inside blockedCrossesDetails. No. = 0
+
+1445845190286 ==>  Inside onReceive of Child. BLOCKEDCROSSES. PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/37742/OVERALL_02#tabs-wrapper-anchor Player ID = 37742 Team = Tottenham Hotspur BlockedCrosses = 0
+
+1445845190890 ==> Inside Crawl getDocument. Success. Size = 215240
+
+1445845191550 ==>  Inside IO getDocument. Success. Size = 189290
+
+1445845191557 ==>  Inside chancesCreatedDetails. No. = 0
+
+1445845191557 ==>  Inside onReceive of Child. CHANCESCREATED. Index = 2PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/1934/OVERALL_02#tabs-wrapper-anchor Player ID = 1934 Team = Tottenham Hotspur Chances = 0
+
+1445845191565 ==>  Inside IO getDocument. Success. Size = 197514
+
+1445845191573 ==>  Insidee passDetails. No. = 47
+
+1445845191573 ==>  Inside onReceive of Child. PASSES. Index = 2PlayerLink = http://www.fourfourtwo.com/statszone/8-2010/matches/322034/player-stats/38290/OVERALL_02#tabs-wrapper-anchor Player ID = 38290 Team = Tottenham Hotspur Passes = 47
+
+1445845191779 ==>  Inside IO getDocument. Success. Size = 190622
+
+1445845191785 ==>  Insidee passDetails. No. = 7
+
+1445845191785 ==>  Inside onReceive of Child. PASSES. In
