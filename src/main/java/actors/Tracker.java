@@ -13,7 +13,10 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -33,7 +36,7 @@ public class Tracker extends UntypedActor {
 
     public void onReceive(Object message) throws Exception {
         if(message instanceof Commands.StartCommand) {
-            System.out.println("Tracker Started ... Dispatcher = " + getContext().dispatcher().toString());
+            //System.out.println("Tracker Started ... Dispatcher = " + getContext().dispatcher().toString());
 
             List<Routee> workerroutees = new ArrayList<Routee>();
             for(int i=0;i<10;i++) {
@@ -43,7 +46,7 @@ public class Tracker extends UntypedActor {
             }
             Info.workerrouter = new Router(new SmallestMailboxRoutingLogic(), workerroutees);
             List<Routee> ioroutees = new ArrayList<>();
-            for(int i=0;i<10;i++) {
+            for(int i=0;i<20;i++) {
                 ActorRef iochild = getContext().actorOf(Props.create(IO.class).withDispatcher("IODispatcher"), "IO" + i);
                 getContext().watch(iochild);
                 ioroutees.add(new ActorRefRoutee(iochild));
@@ -67,22 +70,27 @@ public class Tracker extends UntypedActor {
             //Info.perfActor = getContext().actorOf(Props.create(Perf.class).withDispatcher("PerfDispatcher"), "Perf");
             currentIndex = ((Commands.StartCommand)message).j;
             startTime = System.currentTimeMillis();
+            Info.fileWriter = new FileWriter(Info.prepend + "LOGS-" + currentIndex, true);
+            Info.fileWriter.write("\n" + "START\n");
             //Info.iorouter.route(message, getSelf());
             getParent().tell(message, getSelf());
         }
         else if(message instanceof Commands.SkipGameCommand) {
-            System.out.println("GameLink " + currentIndex + " Skipped.");
+            //System.out.println("GameLink " + currentIndex + " Skipped.");
             restart();
         }
         else if(message instanceof Commands.ShotsCommand) {
+            //System.out.println("Adding Shots for Match=" + Info.FFT_match_id + " Team = " + ((Commands.ShotsCommand) message).playerDetails.team_name + " Player = " + ((Commands.ShotsCommand) message).playerDetails.FFT_player_id + " Shots = " + ((Commands.ShotsCommand) message).shots.size());
             if (!Persistence.addShots(((Commands.ShotsCommand) message).shots, Info.FFT_match_id, ((Commands.ShotsCommand) message).playerDetails.team_name, ((Commands.ShotsCommand) message).playerDetails.FFT_player_id, Info.season))
                 crawl.cleanTerminate("Add shots Failed in Persistence.");
             Info.numMessages--;
             ((Commands.ShotsCommand) message).playerDetails.numShotsComplete++;
             if(((Commands.ShotsCommand) message).playerDetails.numShotsComplete == 4) {
+                Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "4th Shot Command Received for Player = " + ((Commands.ShotsCommand) message).playerDetails.FFT_player_id + " Starting 5th.\n");
                 Info.iorouter.route(commands.new ShotsCommand(((Commands.ShotsCommand) message).playerDetails, 5), getSelf());
             }
             else if(((Commands.ShotsCommand) message).playerDetails.numShotsComplete == 5) {
+                Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "5th Shot Command Received for Player = " + ((Commands.ShotsCommand) message).playerDetails.FFT_player_id + " Starting Others.\n");
                 Info.iorouter.route(commands.new PenaltiesCommand(((Commands.ShotsCommand) message).playerDetails), getSelf());
                 Info.iorouter.route(commands.new FreekickshotsCommand(((Commands.ShotsCommand) message).playerDetails), getSelf());
             }
@@ -90,6 +98,7 @@ public class Tracker extends UntypedActor {
                 restart();
         }
         else if(message instanceof Commands.PenaltiesCommand) {
+            //System.out.println("Adding Penalties for Match=" + Info.FFT_match_id + " Team = " + ((Commands.PenaltiesCommand) message).playerDetails.team_name + " Player = " + ((Commands.PenaltiesCommand) message).playerDetails.FFT_player_id + " Penalties = " + ((Commands.PenaltiesCommand) message).penalties.size());
             if (!Persistence.addPenalties(((Commands.PenaltiesCommand) message).penalties, Info.FFT_match_id, ((Commands.PenaltiesCommand) message).playerDetails.team_name, ((Commands.PenaltiesCommand) message).playerDetails.FFT_player_id, Info.season))
                 crawl.cleanTerminate("Add penalties Failed in Persistence.");
             Info.numMessages--;
@@ -98,6 +107,7 @@ public class Tracker extends UntypedActor {
                 restart();
         }
         else if(message instanceof Commands.FreekickshotsCommand) {
+            //System.out.println("Adding FKShots for Match=" + Info.FFT_match_id + " Team = " + ((Commands.FreekickshotsCommand) message).playerDetails.team_name + " Player = " + ((Commands.FreekickshotsCommand) message).playerDetails.FFT_player_id + " FKShots = " + ((Commands.FreekickshotsCommand) message).freekickshots.size());
             if (!Persistence.addFKShots(((Commands.FreekickshotsCommand) message).freekickshots, Info.FFT_match_id, ((Commands.FreekickshotsCommand) message).playerDetails.team_name, ((Commands.FreekickshotsCommand) message).playerDetails.FFT_player_id, Info.season))
                 crawl.cleanTerminate("Add FKshots Failed in Persistence.");
             Info.numMessages--;
@@ -105,8 +115,10 @@ public class Tracker extends UntypedActor {
                 restart();
         }
         else if(message instanceof Commands.PassesCommand) {
+            //System.out.println("Adding Passes for Match=" + Info.FFT_match_id + " Team = " + ((Commands.PassesCommand) message).playerDetails.team_name + " Player = " + ((Commands.PassesCommand) message).playerDetails.FFT_player_id + " Passes = " + ((Commands.PassesCommand) message).passes.size());
             ((Commands.PassesCommand) message).playerDetails.numPassesComplete++;
             if(((Commands.PassesCommand) message).playerDetails.numPassesComplete == 3) {
+                Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "3rd Pass Command Received for Player = " + ((Commands.PassesCommand) message).playerDetails.FFT_player_id + " Starting 4th.\n");
                 Info.iorouter.route(commands.new PassesCommand(((Commands.PassesCommand) message).playerDetails, 4), getSelf());
             }
             if(!Persistence.addPasses(((Commands.PassesCommand) message).passes, Info.FFT_match_id, ((Commands.PassesCommand) message).playerDetails.team_name, ((Commands.PassesCommand) message).playerDetails.FFT_player_id, Info.season))
@@ -246,14 +258,26 @@ public class Tracker extends UntypedActor {
         }
     }
 
-    private void restart() {
+    private void restart() throws IOException {
         Info.numMessages = 0;
-        System.out.println("Game: " + Info.FFT_match_id + " details saved.");
+        //System.out.println("Game: " + Info.FFT_match_id + " details saved.");
 
         if (!Info.FFT_match_id.equals("") && !Persistence.gameSaved(Info.FFT_match_id))
             crawl.cleanTerminate("Game Could not be Saved.");
         Info.FFT_match_id = "";
         Info.match_date = null;
+        if(!Info.homeRedCards.isEmpty() || !Info.awayRedCards.isEmpty())
+            System.out.println("Red Cards is not empty. Some Error.");
+
+        Info.homeRedCards = new HashMap<>(); Info.awayRedCards = new HashMap<>();
+        if(Info.fileWriter != null) {
+            Info.fileWriter.write("\n" + "END\n");
+            Info.fileWriter.flush();
+            Info.fileWriter.close();
+            Info.fileWriter = null;
+
+        }
+
         //System.out.println("Perf: Success = " + Perf.success_count + " Failure = " + Perf.failure_count);
         //Perf.success_count = 0; Perf.failure_count = 0;
         if(currentIndex == Info.numFiles - 1) {
@@ -274,6 +298,9 @@ public class Tracker extends UntypedActor {
             long curTime = System.currentTimeMillis();
             System.out.println("Time Taken = " + (curTime - startTime));
             startTime = curTime;
+
+            Info.fileWriter = new FileWriter(Info.prepend + "LOGS-" + currentIndex, true);
+            Info.fileWriter.write("\n" + "START\n");
             //Info.iorouter.route(new Commands().new StartCommand(currentIndex), getSelf());
             getParent().tell(new Commands().new StartCommand(currentIndex), getSelf());
         }

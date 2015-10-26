@@ -10,6 +10,7 @@ command/Commands$TakeOnsCommand.class
 actors/Child.class
 command/Commands$ClearancesCommand.class
 command/Commands.class
+crawl/Test.class
 command/Commands$ShotsCommand.class
 command/Commands$BallRecoveriesCommand.class
 actors/IO.class

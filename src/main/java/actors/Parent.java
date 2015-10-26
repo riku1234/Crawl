@@ -34,6 +34,19 @@ public class Parent extends UntypedActor{
 
     public Parent() {
         /* Add Blacklist Links */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321663"); /* Giggs appears in Subs more than once */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321693"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321780"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321789"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321801"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321845"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321848"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321887"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321902"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321835"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322006"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322005"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322035"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360636"); /* No Data */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360805"); /* No Data */
         blackLists.add("http://www.fourfourtwo.com/statszone/21-2012/matches/459522"); /* No Data */
@@ -42,6 +55,7 @@ public class Parent extends UntypedActor{
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321900"); /* Subs missing */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360526"); /* Subs missing */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360834"); /* Subs missing */
+        blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449613"); /* Subs missing */
         /* End .... */
     }
 
@@ -60,8 +74,9 @@ public class Parent extends UntypedActor{
         JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader(Info.prepend + index));
         DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss zzz yyyy", Helper.getLocale((Long) jsonObject.get("LeagueID")));
         String gameLink = (String) jsonObject.get("GameLink");
+
         if (blackLists.contains(gameLink)) {
-            System.out.println("Game " + gameLink + " is Blacklisted. Skipping.");
+            //System.out.println("Game " + gameLink + " is Blacklisted. Skipping.");
             String[] splits = gameLink.split("/");
             Persistence.deleteMatch(splits[splits.length-1]);
             sender.tell(commands.new SkipGameCommand(), getSelf());
@@ -73,7 +88,7 @@ public class Parent extends UntypedActor{
         Info.match_date = df.parse((String) jsonObject.get("Date"));
 
         if (!crawl.populateGameDetails(gameLink, (String) jsonObject.get("Stadium"))) {
-            System.out.println("Skipping Game - " + gameLink);
+            //System.out.println("Skipping Game - " + gameLink);
             sender.tell(commands.new SkipGameCommand(), getSelf());
             return;
         }
@@ -88,7 +103,7 @@ public class Parent extends UntypedActor{
             crawl.cleanTerminate("Away subs size not equal. Exiting.");
 
         Info.numMessages = (33 * (playerLinks.get(0).size() + playerLinks.get(1).size() + playerLinks.get(2).size() + playerLinks.get(4).size()));
-
+        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "Starting Game = " + gameLink + " Date = " + Info.match_date + " Season = " + Info.season + " NumMessages = " + Info.numMessages);
         for (int j = 0; j < playerLinks.size(); j++) {
             Boolean noTask = false;
             if(j == 3 || j == 5)
@@ -118,31 +133,72 @@ public class Parent extends UntypedActor{
         }
     }
 
-    private void getPlayerDetails(String playerLink, int j, ActorRef sender) {
+    private void getPlayerDetails(String playerLink, int j, ActorRef sender) throws IOException {
+        //System.out.println("Player Link = " + playerLink);
         String[] playerDetails = playerLink.split("/");
         Info.FFT_match_id = playerDetails[6]; String FFT_player_id = playerDetails[8];
 
         Document doc = crawl.getDocument(playerLink); String team_name = doc.select("div.team-name").get(0).text();
         Commands.PlayerDetails playerDetailsObj = commands.new PlayerDetails(playerLink, FFT_player_id, team_name);
+        String playerName = doc.select("div#statzone_player_header h1").get(0).text();
 
-        if(!Persistence.addPlayer(team_name, doc.select("div#statzone_player_header h1").get(0).text(), FFT_player_id, Info.FFT_match_id, Info.match_date))
+        if(!Persistence.addPlayer(team_name, playerName, FFT_player_id, Info.FFT_match_id, Info.match_date))
             crawl.cleanTerminate("Add Player Failed in Persistence.");
+
+        String[] playerNameSplits = playerName.split(" ");
         switch(j) {
             case 0:
                 if(!Persistence.addStartingXIs(Info.FFT_match_id, team_name, FFT_player_id, Info.season))
                     crawl.cleanTerminate("Add Starting XI Home Failed in Persistence.");
+                for(String s : playerNameSplits) {
+                    if(Info.homeRedCards.containsKey(s)) {
+                        System.out.println("Red Card to Player Short = " + s + " Long = " + playerName);
+                        String time = Info.homeRedCards.get(s);
+                        Info.homeRedCards.remove(s);
+                        if(!Persistence.addRedCard(Info.FFT_match_id, team_name, FFT_player_id, Info.season, time))
+                            crawl.cleanTerminate("Add Red Cards failed in Home XI.");
+                    }
+                }
+
                 break;
             case 1:
                 if(!Persistence.addStartingXIs(Info.FFT_match_id, team_name, FFT_player_id, Info.season))
                     crawl.cleanTerminate("Add Starting XI Away Failed in Persistence.");
+                for(String s : playerNameSplits) {
+                    if(Info.awayRedCards.containsKey(s)) {
+                        System.out.println("Red Card to Player Short = " + s + " Long = " + playerName);
+                        String time = Info.awayRedCards.get(s);
+                        Info.awayRedCards.remove(s);
+                        if(!Persistence.addRedCard(Info.FFT_match_id, team_name, FFT_player_id, Info.season, time))
+                            crawl.cleanTerminate("Add Red Cards failed in Away XI.");
+                    }
+                }
                 break;
             case 2:
                 if(!Persistence.addSUBs(Info.FFT_match_id, team_name, FFT_player_id, Info.season))
                     crawl.cleanTerminate("Add Subs Home Failed in Persistence.");
+                for(String s : playerNameSplits) {
+                    if(Info.homeRedCards.containsKey(s)) {
+                        System.out.println("Red Card to Player Short = " + s + " Long = " + playerName);
+                        String time = Info.homeRedCards.get(s);
+                        Info.homeRedCards.remove(s);
+                        if(!Persistence.addRedCard(Info.FFT_match_id, team_name, FFT_player_id, Info.season, time))
+                            crawl.cleanTerminate("Add Red Cards failed in Home Sub In.");
+                    }
+                }
                 break;
             case 4:
                 if(!Persistence.addSUBs(Info.FFT_match_id, team_name, FFT_player_id, Info.season))
                     crawl.cleanTerminate("Add Subs Away Failed in Persistence.");
+                for(String s : playerNameSplits) {
+                    if(Info.awayRedCards.containsKey(s)) {
+                        System.out.println("Red Card to Player Short = " + s + " Long = " + playerName);
+                        String time = Info.awayRedCards.get(s);
+                        Info.awayRedCards.remove(s);
+                        if(!Persistence.addRedCard(Info.FFT_match_id, team_name, FFT_player_id, Info.season, time))
+                            crawl.cleanTerminate("Add Red Cards failed in Away Sub In.");
+                    }
+                }
                 break;
             default:
                 crawl.cleanTerminate("Strange Error - Java - 1");

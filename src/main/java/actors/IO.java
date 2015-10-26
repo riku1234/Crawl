@@ -5,7 +5,11 @@ import command.Commands;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * Created by gsm on 9/23/15.
@@ -13,9 +17,18 @@ import java.io.IOException;
 public class IO extends UntypedActor{
 
     private Document getDocument(String link) {
+
         try {
             Document document = Jsoup.connect(link).timeout(10000).get();
             //Info.perfActor.tell("Success", getSelf());
+            Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside IO getDocument. Success. Size = " + document.toString().length()+ "\n");
+            if(document.toString().length() < 150000) {
+                System.out.println("FLAG -------- Size less. " + document.toString().length());
+            }
+            if(document.toString().length() < 100000) {
+                System.out.println("Size less than 100000. Re-loading. Size = " + document.toString().length());
+                throw new IOException();
+            }
             return document;
         } catch(IOException e) {
             //Info.perfActor.tell("Failure", getSelf());
