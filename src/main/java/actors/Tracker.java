@@ -51,21 +51,29 @@ public class Tracker extends UntypedActor {
                 getContext().watch(iochild);
                 ioroutees.add(new ActorRefRoutee(iochild));
             }
-/*
-            for(int i=0;i<5;i++) {
+
+            for(int i=0;i<10;i++) {
                 Timeout timeout = new Timeout(Duration.create(60, "seconds"));
 
                 ActorSelection actorSelection = getContext().actorSelection("akka.tcp://Remote-Actor-System@128.227.248.184:2552/user/RemoteIO" + i);
-                actorSelection.tell("isActive", getSelf());
+                //actorSelection.tell("isActive", getSelf());
                 Future<ActorRef> future = actorSelection.resolveOne(timeout);
                 ActorRef actorRef = null;
-                actorRef = (ActorRef)Await.result(future, timeout.duration());
+                try {
+                    actorRef = Await.result(future, timeout.duration());
+                } catch (Exception e) {
+                    System.out.println("Remote Actor " + i + " creation failed. ");
+                    continue;
+                }
                 if(actorRef != null) {
                     System.out.println("Remote Actor " + i + " found.");
                     ioroutees.add(new ActorRefRoutee(actorRef));
                 }
+                else {
+                    System.out.println("Remote Actor " + i + " creation failed. ");
+                }
             }
-*/
+
             Info.iorouter = new Router(new SmallestMailboxRoutingLogic(), ioroutees);
             //Info.perfActor = getContext().actorOf(Props.create(Perf.class).withDispatcher("PerfDispatcher"), "Perf");
             currentIndex = ((Commands.StartCommand)message).j;

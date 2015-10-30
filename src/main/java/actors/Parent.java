@@ -49,6 +49,9 @@ public class Parent extends UntypedActor{
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322035"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360636"); /* No Data */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360805"); /* No Data */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360471"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360503"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360541"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/21-2012/matches/459522"); /* No Data */
         blackLists.add("http://www.fourfourtwo.com/statszone/24-2014/matches/752029"); /* Header Problem, less tokens. */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321742"); /* Subs mismatch */
