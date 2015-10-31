@@ -40,6 +40,10 @@ public class IO extends UntypedActor{
         if(message instanceof String) {
             System.out.println("Actor " + this.toString() + " receiving message " + message);
         }
+        else if(message instanceof Commands.RemoteSetup) {
+            Info.workerrouter = ((Commands.RemoteSetup) message).workerRouter;
+            System.out.println("Worker Router setup in Remote System");
+        }
         else {
             ((Commands.Global) message).document = getDocument(((Commands.Global) message).commandLink);
             if (((Commands.Global) message).document == null)

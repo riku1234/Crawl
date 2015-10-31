@@ -45,6 +45,7 @@ public class Tracker extends UntypedActor {
                 workerroutees.add(new ActorRefRoutee(child));
             }
             Info.workerrouter = new Router(new SmallestMailboxRoutingLogic(), workerroutees);
+
             List<Routee> ioroutees = new ArrayList<>();
             for(int i=0;i<20;i++) {
                 ActorRef iochild = getContext().actorOf(Props.create(IO.class).withDispatcher("IODispatcher"), "IO" + i);
@@ -55,8 +56,9 @@ public class Tracker extends UntypedActor {
             for(int i=0;i<10;i++) {
                 Timeout timeout = new Timeout(Duration.create(60, "seconds"));
 
-                ActorSelection actorSelection = getContext().actorSelection("akka.tcp://Remote-Actor-System@10.0.0.99:2552/user/RemoteIO" + i);
-                //actorSelection.tell("isActive", getSelf());
+                ActorSelection actorSelection = getContext().actorSelection("akka.tcp://Remote-Actor-System@10.0.0.100:2552/user/RemoteIO" + i);
+                actorSelection.tell("isActive", getSelf());
+
                 Future<ActorRef> future = actorSelection.resolveOne(timeout);
                 ActorRef actorRef = null;
                 try {
@@ -67,11 +69,13 @@ public class Tracker extends UntypedActor {
                 }
                 if(actorRef != null) {
                     System.out.println("Remote Actor " + i + " found.");
+                    actorRef.tell(commands.new RemoteSetup(Info.workerrouter), getSelf());
                     ioroutees.add(new ActorRefRoutee(actorRef));
                 }
                 else {
                     System.out.println("Remote Actor " + i + " creation failed. ");
                 }
+
             }
 
             Info.iorouter = new Router(new SmallestMailboxRoutingLogic(), ioroutees);

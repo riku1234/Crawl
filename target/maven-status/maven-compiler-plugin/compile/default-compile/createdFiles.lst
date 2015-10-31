@@ -34,3 +34,4 @@ command/Commands$SkipGameCommand.class
 command/Commands$ChancesCreatedCommand.class
 crawl/RemoteMain.class
 actors/Perf.class
+command/Commands$RemoteSetup.class

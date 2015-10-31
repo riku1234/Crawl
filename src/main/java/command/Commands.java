@@ -1,5 +1,6 @@
 package command;
 
+import akka.routing.Router;
 import org.jsoup.nodes.Document;
 
 import java.io.Serializable;
@@ -9,12 +10,20 @@ import java.util.ArrayList;
  * Created by gsm on 9/11/15.
  */
 
-public class Commands {
+public class Commands implements Serializable{
     public Commands() {
 
     }
 
-    public class Global {
+    public class RemoteSetup implements Serializable {
+        public Router workerRouter;
+
+        public RemoteSetup(Router workerRouter) {
+            this.workerRouter = workerRouter;
+        }
+    }
+
+    public class Global implements Serializable {
         public Commands.PlayerDetails playerDetails;
         public Document document;
         public String commandLink;
