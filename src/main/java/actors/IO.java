@@ -48,8 +48,12 @@ public class IO extends UntypedActor{
             ((Commands.Global) message).document = getDocument(((Commands.Global) message).commandLink);
             if (((Commands.Global) message).document == null)
                 getSelf().tell(message, getSender());
-            else
-                Info.workerrouter.route(message, getSender());
+            else {
+                if(Info.workerrouter != null)
+                    Info.workerrouter.route(message, getSender());
+                else
+                    getSender().tell(new Commands().new WorkerRoute(message), getSelf());
+            }
         }
     }
 }

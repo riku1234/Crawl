@@ -377,4 +377,12 @@ public class Commands implements Serializable{
                 this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "4_FOULS_02#tabs-wrapper-anchor";
         }
     }
+
+    public class WorkerRoute implements Serializable {
+        public Object object;
+
+        public WorkerRoute(Object object) {
+            this.object = object;
+        }
+    }
 }

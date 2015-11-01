@@ -265,6 +265,9 @@ public class Tracker extends UntypedActor {
             if (Info.numMessages == 0)
                 restart();
         }
+        else if(message instanceof Commands.WorkerRoute) {
+            Info.workerrouter.route(((Commands.WorkerRoute) message).object, getSelf());
+        }
         else {
             crawl.cleanTerminate("Strange Error - 100");
         }

@@ -24,7 +24,7 @@ public class Info {
 
     public static FileWriter fileWriter = null;
 
-    public static Router workerrouter;
-    public static Router iorouter;
-    public static ActorRef perfActor;
+    public static Router workerrouter = null;
+    public static Router iorouter = null;
+    public static ActorRef perfActor = null;
 }
