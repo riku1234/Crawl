@@ -6,6 +6,7 @@ import akka.routing.Routee;
 import akka.routing.Router;
 import akka.routing.SmallestMailboxRoutingLogic;
 import akka.util.Timeout;
+import com.sun.java.swing.plaf.windows.TMSchema;
 import command.Commands;
 import crawl.Crawl;
 import fourfourtwo.Persistence;
@@ -28,68 +29,15 @@ import static akka.pattern.Patterns.gracefulStop;
  * Created by gsm on 9/12/15.
  */
 public class Tracker extends UntypedActor {
-    int currentIndex = 0;
-    private ActorRef parent = null;
-    Commands commands = new Commands();
-    Crawl crawl = new Crawl();
-    static long startTime = -1;
+    private final Commands commands = new Commands();
+    private final Crawl crawl = new Crawl();
+    private long startTime = -1;
 
     public void onReceive(Object message) throws Exception {
-        if(message instanceof Commands.StartCommand) {
-            //System.out.println("Tracker Started ... Dispatcher = " + getContext().dispatcher().toString());
-
-            List<Routee> workerroutees = new ArrayList<Routee>();
-            for(int i=0;i<10;i++) {
-                ActorRef child = getContext().actorOf(Props.create(Child.class).withDispatcher("ChildDispatcher"), "Child" + i);
-                getContext().watch(child);
-                workerroutees.add(new ActorRefRoutee(child));
+        if(message instanceof String) {
+            if(message.equals("Setup")) {
+                getSender().tell("NextMatch", getSelf());
             }
-            Info.workerrouter = new Router(new SmallestMailboxRoutingLogic(), workerroutees);
-
-            List<Routee> ioroutees = new ArrayList<>();
-            for(int i=0;i<20;i++) {
-                ActorRef iochild = getContext().actorOf(Props.create(IO.class).withDispatcher("IODispatcher"), "IO" + i);
-                getContext().watch(iochild);
-                ioroutees.add(new ActorRefRoutee(iochild));
-            }
-
-            for(int i=0;i<10;i++) {
-                Timeout timeout = new Timeout(Duration.create(60, "seconds"));
-
-                ActorSelection actorSelection = getContext().actorSelection("akka.tcp://Remote-Actor-System@10.0.0.100:2552/user/RemoteIO" + i);
-                actorSelection.tell("isActive", getSelf());
-
-                Future<ActorRef> future = actorSelection.resolveOne(timeout);
-                ActorRef actorRef = null;
-                try {
-                    actorRef = Await.result(future, timeout.duration());
-                } catch (Exception e) {
-                    System.out.println("Remote Actor " + i + " creation failed. ");
-                    continue;
-                }
-                if(actorRef != null) {
-                    System.out.println("Remote Actor " + i + " found.");
-                    actorRef.tell(commands.new RemoteSetup(Info.workerrouter), getSelf());
-                    ioroutees.add(new ActorRefRoutee(actorRef));
-                }
-                else {
-                    System.out.println("Remote Actor " + i + " creation failed. ");
-                }
-
-            }
-
-            Info.iorouter = new Router(new SmallestMailboxRoutingLogic(), ioroutees);
-            //Info.perfActor = getContext().actorOf(Props.create(Perf.class).withDispatcher("PerfDispatcher"), "Perf");
-            currentIndex = ((Commands.StartCommand)message).j;
-            startTime = System.currentTimeMillis();
-            Info.fileWriter = new FileWriter(Info.prepend + "LOGS-" + currentIndex, true);
-            Info.fileWriter.write("\n" + "START\n");
-            //Info.iorouter.route(message, getSelf());
-            getParent().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.SkipGameCommand) {
-            //System.out.println("GameLink " + currentIndex + " Skipped.");
-            restart();
         }
         else if(message instanceof Commands.ShotsCommand) {
             //System.out.println("Adding Shots for Match=" + Info.FFT_match_id + " Team = " + ((Commands.ShotsCommand) message).playerDetails.team_name + " Player = " + ((Commands.ShotsCommand) message).playerDetails.FFT_player_id + " Shots = " + ((Commands.ShotsCommand) message).shots.size());

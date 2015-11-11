@@ -133,20 +133,20 @@ public class Crawl {
 */
     }
 
-    public Document getDocument(String link) {
+    public MyDocument getDocument(String link) {
 
         synchronized (Crawl.class) {
             //System.out.println("Get Document called by " + Thread.currentThread().getName());
             while (true) {
                 try {
-                    Document document = Jsoup.connect(link).timeout(10000).get();
+                    MyDocument document = new MyDocument(Jsoup.connect(link).timeout(10000).get());
                     if(Info.fileWriter != null)
                         Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "Inside Crawl getDocument. Success. Size = " + document.toString().length()+ "\n");
-                    if(document.toString().length() < 150000) {
-                        System.out.println("FLAG --- SIZE LESS " + document.toString().length());
+                    if(document.document.toString().length() < 150000) {
+                        System.out.println("FLAG --- SIZE LESS " + document.document.toString().length());
                     }
-                    if(document.toString().length() < 100000) {
-                        System.out.println("Size less than 100000. Re-loading. Size = " + document.toString().length());
+                    if(document.document.toString().length() < 100000) {
+                        System.out.println("Size less than 100000. Re-loading. Size = " + document.document.toString().length());
                         throw new IOException();
                     }
                     return document;
@@ -182,7 +182,7 @@ public class Crawl {
     void populateJSON(JSONObject jsonObject, String gameLink) throws ParseException {
         Document doc = getDocument(gameLink);
 
-        String matchHeader = doc.select("div.teams").text();
+        String matchHeader = doc.document.select("div.teams").text();
         //System.out.println("Header = " + matchHeader);
         String[] matchHeaderDetails = matchHeader.split(",");
         String stadium = matchHeaderDetails[0].trim();
@@ -200,17 +200,9 @@ public class Crawl {
         jsonObject.put("Date", game_date);
     }
 */
-    public Boolean populateGameDetails(String gameLink, String stadium) throws IOException, ParseException {
-        StringTokenizer st = new StringTokenizer(gameLink, "/");
-        int count = st.countTokens();
-        while(st.hasMoreTokens()) {
-            Info.FFT_match_id = st.nextToken();
-        }
-        if(Persistence.gameExists(Info.FFT_match_id))
-            return false;
+    public boolean populateGameDetails(Commands.MatchGlobals matchGlobals) {
 
-        Document doc = getDocument(gameLink);
-
+        Document doc = matchGlobals.getGameDocument();
         String home_team_name = doc.select("span.home-head").text();
         String away_team_name = doc.select("span.away-head").text();
         String full_time_score = doc.select("span.score").text();
@@ -219,31 +211,34 @@ public class Crawl {
         Elements homeRedCardElements = doc.select("div.home span.red_card");
         Elements awayRedCardElements = doc.select("div.away span.red_card");
 
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside populateGameDetails. GameLink = " + gameLink + " Stadium = " + stadium + "\n");
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "Inside populateGameDetails. Home Team = " + home_team_name + " Away Team = " + away_team_name + " FT Score = " + full_time_score + " Home Possession = " + home_team_possession + " Away Possession = " + away_team_possession + " Home Reds = " + homeRedCardElements.size() + " Away Reds = " + awayRedCardElements.size() + "\n");
+        matchGlobals.setHome_team_name(home_team_name); matchGlobals.setAway_team_name(away_team_name);
+        matchGlobals.setHome_possession(home_team_possession); matchGlobals.setAway_possession(away_team_possession);
+        matchGlobals.setFullTimeScore(full_time_score);
 
         for(int i=0;i<homeRedCardElements.size();i++) {
             String text = homeRedCardElements.get(i).text();
             String[] splits = text.split(" ");
-            Info.homeRedCards.put(splits[0].trim(), splits[1].trim());
+            matchGlobals.addHomeRedCard(splits[0].trim(), splits[1].trim());
             System.out.println("Home Red added. Name = " + splits[0] + " Time = " + splits[1]);
         }
 
         for(int i=0;i<awayRedCardElements.size();i++) {
             String text = awayRedCardElements.get(i).text();
             String[] splits = text.split(" ");
-            Info.awayRedCards.put(splits[1].trim(), splits[0].trim());
+            matchGlobals.addAwayRedCard(splits[1].trim(), splits[0].trim());
             System.out.println("Away Red added. Name = " + splits[1] + " Time = " + splits[0]);
         }
 
-        if(!Persistence.addMatch(stadium, Info.match_date, home_team_name, away_team_name, full_time_score, Info.FFT_match_id, Info.season, home_team_possession, away_team_possession))
-            cleanTerminate("Add Match failed in Persistance.");
+        if(!Persistence.addMatch(matchGlobals.getStadium(), matchGlobals.getGameDate(), home_team_name, away_team_name, full_time_score, matchGlobals.getFFT_Match_ID(), matchGlobals.getSeason(), home_team_possession, away_team_possession)) {
+            System.out.println("Add Match Unsuccessful for GameLink = " + matchGlobals.getGameLink());
+            return false;
+        }
         return true;
     }
 /*
     ArrayList<String> getGameLinks(String resultsPage) throws IOException {
         Document doc = getDocument(resultsPage);
-        Elements elements = doc.select("td.link-to-match a");
+        Elements elements = doc.document.select("td.link-to-match a");
         ArrayList<String> gameLinks = new ArrayList<String>();
         for(int i = 0; i < elements.size(); i++) {
             gameLinks.add(elements.get(i).attr("abs:href"));
@@ -252,9 +247,9 @@ public class Crawl {
     }
 */
 
-    public ArrayList<String> foulsDetails(Document doc, int who) throws IOException {
+    public ArrayList<String> foulsDetails(MyDocument doc, int who) throws IOException {
         ArrayList<String> fouls = new ArrayList<>();
-        Elements elements = doc.select("image");
+        Elements elements = doc.document.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -273,8 +268,8 @@ public class Crawl {
 
     public ArrayList<String> redCardDetails(String gameLink) throws IOException {
         ArrayList<String> redCards = new ArrayList<>();
-        Document doc = getDocument(gameLink);
-        Elements elements = doc.select("span.red_card");
+        MyDocument doc = getDocument(gameLink);
+        Elements elements = doc.document.select("span.red_card");
         for(int i=0;i<elements.size();i++) {
             Element element = elements.get(i);
             String text = element.text();
@@ -286,8 +281,8 @@ public class Crawl {
         return redCards;
     }
 
-    public ArrayList<String> defensiveErrorsDetails(Document doc, int leadingTo) throws IOException {
-        Elements elements = doc.select("image");
+    public ArrayList<String> defensiveErrorsDetails(MyDocument doc, int leadingTo) throws IOException {
+        Elements elements = doc.document.select("image");
         ArrayList<String> defensiveErrors = new ArrayList<>();
 
         for (int i = 0; i < elements.size(); i++) {
@@ -305,9 +300,9 @@ public class Crawl {
         return defensiveErrors;
     }
 
-    public ArrayList<String> blockedCrossesDetails(Document doc) throws IOException {
+    public ArrayList<String> blockedCrossesDetails(MyDocument doc) throws IOException {
         ArrayList<String> blockedCrosses = new ArrayList<String>();
-        Elements elements = doc.select("image");
+        Elements elements = doc.document.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -324,9 +319,9 @@ public class Crawl {
         return blockedCrosses;
     }
 
-    public ArrayList<String> aerialDuelsDetails(Document doc) throws IOException {
+    public ArrayList<String> aerialDuelsDetails(MyDocument doc) throws IOException {
         ArrayList<String> aerial_duels = new ArrayList<String>();
-        Elements elements = doc.select("image");
+        Elements elements = doc.document.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -348,9 +343,9 @@ public class Crawl {
         return aerial_duels;
     }
 
-    public ArrayList<String> clearancesDetails(Document doc) throws IOException {
+    public ArrayList<String> clearancesDetails(MyDocument doc) throws IOException {
         ArrayList<String> clearances = new ArrayList<String>();
-        Elements elements = doc.select("image");
+        Elements elements = doc.document.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -372,9 +367,9 @@ public class Crawl {
         return clearances;
     }
 
-    public ArrayList<String> blocksDetails(Document doc) throws IOException {
+    public ArrayList<String> blocksDetails(MyDocument doc) throws IOException {
         ArrayList<String> blocks = new ArrayList<String>();
-        Elements elements = doc.select("image");
+        Elements elements = doc.document.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -391,9 +386,9 @@ public class Crawl {
         return blocks;
     }
 
-    public ArrayList<String> interceptionsDetails(Document doc) throws IOException {
+    public ArrayList<String> interceptionsDetails(MyDocument doc) throws IOException {
         ArrayList<String> interceptions = new ArrayList<String>();
-        Elements elements = doc.select("image");
+        Elements elements = doc.document.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -410,9 +405,9 @@ public class Crawl {
         return interceptions;
     }
 
-    public ArrayList<String> tacklesDetails(Document doc) throws IOException {
+    public ArrayList<String> tacklesDetails(MyDocument doc) throws IOException {
         ArrayList<String> tackles = new ArrayList<String>();
-        Elements elements = doc.select("image");
+        Elements elements = doc.document.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -434,9 +429,9 @@ public class Crawl {
         return tackles;
     }
 
-    public ArrayList<String> chancesCreatedDetails(Document doc, int from) throws IOException {
+    public ArrayList<String> chancesCreatedDetails(MyDocument doc, int from) throws IOException {
         ArrayList<String> chancesCreated = new ArrayList<>();
-        Elements elements = doc.select("line");
+        Elements elements = doc.document.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -454,9 +449,9 @@ public class Crawl {
         return chancesCreated;
     }
 
-    public ArrayList<String> ballRecoveriesDetails(Document doc) throws IOException {
+    public ArrayList<String> ballRecoveriesDetails(MyDocument doc) throws IOException {
         ArrayList<String> ballrecoveries = new ArrayList<String>();
-        Elements elements = doc.select("image");
+        Elements elements = doc.document.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -473,9 +468,9 @@ public class Crawl {
         return ballrecoveries;
     }
 
-    public ArrayList<String> offsidePassesDetails(Document doc) throws IOException {
+    public ArrayList<String> offsidePassesDetails(MyDocument doc) throws IOException {
         ArrayList<String> offsidePasses = new ArrayList<String>();
-        Elements elements = doc.select("line");
+        Elements elements = doc.document.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -493,9 +488,9 @@ public class Crawl {
         return offsidePasses;
     }
 
-    public ArrayList<String> cornersDetails(Document doc) throws IOException {
+    public ArrayList<String> cornersDetails(MyDocument doc) throws IOException {
         ArrayList<String> corners = new ArrayList<String>();
-        Elements elements = doc.select("line");
+        Elements elements = doc.document.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -524,9 +519,9 @@ public class Crawl {
         return corners;
     }
 
-    public ArrayList<String> takeOnsDetails(Document doc) throws IOException {
+    public ArrayList<String> takeOnsDetails(MyDocument doc) throws IOException {
         ArrayList<String> takeons = new ArrayList<String>();
-        Elements elements = doc.select("image");
+        Elements elements = doc.document.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -549,9 +544,9 @@ public class Crawl {
         return takeons;
     }
 
-    public ArrayList<String> crossesDetails(Document doc) throws IOException {
+    public ArrayList<String> crossesDetails(MyDocument doc) throws IOException {
         ArrayList<String> crosses = new ArrayList<String>();
-        Elements elements = doc.select("line");
+        Elements elements = doc.document.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -580,9 +575,9 @@ public class Crawl {
         return crosses;
     }
 
-    public String getShortPassesDetails(Document doc) throws IOException {
+    public String getShortPassesDetails(MyDocument doc) throws IOException {
         String shortpasses = "";
-        Elements elements = doc.select("line");
+        Elements elements = doc.document.select("line");
 
         int count = 0; int success_count = 0; int fail_count = 0; int assist_count = 0; int chances_count = 0;
 
@@ -608,9 +603,9 @@ public class Crawl {
         return shortpasses;
     }
 
-    public String getLongPassesDetails(Document doc) throws IOException {
+    public String getLongPassesDetails(MyDocument doc) throws IOException {
         String longpasses = "";
-        Elements elements = doc.select("line");
+        Elements elements = doc.document.select("line");
 
         int count = 0; int success_count = 0; int fail_count = 0; int assist_count = 0; int chances_count = 0;
 
@@ -636,9 +631,9 @@ public class Crawl {
         return longpasses;
     }
 
-    public ArrayList<String> receivedPassDetails(Document doc) throws IOException {
+    public ArrayList<String> receivedPassDetails(MyDocument doc) throws IOException {
         ArrayList<String> receivedPasses = new ArrayList<String>();
-        Elements elements = doc.select("line");
+        Elements elements = doc.document.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -665,9 +660,9 @@ public class Crawl {
         return receivedPasses;
     }
 
-    public ArrayList<String> assistDetails(Document doc, int from) throws IOException {
+    public ArrayList<String> assistDetails(MyDocument doc, int from) throws IOException {
         ArrayList<String> assists = new ArrayList<>();
-        Elements elements = doc.select("line");
+        Elements elements = doc.document.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -685,9 +680,9 @@ public class Crawl {
         return assists;
     }
 
-    public ArrayList<String> passDetails(Document doc, int third) throws IOException {
+    public ArrayList<String> passDetails(MyDocument doc, int third) throws IOException {
         ArrayList<String> passes = new ArrayList<>();
-        Elements elements = doc.select("line");
+        Elements elements = doc.document.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -714,9 +709,9 @@ public class Crawl {
         return passes;
     }
 
-    public ArrayList<String> freekickShotsDetails(Document doc) throws IOException {
+    public ArrayList<String> freekickShotsDetails(MyDocument doc) throws IOException {
         ArrayList<String> freekick_shots = new ArrayList<String>();
-        Elements elements = doc.select("line");
+        Elements elements = doc.document.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -743,10 +738,10 @@ public class Crawl {
         return freekick_shots;
     }
 
-    public ArrayList<String> shotsDetails(Document doc, int part) throws IOException {
+    public ArrayList<String> shotsDetails(MyDocument doc, int part) throws IOException {
         ArrayList<String> shots = new ArrayList<>();
 
-        Elements elements = doc.select("line");
+        Elements elements = doc.document.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -774,8 +769,8 @@ public class Crawl {
         return shots;
     }
 
-    public ArrayList<String> penaltyDetails(Document doc) throws IOException {
-        Elements elements = doc.select("line");
+    public ArrayList<String> penaltyDetails(MyDocument doc) throws IOException {
+        Elements elements = doc.document.select("line");
         ArrayList<String> penalties = new ArrayList();
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -802,25 +797,30 @@ public class Crawl {
         return penalties;
     }
 
-    public List<Elements> getPlayerStatsLink(String URL) throws IOException {
+    public List<Elements> getPlayerStatsLink(Document doc) {
         int count = 0;
-        Document doc = getDocument(URL);
         Elements homeXIs = doc.select("div.lineup.home span a");
         if (homeXIs.size() != 11) {
-            cleanTerminate("Home team doesn't have 11 players. Error.");
+            System.out.println("Home team doesn't have 11 players. Error.");
+            return null;
         }
         Elements awayXIs = doc.select("div.lineup.away span a");
         if (awayXIs.size() != 11) {
-            cleanTerminate("Away team doesn't have 11 players. Error.");
+            System.out.println("Away team doesn't have 11 players. Error.");
+            return null;
         }
         Elements homeSUBSIN = doc.select("ul.home.subs li div ul li.first a");
         Elements homeSUBSOUT = doc.select("ul.home.subs li div ul li.last a");
         Elements awaySUBSIN = doc.select("ul.away.subs li div ul li.first a");
         Elements awaySUBSOUT = doc.select("ul.away.subs li div ul li.last a");
-        if(homeSUBSIN.size() != homeSUBSOUT.size())
-            cleanTerminate("Number of home subs in not equal to number of home subs out.");
-        if(awaySUBSIN.size() != awaySUBSOUT.size())
-            cleanTerminate("Number of away subs in not equal to number of home subs out.");
+        if(homeSUBSIN.size() != homeSUBSOUT.size()) {
+            System.out.println("Home Sub-In Size != Home Sub-Out Size. Error.");
+            return null;
+        }
+        if(awaySUBSIN.size() != awaySUBSOUT.size()) {
+            System.out.println("Away Sub-In Size != Away Sub-Out Size. Error.");
+            return null;
+        }
         List<Elements> list = new ArrayList();
         list.add(homeXIs);
         list.add(awayXIs);
@@ -828,17 +828,14 @@ public class Crawl {
         list.add(homeSUBSOUT);
         list.add(awaySUBSIN);
         list.add(awaySUBSOUT);
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside getPlayerStatsLink. Home XI = " + homeXIs.size() + " Away XI = " + awayXIs.size() + " Home Subs In = " + homeSUBSIN.size() + " Home Subs Out = " + homeSUBSOUT.size() + " Away Subs In = " + awaySUBSIN.size() + " Away Subs Out = " + awaySUBSOUT.size() + "\n");
         return list;
     }
 
-    public void cleanTerminate(String errorMessage) throws IOException {
+    /*public void cleanTerminate(String errorMessage) {
         System.out.println(errorMessage);
         System.out.println("Match ID: " + Info.FFT_match_id);
-        //Persistence.deleteMatch(Info.FFT_match_id);
+        Persistence.deleteMatch(Info.FFT_match_id);
         System.out.println("Record Deleted. Exiting.");
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside cleanTerminate." + "\n");
-        Info.fileWriter.flush(); Info.fileWriter.close();
         System.exit(1);
-    }
+    }*/
 }

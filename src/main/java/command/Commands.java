@@ -1,10 +1,13 @@
 package command;
 
 import akka.routing.Router;
+import crawl.MyDocument;
 import org.jsoup.nodes.Document;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by gsm on 9/11/15.
@@ -15,11 +18,113 @@ public class Commands implements Serializable{
 
     }
 
-    public class RemoteSetup implements Serializable {
-        public Router workerRouter;
+    public class MatchGlobals implements Serializable {
+        private String gameLink;
+        private Long leagueID;
+        private String FFT_Match_ID;
+        private String season;
+        private Date gameDate;
+        private Document gameDocument;
+        private Document playersDocument;
+        private String stadium;
+        private String home_team_name; private String away_team_name;
+        private double home_possession; private double away_possession;
+        private HashMap<String, String> home_red_cards; private HashMap<String, String> away_red_cards;
+        private String fullTimeScore;
+        private int numMessagesRemaining;
 
-        public RemoteSetup(Router workerRouter) {
-            this.workerRouter = workerRouter;
+        public MatchGlobals(String gameLink, Long leagueID, String FFT_Match_ID, String season, Date gameDate, String stadium) {
+            this.gameLink = gameLink;
+            this.leagueID = leagueID;
+            this.FFT_Match_ID = FFT_Match_ID;
+            this.season = season;
+            this.gameDate = gameDate;
+            this.stadium = stadium;
+            this.gameDocument = null; this.playersDocument = null;
+            this.home_team_name = ""; this.away_team_name = ""; this.home_possession = 0; this.away_possession = 0;
+            this.home_red_cards = new HashMap<>(); this.away_red_cards = new HashMap<>();
+            this.fullTimeScore = "";
+            this.numMessagesRemaining = 0;
+        }
+
+        public void setGameDocument(Document gameDocument) {
+            this.gameDocument = gameDocument;
+        }
+
+        public Document getGameDocument() {
+            return this.gameDocument;
+        }
+
+        public void setPlayersDocument(Document playersDocument) {
+            this.playersDocument = playersDocument;
+        }
+
+        public Document getPlayersDocument() {
+            return this.playersDocument;
+        }
+
+        public String getGameLink() {
+            return this.gameLink;
+        }
+
+        public String getStadium() {
+            return this.stadium;
+        }
+
+        public void setHome_team_name(String home_team_name) {
+            this.home_team_name = home_team_name;
+        }
+
+        public void setAway_team_name(String away_team_name) {
+            this.away_team_name = away_team_name;
+        }
+
+        public void setHome_possession(double home_possession) {
+            this.home_possession = home_possession;
+        }
+
+        public void setAway_possession(double away_possession) {
+            this.away_possession = away_possession;
+        }
+
+        public void addHomeRedCard(String name, String time) {
+            this.home_red_cards.put(name, time);
+        }
+
+        public void addAwayRedCard(String name, String time) {
+            this.away_red_cards.put(name, time);
+        }
+
+        public void setFullTimeScore(String fullTimeScore) {
+            this.fullTimeScore = fullTimeScore;
+        }
+
+        public Date getGameDate() {
+            return this.gameDate;
+        }
+
+        public String getFFT_Match_ID() {
+            return this.FFT_Match_ID;
+        }
+
+        public String getSeason() {
+            return this.season;
+        }
+
+        public void setNumMessagesRemaining(int numMessagesRemaining) {
+            this.numMessagesRemaining = numMessagesRemaining;
+        }
+
+        public int getNumMessagesRemaining() {
+            return this.numMessagesRemaining;
+        }
+
+        public HashMap<String, String> getHomeRedCards() {
+            return home_red_cards;
+        }
+
+        public HashMap<String, String> getAwayRedCards() {
+            return away_red_cards;
         }
     }
 
@@ -30,26 +135,42 @@ public class Commands implements Serializable{
     }
 
     public class PlayerDetails implements Serializable{
+        public MatchGlobals matchGlobals;
         public String playerLink;
         public String FFT_player_id;
         public String team_name;
         public int numShotsComplete;
         public int numPassesComplete;
+        public Document playerDocument;
+        public int j;
 
-        public PlayerDetails(String playerLink, String FFT_player_id, String team_name) {
-            this.team_name = team_name;
-            this.FFT_player_id = FFT_player_id;
+        public PlayerDetails(MatchGlobals matchGlobals, String playerLink, int j) {
             this.playerLink = playerLink;
+            this.matchGlobals = matchGlobals;
+            this.j = j;
+            this.FFT_player_id = "";
+            this.team_name = "";
             this.numShotsComplete = 0;
             this.numPassesComplete = 0;
+            this.playerDocument = null;
         }
     }
 
     public class StartCommand implements Serializable{
-        public int j;
+        private String prefix = null;
+        private int index = -1;
 
-        public StartCommand(int j) {
-            this.j = j;
+        public StartCommand(String prefix, int index) {
+            this.prefix = prefix;
+            this.index = index;
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public int getIndex() {
+            return index;
         }
     }
 
@@ -84,6 +205,7 @@ public class Commands implements Serializable{
             this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "0_SHOT_07#tabs-wrapper-anchor";
         }
     }
+
     public class ShotsCommand extends Global implements Serializable{
         //public PlayerDetails playerDetails;
         public ArrayList<String> shots;

@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import command.Commands;
 import crawl.Crawl;
+import crawl.MyDocument;
 import fourfourtwo.Helper;
 import fourfourtwo.Persistence;
 import org.json.simple.JSONObject;
@@ -142,9 +143,9 @@ public class Parent extends UntypedActor{
         String[] playerDetails = playerLink.split("/");
         Info.FFT_match_id = playerDetails[6]; String FFT_player_id = playerDetails[8];
 
-        Document doc = crawl.getDocument(playerLink); String team_name = doc.select("div.team-name").get(0).text();
+        MyDocument doc = (MyDocument)crawl.getDocument(playerLink); String team_name = doc.document.select("div.team-name").get(0).text();
         Commands.PlayerDetails playerDetailsObj = commands.new PlayerDetails(playerLink, FFT_player_id, team_name);
-        String playerName = doc.select("div#statzone_player_header h1").get(0).text();
+        String playerName = doc.document.select("div#statzone_player_header h1").get(0).text();
 
         if(!Persistence.addPlayer(team_name, playerName, FFT_player_id, Info.FFT_match_id, Info.match_date))
             crawl.cleanTerminate("Add Player Failed in Persistence.");

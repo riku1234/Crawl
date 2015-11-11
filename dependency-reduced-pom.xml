@@ -21,7 +21,7 @@
                   <resource>reference.conf</resource>
                 </transformer>
                 <transformer>
-                  <mainClass>crawl.Crawl</mainClass>
+                  <mainClass>crawl.RemoteMain</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -55,7 +55,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          <mainClass>crawl.Crawl</mainClass>
+          <mainClass>crawl.RemoteMain</mainClass>
           <includeProjectDependencies>true</includeProjectDependencies>
           <includePluginDependencies>true</includePluginDependencies>
         </configuration>
@@ -87,7 +87,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>${project.basedir}/target/dependency/</classpathPrefix>
-              <mainClass>crawl.Crawl</mainClass>
+              <mainClass>crawl.RemoteMain</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -105,7 +105,7 @@
     <repository>
       <id>localRepo</id>
       <name>My Local Repo</name>
-      <url>file:/Users/gsm/.m2/repository/</url>
+      <url>file:/home/gsm/.m2/repository/</url>
     </repository>
   </distributionManagement>
 </project>
