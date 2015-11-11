@@ -7,9 +7,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d78e0be3-f8f2-4d6b-8fa9-0c68332c9de2" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/actors/Distributor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/crawl/MyDocument.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/actors/Child.class" afterPath="$PROJECT_DIR$/target/classes/actors/Child.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/command/Commands$AerialDuelsCommand.class" afterPath="$PROJECT_DIR$/target/classes/command/Commands$AerialDuelsCommand.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/command/Commands$AssistsCommand.class" afterPath="$PROJECT_DIR$/target/classes/command/Commands$AssistsCommand.class" />
@@ -45,19 +42,10 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/actors/Tracker.class" afterPath="$PROJECT_DIR$/target/classes/actors/Tracker.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/fa-1.0.jar" afterPath="$PROJECT_DIR$/target/fa-1.0.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/original-fa-1.0.jar" afterPath="$PROJECT_DIR$/target/original-fa-1.0.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/command/Commands.java" afterPath="$PROJECT_DIR$/src/main/java/command/Commands.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/crawl/Crawl.java" afterPath="$PROJECT_DIR$/src/main/java/crawl/Crawl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/actors/IO.java" afterPath="$PROJECT_DIR$/src/main/java/actors/IO.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/actors/Info.java" afterPath="$PROJECT_DIR$/src/main/java/actors/Info.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/actors/Parent.java" afterPath="$PROJECT_DIR$/src/main/java/actors/Parent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/actors/Tracker.java" afterPath="$PROJECT_DIR$/src/main/java/actors/Tracker.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/application.conf" afterPath="$PROJECT_DIR$/src/main/resources/application.conf" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/application.conf" afterPath="$PROJECT_DIR$/target/classes/application.conf" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dependency-reduced-pom.xml" afterPath="$PROJECT_DIR$/dependency-reduced-pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Crawl.iws" />
@@ -966,7 +954,13 @@
       <option name="project" value="LOCAL" />
       <updated>1446335425462</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="2.0&#10;Data Store for verification.">
+      <created>1447245692296</created>
+      <option name="number" value="00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1447245692296</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1020,7 +1014,8 @@
     <MESSAGE value="1.3&#10;Last release of actor model in 1 system." />
     <MESSAGE value="1.4&#10;Last release of actor model in 1 system." />
     <MESSAGE value="1.5&#10;Latest release of multi-system." />
-    <option name="LAST_COMMIT_MESSAGE" value="1.5&#10;Latest release of multi-system." />
+    <MESSAGE value="2.0&#10;Data Store for verification." />
+    <option name="LAST_COMMIT_MESSAGE" value="2.0&#10;Data Store for verification." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
