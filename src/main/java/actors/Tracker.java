@@ -41,9 +41,11 @@ public class Tracker extends UntypedActor {
         }
         else if(message instanceof Commands.ShotsCommand) {
             //System.out.println("Adding Shots for Match=" + Info.FFT_match_id + " Team = " + ((Commands.ShotsCommand) message).playerDetails.team_name + " Player = " + ((Commands.ShotsCommand) message).playerDetails.FFT_player_id + " Shots = " + ((Commands.ShotsCommand) message).shots.size());
-            if (!Persistence.addShots(((Commands.ShotsCommand) message).shots, Info.FFT_match_id, ((Commands.ShotsCommand) message).playerDetails.team_name, ((Commands.ShotsCommand) message).playerDetails.FFT_player_id, Info.season))
-                crawl.cleanTerminate("Add shots Failed in Persistence.");
-            Info.numMessages--;
+            if (!Persistence.addShots(((Commands.ShotsCommand) message).shots, ((Commands.ShotsCommand) message).playerDetails.matchGlobals.getFFT_Match_ID(), ((Commands.ShotsCommand) message).playerDetails.team_name, ((Commands.ShotsCommand) message).playerDetails.FFT_player_id, ((Commands.ShotsCommand) message).playerDetails.matchGlobals.getSeason())) {
+                System.out.println("Add shots Failed in Persistence.");
+                System.exit(1);
+            }
+            ((Commands.ShotsCommand) message).playerDetails.matchGlobals.setNumMessagesRemaining(((Commands.ShotsCommand) message).playerDetails.matchGlobals.getNumMessagesRemaining() - 1);
             ((Commands.ShotsCommand) message).playerDetails.numShotsComplete++;
             if(((Commands.ShotsCommand) message).playerDetails.numShotsComplete == 4) {
                 Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "4th Shot Command Received for Player = " + ((Commands.ShotsCommand) message).playerDetails.FFT_player_id + " Starting 5th.\n");

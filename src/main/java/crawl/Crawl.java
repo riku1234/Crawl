@@ -132,16 +132,16 @@ public class Crawl {
 
 */
     }
-
-    public MyDocument getDocument(String link) {
+/*
+    public Document getDocument(String link) {
 
         synchronized (Crawl.class) {
             //System.out.println("Get Document called by " + Thread.currentThread().getName());
             while (true) {
                 try {
-                    MyDocument document = new MyDocument(Jsoup.connect(link).timeout(10000).get());
-                    if(Info.fileWriter != null)
-                        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "Inside Crawl getDocument. Success. Size = " + document.toString().length()+ "\n");
+                    Document document = new MyDocument(Jsoup.connect(link).timeout(10000).get());
+                    if(//Info.fileWriter != null)
+                        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "Inside Crawl getDocument. Success. Size = " + document.toString().length()+ "\n");
                     if(document.document.toString().length() < 150000) {
                         System.out.println("FLAG --- SIZE LESS " + document.document.toString().length());
                     }
@@ -163,19 +163,20 @@ public class Crawl {
             }
         }
     }
-
+*/
     public Boolean addSubstitutions(String subInPlayerLink, String subOutPlayerLink) throws IOException {
         //System.out.println("Add Substitutions Called for Sub-In - " + subInPlayerLink + " Sub-Out - " + subOutPlayerLink);
         String[] subInDetails = subInPlayerLink.split("/");
         String[] subOutDetails = subOutPlayerLink.split("/");
 
-        if(!subInDetails[6].equals(subOutDetails[6]))
-            cleanTerminate("Sub In and Sub Out Match Id not same. Exiting.");
+        if(!subInDetails[6].equals(subOutDetails[6])) {
+            System.out.println("Sub In and Sub Out Match Id not same.");
+            return false;
+        }
 
         String game_id = subInDetails[6];
         String sub_in_id = subInDetails[8]; String sub_out_id = subOutDetails[8];
-        if(Info.fileWriter != null)
-            Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "Inside addSubstitutions. Persistence addSubstitutions called for GameID = " + game_id + " Sub-in ID = " + sub_in_id + " Sub-out ID = " + sub_out_id + "\n");
+
         return Persistence.addSubstitutions(game_id, sub_in_id, sub_out_id);
     }
 /*
@@ -247,9 +248,9 @@ public class Crawl {
     }
 */
 
-    public ArrayList<String> foulsDetails(MyDocument doc, int who) throws IOException {
+    public ArrayList<String> foulsDetails(Document doc, int who) throws IOException {
         ArrayList<String> fouls = new ArrayList<>();
-        Elements elements = doc.document.select("image");
+        Elements elements = doc.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -262,10 +263,10 @@ public class Crawl {
                 fouls.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside foulsDetails. No. of Fouls = " + fouls.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside foulsDetails. No. of Fouls = " + fouls.size() + "\n");
         return fouls;
     }
-
+/*
     public ArrayList<String> redCardDetails(String gameLink) throws IOException {
         ArrayList<String> redCards = new ArrayList<>();
         MyDocument doc = getDocument(gameLink);
@@ -277,12 +278,12 @@ public class Crawl {
             //String time = splits[0].trim(); String player = splits[1].trim();
             redCards.add(text);
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside redCardDetails. No. of Red Cards = " + redCards.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside redCardDetails. No. of Red Cards = " + redCards.size() + "\n");
         return redCards;
     }
-
-    public ArrayList<String> defensiveErrorsDetails(MyDocument doc, int leadingTo) throws IOException {
-        Elements elements = doc.document.select("image");
+*/
+    public ArrayList<String> defensiveErrorsDetails(Document doc, int leadingTo) throws IOException {
+        Elements elements = doc.select("image");
         ArrayList<String> defensiveErrors = new ArrayList<>();
 
         for (int i = 0; i < elements.size(); i++) {
@@ -296,13 +297,13 @@ public class Crawl {
                 defensiveErrors.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside defensiveErrorsDetails. No. of defensiveErrors = " + defensiveErrors.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside defensiveErrorsDetails. No. of defensiveErrors = " + defensiveErrors.size() + "\n");
         return defensiveErrors;
     }
 
-    public ArrayList<String> blockedCrossesDetails(MyDocument doc) throws IOException {
+    public ArrayList<String> blockedCrossesDetails(Document doc) throws IOException {
         ArrayList<String> blockedCrosses = new ArrayList<String>();
-        Elements elements = doc.document.select("image");
+        Elements elements = doc.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -315,13 +316,13 @@ public class Crawl {
                 blockedCrosses.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside blockedCrossesDetails. No. = " + blockedCrosses.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside blockedCrossesDetails. No. = " + blockedCrosses.size() + "\n");
         return blockedCrosses;
     }
 
-    public ArrayList<String> aerialDuelsDetails(MyDocument doc) throws IOException {
+    public ArrayList<String> aerialDuelsDetails(Document doc) throws IOException {
         ArrayList<String> aerial_duels = new ArrayList<String>();
-        Elements elements = doc.document.select("image");
+        Elements elements = doc.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -339,13 +340,13 @@ public class Crawl {
                 aerial_duels.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside aerialDuelsDetails. No. = " + aerial_duels.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside aerialDuelsDetails. No. = " + aerial_duels.size() + "\n");
         return aerial_duels;
     }
 
-    public ArrayList<String> clearancesDetails(MyDocument doc) throws IOException {
+    public ArrayList<String> clearancesDetails(Document doc) throws IOException {
         ArrayList<String> clearances = new ArrayList<String>();
-        Elements elements = doc.document.select("image");
+        Elements elements = doc.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -363,13 +364,13 @@ public class Crawl {
                 clearances.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside clearancesDetails. No. = " + clearances.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside clearancesDetails. No. = " + clearances.size() + "\n");
         return clearances;
     }
 
-    public ArrayList<String> blocksDetails(MyDocument doc) throws IOException {
+    public ArrayList<String> blocksDetails(Document doc) throws IOException {
         ArrayList<String> blocks = new ArrayList<String>();
-        Elements elements = doc.document.select("image");
+        Elements elements = doc.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -382,13 +383,13 @@ public class Crawl {
                 blocks.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside blocksDetails. No. = " + blocks.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside blocksDetails. No. = " + blocks.size() + "\n");
         return blocks;
     }
 
-    public ArrayList<String> interceptionsDetails(MyDocument doc) throws IOException {
+    public ArrayList<String> interceptionsDetails(Document doc) throws IOException {
         ArrayList<String> interceptions = new ArrayList<String>();
-        Elements elements = doc.document.select("image");
+        Elements elements = doc.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -401,13 +402,13 @@ public class Crawl {
                 interceptions.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside interceptionsDetails. No. = " + interceptions.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside interceptionsDetails. No. = " + interceptions.size() + "\n");
         return interceptions;
     }
 
-    public ArrayList<String> tacklesDetails(MyDocument doc) throws IOException {
+    public ArrayList<String> tacklesDetails(Document doc) throws IOException {
         ArrayList<String> tackles = new ArrayList<String>();
-        Elements elements = doc.document.select("image");
+        Elements elements = doc.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -425,13 +426,13 @@ public class Crawl {
                 tackles.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside tacklesDetails. No. = " + tackles.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside tacklesDetails. No. = " + tackles.size() + "\n");
         return tackles;
     }
 
-    public ArrayList<String> chancesCreatedDetails(MyDocument doc, int from) throws IOException {
+    public ArrayList<String> chancesCreatedDetails(Document doc, int from) throws IOException {
         ArrayList<String> chancesCreated = new ArrayList<>();
-        Elements elements = doc.document.select("line");
+        Elements elements = doc.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -445,13 +446,13 @@ public class Crawl {
                 chancesCreated.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside chancesCreatedDetails. No. = " + chancesCreated.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside chancesCreatedDetails. No. = " + chancesCreated.size() + "\n");
         return chancesCreated;
     }
 
-    public ArrayList<String> ballRecoveriesDetails(MyDocument doc) throws IOException {
+    public ArrayList<String> ballRecoveriesDetails(Document doc) throws IOException {
         ArrayList<String> ballrecoveries = new ArrayList<String>();
-        Elements elements = doc.document.select("image");
+        Elements elements = doc.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -464,13 +465,13 @@ public class Crawl {
                 ballrecoveries.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside ballRecoveriesDetails. No. = " + ballrecoveries.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside ballRecoveriesDetails. No. = " + ballrecoveries.size() + "\n");
         return ballrecoveries;
     }
 
-    public ArrayList<String> offsidePassesDetails(MyDocument doc) throws IOException {
+    public ArrayList<String> offsidePassesDetails(Document doc) throws IOException {
         ArrayList<String> offsidePasses = new ArrayList<String>();
-        Elements elements = doc.document.select("line");
+        Elements elements = doc.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -484,13 +485,13 @@ public class Crawl {
                 offsidePasses.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside offsidePassesDetails. No. = " + offsidePasses.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside offsidePassesDetails. No. = " + offsidePasses.size() + "\n");
         return offsidePasses;
     }
 
-    public ArrayList<String> cornersDetails(MyDocument doc) throws IOException {
+    public ArrayList<String> cornersDetails(Document doc) throws IOException {
         ArrayList<String> corners = new ArrayList<String>();
-        Elements elements = doc.document.select("line");
+        Elements elements = doc.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -515,13 +516,13 @@ public class Crawl {
                 corners.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside cornersDetails. No. = " + corners.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside cornersDetails. No. = " + corners.size() + "\n");
         return corners;
     }
 
-    public ArrayList<String> takeOnsDetails(MyDocument doc) throws IOException {
+    public ArrayList<String> takeOnsDetails(Document doc) throws IOException {
         ArrayList<String> takeons = new ArrayList<String>();
-        Elements elements = doc.document.select("image");
+        Elements elements = doc.select("image");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -540,13 +541,13 @@ public class Crawl {
                 takeons.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside takeonsDetails. No. = " + takeons.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside takeonsDetails. No. = " + takeons.size() + "\n");
         return takeons;
     }
 
-    public ArrayList<String> crossesDetails(MyDocument doc) throws IOException {
+    public ArrayList<String> crossesDetails(Document doc) throws IOException {
         ArrayList<String> crosses = new ArrayList<String>();
-        Elements elements = doc.document.select("line");
+        Elements elements = doc.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -571,13 +572,13 @@ public class Crawl {
                 crosses.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside crossesDetails. No. = " + crosses.size() + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside crossesDetails. No. = " + crosses.size() + "\n");
         return crosses;
     }
 
-    public String getShortPassesDetails(MyDocument doc) throws IOException {
+    public String getShortPassesDetails(Document doc) throws IOException {
         String shortpasses = "";
-        Elements elements = doc.document.select("line");
+        Elements elements = doc.select("line");
 
         int count = 0; int success_count = 0; int fail_count = 0; int assist_count = 0; int chances_count = 0;
 
@@ -599,13 +600,13 @@ public class Crawl {
             }
         }
         shortpasses = count + ";;" + success_count + ";;" + fail_count + ";;" + assist_count + ";;" + chances_count;
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside shortPassesDetails. Count = " + count + " Success = " + success_count + " Fail = " + fail_count + " Assists = " + assist_count + " Chances = " + chances_count + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside shortPassesDetails. Count = " + count + " Success = " + success_count + " Fail = " + fail_count + " Assists = " + assist_count + " Chances = " + chances_count + "\n");
         return shortpasses;
     }
 
-    public String getLongPassesDetails(MyDocument doc) throws IOException {
+    public String getLongPassesDetails(Document doc) throws IOException {
         String longpasses = "";
-        Elements elements = doc.document.select("line");
+        Elements elements = doc.select("line");
 
         int count = 0; int success_count = 0; int fail_count = 0; int assist_count = 0; int chances_count = 0;
 
@@ -627,13 +628,13 @@ public class Crawl {
             }
         }
         longpasses = count + ";;" + success_count + ";;" + fail_count + ";;" + assist_count + ";;" + chances_count;
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside longPassesDetails. Count = " + count + " Success = " + success_count + " Fail = " + fail_count + " Assists = " + assist_count + " Chances = " + chances_count + "\n");
+        //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside longPassesDetails. Count = " + count + " Success = " + success_count + " Fail = " + fail_count + " Assists = " + assist_count + " Chances = " + chances_count + "\n");
         return longpasses;
     }
 
-    public ArrayList<String> receivedPassDetails(MyDocument doc) throws IOException {
+    public ArrayList<String> receivedPassDetails(Document doc) throws IOException {
         ArrayList<String> receivedPasses = new ArrayList<String>();
-        Elements elements = doc.document.select("line");
+        Elements elements = doc.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -656,13 +657,12 @@ public class Crawl {
                 receivedPasses.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside receivedPassDetails. No. = " + receivedPasses.size() + "\n");
         return receivedPasses;
     }
 
-    public ArrayList<String> assistDetails(MyDocument doc, int from) throws IOException {
+    public ArrayList<String> assistDetails(Document doc, int from) throws IOException {
         ArrayList<String> assists = new ArrayList<>();
-        Elements elements = doc.document.select("line");
+        Elements elements = doc.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -676,13 +676,12 @@ public class Crawl {
                 assists.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside assistDetails. No. = " + assists.size() + "\n");
         return assists;
     }
 
-    public ArrayList<String> passDetails(MyDocument doc, int third) throws IOException {
+    public ArrayList<String> passDetails(Document doc, int third) throws IOException {
         ArrayList<String> passes = new ArrayList<>();
-        Elements elements = doc.document.select("line");
+        Elements elements = doc.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -705,13 +704,12 @@ public class Crawl {
                 passes.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Insidee passDetails. No. = " + passes.size() + "\n");
         return passes;
     }
 
-    public ArrayList<String> freekickShotsDetails(MyDocument doc) throws IOException {
+    public ArrayList<String> freekickShotsDetails(Document doc) throws IOException {
         ArrayList<String> freekick_shots = new ArrayList<String>();
-        Elements elements = doc.document.select("line");
+        Elements elements = doc.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -734,14 +732,13 @@ public class Crawl {
                 freekick_shots.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside FKShotsDetails. No. = " + freekick_shots.size() + "\n");
         return freekick_shots;
     }
 
-    public ArrayList<String> shotsDetails(MyDocument doc, int part) throws IOException {
+    public ArrayList<String> shotsDetails(Document doc, int part) throws IOException {
         ArrayList<String> shots = new ArrayList<>();
 
-        Elements elements = doc.document.select("line");
+        Elements elements = doc.select("line");
 
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -765,12 +762,11 @@ public class Crawl {
                 shots.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside shotsDetails. No. = " + shots.size() + "\n");
         return shots;
     }
 
-    public ArrayList<String> penaltyDetails(MyDocument doc) throws IOException {
-        Elements elements = doc.document.select("line");
+    public ArrayList<String> penaltyDetails(Document doc) throws IOException {
+        Elements elements = doc.select("line");
         ArrayList<String> penalties = new ArrayList();
         for (int i = 0; i < elements.size(); i++) {
             Element element = elements.get(i);
@@ -793,7 +789,6 @@ public class Crawl {
                 penalties.add(output);
             }
         }
-        Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside penaltyDetails. No. = " + penalties.size() + "\n");
         return penalties;
     }
 
