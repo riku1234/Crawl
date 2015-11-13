@@ -31,7 +31,9 @@ public class Commands implements Serializable{
         private double home_possession; private double away_possession;
         private HashMap<String, String> home_red_cards; private HashMap<String, String> away_red_cards;
         private String fullTimeScore;
-        private int numMessagesRemaining;
+        public int numMessagesRemaining;
+        public HashMap<String, String> homeSubstitutions;
+        public HashMap<String, String> awaySubstitutions;
 
         public MatchGlobals(String gameLink, Long leagueID, String FFT_Match_ID, String season, Date gameDate, String stadium) {
             this.gameLink = gameLink;
@@ -45,6 +47,8 @@ public class Commands implements Serializable{
             this.home_red_cards = new HashMap<>(); this.away_red_cards = new HashMap<>();
             this.fullTimeScore = "";
             this.numMessagesRemaining = 0;
+            this.homeSubstitutions = new HashMap<>();
+            this.awaySubstitutions = new HashMap<>();
         }
 
         public void setGameDocument(Document gameDocument) {
@@ -156,21 +160,9 @@ public class Commands implements Serializable{
         }
     }
 
-    public class StartCommand implements Serializable{
-        private String prefix = null;
-        private int index = -1;
+    public class StartCommand implements Serializable {
 
-        public StartCommand(String prefix, int index) {
-            this.prefix = prefix;
-            this.index = index;
-        }
-
-        public String getPrefix() {
-            return prefix;
-        }
-
-        public int getIndex() {
-            return index;
+        public StartCommand() {
         }
     }
 

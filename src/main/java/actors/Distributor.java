@@ -137,6 +137,24 @@ public class Distributor extends UntypedActor {
                     }
                 }
             }
+
+            for (int j = 0; j < playerLinks.get(2).size(); j++) {
+                String homeTeamSubInLink = playerLinks.get(2).get(j).attr("abs:href");
+                String homeTeamSubOutLink = playerLinks.get(3).get(j).attr("abs:href");
+
+                ((Commands.MatchGlobals) message).homeSubstitutions.put(homeTeamSubInLink, homeTeamSubOutLink);
+                if (!crawl.addSubstitutions(homeTeamSubInLink, homeTeamSubOutLink))
+                    crawl.cleanTerminate("Home Substitutions could not be added. Error.");
+            }
+
+            for (int j = 0; j < playerLinks.get(4).size(); j++) {
+                String awayTeamSubInLink = playerLinks.get(4).get(j).attr("abs:href");
+                String awayTeamSubOutLink = playerLinks.get(5).get(j).attr("abs:href");
+
+                ((Commands.MatchGlobals) message).awaySubstitutions.put(awayTeamSubInLink, awayTeamSubOutLink);
+                if (!crawl.addSubstitutions(awayTeamSubInLink, awayTeamSubOutLink))
+                    crawl.cleanTerminate("Away Substitutions could not be added. Error.");
+            }
         }
         else if(message instanceof Commands.PlayerDetails) {
             if(!this.getPlayerDetails((Commands.PlayerDetails) message, getSender())) {

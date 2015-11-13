@@ -1,5 +1,6 @@
 package crawl;
 
+import actors.Distributor;
 import actors.Info;
 import actors.Tracker;
 import akka.actor.ActorRef;
@@ -43,8 +44,8 @@ public class Crawl {
         Persistence.createTables();
         //Persistence.deleteMatch("321662");
         final ActorSystem actorSystem = ActorSystem.create("Actor-System");
-        final ActorRef tracker = actorSystem.actorOf(Props.create(Tracker.class).withDispatcher("TrackerDispatcher"), "Tracker");
-        tracker.tell(new Commands().new StartCommand(0), null);
+        final ActorRef distributor = actorSystem.actorOf(Props.create(Distributor.class).withDispatcher("DistributorDispatcher"), "Distributor");
+        distributor.tell(new Commands().new StartCommand(), null);
 
         //ArrayList<String> FFTResultsPage = new ArrayList<String>();
 
@@ -164,7 +165,7 @@ public class Crawl {
         }
     }
 */
-    public Boolean addSubstitutions(String subInPlayerLink, String subOutPlayerLink) throws IOException {
+    public Boolean addSubstitutions(String subInPlayerLink, String subOutPlayerLink) {
         //System.out.println("Add Substitutions Called for Sub-In - " + subInPlayerLink + " Sub-Out - " + subOutPlayerLink);
         String[] subInDetails = subInPlayerLink.split("/");
         String[] subOutDetails = subOutPlayerLink.split("/");
@@ -826,11 +827,8 @@ public class Crawl {
         return list;
     }
 
-    /*public void cleanTerminate(String errorMessage) {
+    public void cleanTerminate(String errorMessage) {
         System.out.println(errorMessage);
-        System.out.println("Match ID: " + Info.FFT_match_id);
-        Persistence.deleteMatch(Info.FFT_match_id);
-        System.out.println("Record Deleted. Exiting.");
         System.exit(1);
-    }*/
+    }
 }
