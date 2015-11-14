@@ -59,7 +59,6 @@ public class IO extends UntypedActor{
             Document playerDocument = getDocument(((Commands.PlayerDetails) message).playerLink);
             if(playerDocument == null) {
                 getSelf().tell(message, getSender());
-                return;
             }
             else {
                 ((Commands.PlayerDetails) message).playerDocument = playerDocument;

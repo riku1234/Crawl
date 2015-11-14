@@ -108,14 +108,12 @@ public class Distributor extends UntypedActor {
         }
         else if(message instanceof Commands.MatchGlobals) {
             if(!crawl.populateGameDetails((Commands.MatchGlobals) message)) {
-                System.out.println("Skipping Game " + ((Commands.MatchGlobals) message).getGameLink());
-                getSelf().tell(message, getSender()); return;
+                crawl.cleanTerminate("Populate Game Details failed for GameLink = " + ((Commands.MatchGlobals) message).getGameLink());
             }
 
             List<Elements> playerLinks = crawl.getPlayerStatsLink(((Commands.MatchGlobals) message).getPlayersDocument());
-            if(playerLinks == null) {
-                System.out.println("Skipping Game " + ((Commands.MatchGlobals) message).getGameLink());
-                getSelf().tell(message, getSender()); return;
+            if(playerLinks == null || playerLinks.size() != 6) {
+                crawl.cleanTerminate("PlayerLinks is null. Error.");
             }
 
             ((Commands.MatchGlobals) message).setNumMessagesRemaining(33 * (playerLinks.get(0).size() + playerLinks.get(1).size() + playerLinks.get(2).size() + playerLinks.get(4).size()));
@@ -151,14 +149,14 @@ public class Distributor extends UntypedActor {
             }
         }
         else if(message instanceof Commands.PlayerDetails) {
-            if(!this.getPlayerDetails((Commands.PlayerDetails) message, getSender())) {
+            if(!this.getPlayerDetails((Commands.PlayerDetails) message)) {
                 crawl.cleanTerminate("Skipping game = " + ((Commands.PlayerDetails) message).matchGlobals.getFFT_Match_ID());
             }
         }
     }
 
     private void sendWork(ActorRef tracker) {
-        if(currentMatchIndex >= numMatches[currentPrefixIndex]) {
+        if(currentPrefixIndex < prefixes.length && currentMatchIndex >= numMatches[currentPrefixIndex]) {
             currentMatchIndex = 0;
             currentPrefixIndex++;
         }
@@ -195,24 +193,19 @@ public class Distributor extends UntypedActor {
                 Date gameDate = df.parse((String) jsonObject.get("Date"));
                 Commands.MatchGlobals matchGlobals = commands.new MatchGlobals(gameLink, leagueID, FFT_Match_ID, season, gameDate, stadium);
                 ioRouter.route(matchGlobals, tracker);
-                //tracker.tell(commands.new StartCommand(prefixes[currentPrefixIndex], currentMatchIndex), getSelf());
             } catch (FileNotFoundException e) {
-                System.out.println("File " + prefix + currentMatchIndex + " not found. Doing nothing.");
-                return;
+                crawl.cleanTerminate("File " + prefix + currentMatchIndex + " not found.");
             } catch (ParseException e) {
-                System.out.println("Could not parse file " + prefix + currentMatchIndex + " Doing nothing.");
-                return;
+                crawl.cleanTerminate("Could not parse file " + prefix + currentMatchIndex + " Doing nothing.");
             } catch (org.json.simple.parser.ParseException e) {
-                System.out.println("Could not parse file " + prefix + currentMatchIndex + " Doing nothing.");
-                return;
+                crawl.cleanTerminate("Could not parse file " + prefix + currentMatchIndex + " Doing nothing.");
             } catch (IOException e) {
-                System.out.println("IO Exception for file " + prefix + currentMatchIndex + " Doing nothing.");
-                return;
+                crawl.cleanTerminate("IO Exception for file " + prefix + currentMatchIndex + " Doing nothing.");
             }
         }
     }
 
-    private boolean getPlayerDetails(Commands.PlayerDetails playerDetails, ActorRef sender) {
+    private boolean getPlayerDetails(Commands.PlayerDetails playerDetails) {
         //System.out.println("Player Link = " + playerLink);
         String[] playerLinkSplits = playerDetails.playerLink.split("/");
         String FFT_player_id = playerLinkSplits[8];

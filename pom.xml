@@ -13,7 +13,7 @@
         <repository>
             <id>localRepo</id>
             <name>My Local Repo</name>
-            <url>file:/home/gsm/.m2/repository/</url>
+            <url>file:/home/cisco/.m2/repository/</url>
         </repository>
     </distributionManagement>
 
