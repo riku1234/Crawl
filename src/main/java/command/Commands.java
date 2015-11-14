@@ -1,7 +1,5 @@
 package command;
 
-import akka.routing.Router;
-import crawl.MyDocument;
 import org.jsoup.nodes.Document;
 
 import java.io.Serializable;
@@ -163,12 +161,6 @@ public class Commands implements Serializable{
     public class StartCommand implements Serializable {
 
         public StartCommand() {
-        }
-    }
-
-    public class SkipGameCommand implements Serializable{
-        public SkipGameCommand() {
-
         }
     }
 

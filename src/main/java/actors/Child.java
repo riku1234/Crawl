@@ -117,8 +117,7 @@ public class Child extends UntypedActor{
             getSender().tell(message, getSelf());
         }
         else {
-            System.out.println("Strange Error - 100");
-            getContext().parent().tell("NextMatch", getSender());
+            crawl.cleanTerminate("Strange Error - 100");
         }
     }
 }

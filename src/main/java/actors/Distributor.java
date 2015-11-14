@@ -9,7 +9,6 @@ import akka.routing.Router;
 import akka.routing.SmallestMailboxRoutingLogic;
 import command.Commands;
 import crawl.Crawl;
-import crawl.MyDocument;
 import fourfourtwo.Helper;
 import fourfourtwo.Persistence;
 import org.json.simple.JSONObject;
@@ -104,8 +103,7 @@ public class Distributor extends UntypedActor {
                 this.sendWork(getSender());
             }
             else {
-                System.out.println("Strange Error inside onReceive of Distributor. Exiting.");
-                System.exit(1);
+                crawl.cleanTerminate("Strange Error inside onReceive of Distributor. Exiting.");
             }
         }
         else if(message instanceof Commands.MatchGlobals) {
@@ -143,8 +141,6 @@ public class Distributor extends UntypedActor {
                 String homeTeamSubOutLink = playerLinks.get(3).get(j).attr("abs:href");
 
                 ((Commands.MatchGlobals) message).homeSubstitutions.put(homeTeamSubInLink, homeTeamSubOutLink);
-                if (!crawl.addSubstitutions(homeTeamSubInLink, homeTeamSubOutLink))
-                    crawl.cleanTerminate("Home Substitutions could not be added. Error.");
             }
 
             for (int j = 0; j < playerLinks.get(4).size(); j++) {
@@ -152,15 +148,11 @@ public class Distributor extends UntypedActor {
                 String awayTeamSubOutLink = playerLinks.get(5).get(j).attr("abs:href");
 
                 ((Commands.MatchGlobals) message).awaySubstitutions.put(awayTeamSubInLink, awayTeamSubOutLink);
-                if (!crawl.addSubstitutions(awayTeamSubInLink, awayTeamSubOutLink))
-                    crawl.cleanTerminate("Away Substitutions could not be added. Error.");
             }
         }
         else if(message instanceof Commands.PlayerDetails) {
             if(!this.getPlayerDetails((Commands.PlayerDetails) message, getSender())) {
-                System.out.println("Skipping game = " + ((Commands.PlayerDetails) message).matchGlobals.getFFT_Match_ID());
-                getSelf().tell("NextMatch", getSender());
-                return;
+                crawl.cleanTerminate("Skipping game = " + ((Commands.PlayerDetails) message).matchGlobals.getFFT_Match_ID());
             }
         }
     }

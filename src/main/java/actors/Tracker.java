@@ -26,8 +26,7 @@ public class Tracker extends UntypedActor {
         else if(message instanceof Commands.ShotsCommand) {
             //System.out.println("Adding Shots for Match=" + ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID() + " Team = " + ((Commands.ShotsCommand) message).playerDetails.team_name + " Player = " + ((Commands.ShotsCommand) message).playerDetails.FFT_player_id + " Shots = " + ((Commands.ShotsCommand) message).shots.size());
             if (!Persistence.addShots(((Commands.ShotsCommand) message).shots, ((Commands.ShotsCommand) message).playerDetails.matchGlobals.getFFT_Match_ID(), ((Commands.ShotsCommand) message).playerDetails.team_name, ((Commands.ShotsCommand) message).playerDetails.FFT_player_id, ((Commands.ShotsCommand) message).playerDetails.matchGlobals.getSeason())) {
-                System.out.println("Add shots Failed in Persistence.");
-                System.exit(1);
+                crawl.cleanTerminate("Add shots Failed in Persistence.");
             }
             ((Commands.ShotsCommand) message).playerDetails.matchGlobals.setNumMessagesRemaining(((Commands.ShotsCommand) message).playerDetails.matchGlobals.getNumMessagesRemaining() - 1);
             ((Commands.ShotsCommand) message).playerDetails.numShotsComplete++;
@@ -208,7 +207,7 @@ public class Tracker extends UntypedActor {
         //System.out.println("Game: " + ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID() + " details saved.");
 
         if (!matchGlobals.getFFT_Match_ID().equals("") && !Persistence.gameSaved(matchGlobals.getFFT_Match_ID()))
-            crawl.cleanTerminate("Game Could not be Saved.");
+            crawl.cleanTerminate("Game " + matchGlobals.getFFT_Match_ID() + " Could not be Saved.");
 
         int num_substitutions_home = matchGlobals.homeSubstitutions.size();
         int num_substitutions_away = matchGlobals.awaySubstitutions.size();
@@ -221,5 +220,6 @@ public class Tracker extends UntypedActor {
             matchGlobals.awaySubstitutions.forEach((key, value) -> crawl.addSubstitutions(key, value));
         }
 
+        getContext().parent().tell("NextMatch", getSelf());
     }
 }

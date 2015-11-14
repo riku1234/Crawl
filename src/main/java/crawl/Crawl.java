@@ -1,27 +1,20 @@
 package crawl;
 
 import actors.Distributor;
-import actors.Info;
-import actors.Tracker;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import command.Commands;
 import fourfourtwo.Persistence;
-import org.json.simple.JSONObject;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /*
 class MyComparator implements Comparator<JSONObject> { // Comparator to Sort Date objects
