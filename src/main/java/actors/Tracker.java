@@ -20,6 +20,7 @@ public class Tracker extends UntypedActor {
     public void onReceive(Object message) throws Exception {
         if(message instanceof String) {
             if(message.equals("Setup")) {
+                startTime = System.currentTimeMillis();
                 getSender().tell("NextMatch", getSelf());
             }
         }
@@ -219,7 +220,9 @@ public class Tracker extends UntypedActor {
         if(num_substitutions_away > 0) {
             matchGlobals.awaySubstitutions.forEach((key, value) -> crawl.addSubstitutions(key, value));
         }
-
+        long endTime = System.currentTimeMillis();
+        System.out.println("Match " + matchGlobals.getGameLink() + " Details saved. Time taken = " + (endTime - startTime));
+        startTime = System.currentTimeMillis();
         getContext().parent().tell("NextMatch", getSelf());
     }
 }

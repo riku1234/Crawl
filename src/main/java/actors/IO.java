@@ -5,17 +5,38 @@ import command.Commands;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
 
 /**
  * Created by gsm on 9/23/15.
  */
 public class IO extends UntypedActor{
+    private int torIndex = -1;
+    private int socksPort = -1;
 
     private Document getDocument(String link) {
 
         try {
-            Document document = Jsoup.connect(link).timeout(10000).get();
+            URL url = new URL(link);
+            Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("127.0.0.1", this.socksPort));
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection(proxy);
+            httpURLConnection.connect();
+
+            String line = null;
+            StringBuffer tmp = new StringBuffer();
+            BufferedReader in = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+            while ((line = in.readLine()) != null) {
+                tmp.append(line);
+            }
+
+            Document document = Jsoup.parse(String.valueOf(tmp));
+            //Document document = Jsoup.connect(link).timeout(10000).get();
             //Info.perfActor.tell("Success", getSelf());
             //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside IO getDocument. Success. Size = " + document.toString().length()+ "\n");
             if(document.toString().length() < 150000) {
@@ -35,6 +56,8 @@ public class IO extends UntypedActor{
     public void onReceive(Object message) throws Exception {
         if(message instanceof String) {
             System.out.println("Actor " + this.toString() + " receiving message " + message);
+            this.torIndex = Integer.parseInt(((String) message).split("-")[1]);
+            this.socksPort = 9050 + this.torIndex;
         }
         else if(message instanceof Commands.MatchGlobals) {
             if(((Commands.MatchGlobals) message).getGameDocument() == null) {

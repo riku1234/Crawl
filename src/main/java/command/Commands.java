@@ -18,7 +18,7 @@ public class Commands implements Serializable{
 
     public class MatchGlobals implements Serializable {
         private String gameLink;
-        private Long leagueID;
+        public Long leagueID;
         private String FFT_Match_ID;
         private String season;
         private Date gameDate;

@@ -38,7 +38,7 @@ public class Distributor extends UntypedActor {
     private int[] numMatches = {380, 378, 1825, 1824, 1825};
     private int currentPrefixIndex = 0; private int currentMatchIndex = 0;
 
-    private int numTrackers = 5; private int numIOWorkers = 5; private int numChildWorkers = 5;
+    private int numTrackers = 5; private int numIOWorkers = 5; private int numChildWorkers = 5; private int numTORProxies = 10;
     private ActorRef[] trackers = null;
 
     public static Router ioRouter = null; public static Router childRouter = null;
@@ -79,6 +79,7 @@ public class Distributor extends UntypedActor {
             List<Routee> ioRoutees = new ArrayList<>(numIOWorkers);
             for(int i=0;i<numIOWorkers;i++) {
                 ActorRef ioWorker = getContext().actorOf(Props.create(IO.class), "IO-" + i);
+                ioWorker.tell("Setup-" + (i % numTORProxies), getSelf());
                 getContext().watch(ioWorker);
                 ioRoutees.add(new ActorRefRoutee(ioWorker));
             }
