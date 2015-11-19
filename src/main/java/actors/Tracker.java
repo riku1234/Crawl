@@ -1,6 +1,8 @@
 package actors;
 
 import akka.actor.UntypedActor;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import command.Commands;
 import crawl.Crawl;
 import fourfourtwo.Persistence;
@@ -16,15 +18,18 @@ public class Tracker extends UntypedActor {
     private final Commands commands = new Commands();
     private final Crawl crawl = new Crawl();
     private long startTime = -1;
+    LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
     public void onReceive(Object message) throws Exception {
         if(message instanceof String) {
             if(message.equals("Setup")) {
+                log.info("Setup message received by Tracker " + getSelf().path() + " Asking Distributor for Next Match.");
                 startTime = System.currentTimeMillis();
                 getSender().tell("NextMatch", getSelf());
             }
         }
         else if(message instanceof Commands.ShotsCommand) {
+            log.info("Shots Command received by Tracker " + getSelf().path() + " Num Messages Remaining = " + ((Commands.ShotsCommand) message).playerDetails.matchGlobals.numMessagesRemaining);
             //System.out.println("Adding Shots for Match=" + ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID() + " Team = " + ((Commands.ShotsCommand) message).playerDetails.team_name + " Player = " + ((Commands.ShotsCommand) message).playerDetails.FFT_player_id + " Shots = " + ((Commands.ShotsCommand) message).shots.size());
             if (!Persistence.addShots(((Commands.ShotsCommand) message).shots, ((Commands.ShotsCommand) message).playerDetails.matchGlobals.getFFT_Match_ID(), ((Commands.ShotsCommand) message).playerDetails.team_name, ((Commands.ShotsCommand) message).playerDetails.FFT_player_id, ((Commands.ShotsCommand) message).playerDetails.matchGlobals.getSeason())) {
                 crawl.cleanTerminate("Add shots Failed in Persistence.");
@@ -221,7 +226,7 @@ public class Tracker extends UntypedActor {
             matchGlobals.awaySubstitutions.forEach((key, value) -> crawl.addSubstitutions(key, value));
         }
         long endTime = System.currentTimeMillis();
-        System.out.println("Match " + matchGlobals.getGameLink() + " Details saved. Time taken = " + (endTime - startTime));
+        log.info("Match " + matchGlobals.getGameLink() + " Details saved. Time taken = " + (endTime - startTime));
         startTime = System.currentTimeMillis();
         getContext().parent().tell("NextMatch", getSelf());
     }

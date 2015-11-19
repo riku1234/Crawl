@@ -1,6 +1,8 @@
 package actors;
 
 import akka.actor.UntypedActor;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import command.Commands;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,6 +21,7 @@ import java.net.URL;
 public class IO extends UntypedActor{
     private int torIndex = -1;
     private int socksPort = -1;
+    LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
     private Document getDocument(String link) {
 
@@ -26,6 +29,7 @@ public class IO extends UntypedActor{
             URL url = new URL(link);
             Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("127.0.0.1", this.socksPort));
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection(proxy);
+            httpURLConnection.setReadTimeout(10000); httpURLConnection.setConnectTimeout(10000);
             httpURLConnection.connect();
 
             String line = null;
@@ -35,7 +39,8 @@ public class IO extends UntypedActor{
                 tmp.append(line);
             }
 
-            Document document = Jsoup.parse(String.valueOf(tmp));
+            Document document = Jsoup.parse(String.valueOf(tmp), link);
+
             //Document document = Jsoup.connect(link).timeout(10000).get();
             //Info.perfActor.tell("Success", getSelf());
             //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside IO getDocument. Success. Size = " + document.toString().length()+ "\n");
@@ -46,9 +51,10 @@ public class IO extends UntypedActor{
                 System.out.println("Size less than 100000. Re-loading. Size = " + document.toString().length());
                 throw new IOException();
             }
+            log.info("Document returned from Proxy Port = " + this.socksPort);
             return document;
         } catch(IOException e) {
-            //Info.perfActor.tell("Failure", getSelf());
+            //log.error("Document Exception ... ");
             return null;
         }
     }
@@ -57,9 +63,11 @@ public class IO extends UntypedActor{
         if(message instanceof String) {
             System.out.println("Actor " + this.toString() + " receiving message " + message);
             this.torIndex = Integer.parseInt(((String) message).split("-")[1]);
-            this.socksPort = 9050 + this.torIndex;
+            this.socksPort = 9051 + this.torIndex;
         }
         else if(message instanceof Commands.MatchGlobals) {
+            log.info("Match Globals request received on Port = " + this.socksPort);
+            log.info("GameLink = " + ((Commands.MatchGlobals) message).getGameLink());
             if(((Commands.MatchGlobals) message).getGameDocument() == null) {
                 Document gameDocument = getDocument(((Commands.MatchGlobals) message).getGameLink());
                 if (gameDocument == null) {
@@ -79,6 +87,8 @@ public class IO extends UntypedActor{
             }
         }
         else if(message instanceof Commands.PlayerDetails) {
+            log.info("Player Details request received on Port = " + this.socksPort);
+            log.info("Player Link = " + ((Commands.PlayerDetails) message).playerLink);
             Document playerDocument = getDocument(((Commands.PlayerDetails) message).playerLink);
             if(playerDocument == null) {
                 getSelf().tell(message, getSender());
@@ -89,6 +99,7 @@ public class IO extends UntypedActor{
             }
         }
         else {
+            //log.info("Command Link request received on Port = " + this.socksPort);
             ((Commands.Global) message).document = getDocument(((Commands.Global) message).commandLink);
             if (((Commands.Global) message).document == null)
                 getSelf().tell(message, getSender());

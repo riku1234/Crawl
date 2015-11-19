@@ -3,6 +3,8 @@ package actors;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import akka.routing.ActorRefRoutee;
 import akka.routing.Routee;
 import akka.routing.Router;
@@ -33,12 +35,13 @@ public class Distributor extends UntypedActor {
     private final Commands commands = new Commands();
     private final Crawl crawl = new Crawl();
     private ArrayList<String> blackLists = new ArrayList<String>();
+    LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
-    private String[] prefixes = {"2010_380/", "2011_378/", "2012_1825/", "2013_1824/", "2014_1825/"};
-    private int[] numMatches = {380, 378, 1825, 1824, 1825};
-    private int currentPrefixIndex = 0; private int currentMatchIndex = 0;
+    private String[] prefixes = {"2010_490/", "2011_497/", "2012_1949/", "2013_1951/", "2014_1950/"};
+    private int[] numMatches = {490, 497, 1949, 1951, 1950};
+    private int currentPrefixIndex = 0; private int currentMatchIndex = -1;
 
-    private int numTrackers = 5; private int numIOWorkers = 5; private int numChildWorkers = 5; private int numTORProxies = 10;
+    private int numTrackers = 10; private int numIOWorkers = 24; private int numChildWorkers = 24; private int numTORProxies = 10;
     private ActorRef[] trackers = null;
 
     public static Router ioRouter = null; public static Router childRouter = null;
@@ -76,6 +79,7 @@ public class Distributor extends UntypedActor {
 
     public void onReceive(Object message) {
         if(message instanceof Commands.StartCommand) {
+            log.info("Start message received by Distributor. Setting up actors.");
             List<Routee> ioRoutees = new ArrayList<>(numIOWorkers);
             for(int i=0;i<numIOWorkers;i++) {
                 ActorRef ioWorker = getContext().actorOf(Props.create(IO.class), "IO-" + i);
@@ -93,6 +97,7 @@ public class Distributor extends UntypedActor {
             }
             childRouter = new Router(new SmallestMailboxRoutingLogic(), childRoutees);
 
+            trackers = new ActorRef[numTrackers];
             for(int i=0;i<numTrackers;i++) {
                 trackers[i] = getContext().actorOf(Props.create(Tracker.class), "Tracker-" + i);
                 getContext().watch(trackers[i]);
@@ -101,6 +106,7 @@ public class Distributor extends UntypedActor {
         }
         else if(message instanceof String) {
             if(message.equals("NextMatch")) {
+                log.info("Next Match request received from tracker = " + getSender().path());
                 this.sendWork(getSender());
             }
             else {
@@ -108,6 +114,7 @@ public class Distributor extends UntypedActor {
             }
         }
         else if(message instanceof Commands.MatchGlobals) {
+            log.info("Match Globals request received by Distributor.");
             if(!crawl.populateGameDetails((Commands.MatchGlobals) message)) {
                 crawl.cleanTerminate("Populate Game Details failed for GameLink = " + ((Commands.MatchGlobals) message).getGameLink());
             }
@@ -128,6 +135,7 @@ public class Distributor extends UntypedActor {
                     Elements temp = playerLinks.get(j);
                     for (int k = 0; k < temp.size(); k++) {
                         String playerLink = temp.get(k).attr("abs:href");
+                        log.info("Player Link = " + playerLink);
                         //this.getPlayerDetails(playerLink, j, sender);
                         Commands.PlayerDetails playerDetails = commands.new PlayerDetails((Commands.MatchGlobals)message, playerLink, j);
                         ioRouter.route(playerDetails, getSender());
@@ -150,6 +158,7 @@ public class Distributor extends UntypedActor {
             }
         }
         else if(message instanceof Commands.PlayerDetails) {
+            log.info("Player Details request received by Distributor.");
             if(!this.getPlayerDetails((Commands.PlayerDetails) message)) {
                 crawl.cleanTerminate("Skipping game = " + ((Commands.PlayerDetails) message).matchGlobals.getFFT_Match_ID());
             }
@@ -157,6 +166,9 @@ public class Distributor extends UntypedActor {
     }
 
     private void sendWork(ActorRef tracker) {
+
+        currentMatchIndex++;
+
         if(currentPrefixIndex < prefixes.length && currentMatchIndex >= numMatches[currentPrefixIndex]) {
             currentMatchIndex = 0;
             currentPrefixIndex++;
@@ -177,7 +189,7 @@ public class Distributor extends UntypedActor {
                 String[] splits = gameLink.split("/");
                 String FFT_Match_ID = splits[splits.length - 1];
                 if (blackLists.contains(gameLink)) {
-                    //System.out.println("Game " + gameLink + " is Blacklisted. Skipping.");
+                    log.info("Game " + gameLink + " is Blacklisted. Skipping.");
                     Persistence.deleteMatch(FFT_Match_ID);
                     getSelf().tell("NextMatch", tracker);
                     return;
@@ -189,10 +201,11 @@ public class Distributor extends UntypedActor {
                 }
                 Long leagueID = (Long) jsonObject.get("LeagueID");
                 //Helper.setLeagueID((Long) jsonObject.get("LeagueID"));
-                //Persistence.addLeague();
+                Persistence.addLeague(leagueID);
                 String season = (String) jsonObject.get("Season");
                 Date gameDate = df.parse((String) jsonObject.get("Date"));
                 Commands.MatchGlobals matchGlobals = commands.new MatchGlobals(gameLink, leagueID, FFT_Match_ID, season, gameDate, stadium);
+                log.info("Starting GameLink = " + gameLink);
                 ioRouter.route(matchGlobals, tracker);
             } catch (FileNotFoundException e) {
                 crawl.cleanTerminate("File " + prefix + currentMatchIndex + " not found.");
