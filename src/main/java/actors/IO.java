@@ -52,9 +52,13 @@ public class IO extends UntypedActor{
                 throw new IOException();
             }
             //log.info("Document returned from Proxy Port = " + this.socksPort);
+            if(Distributor.perfActor != null)
+                Distributor.perfActor.tell("Success-" + socksPort, getSelf());
             return document;
         } catch(IOException e) {
             //log.error("Document Exception ... ");
+            if(Distributor.perfActor != null)
+                Distributor.perfActor.tell("Failure-" + socksPort, getSelf());
             return null;
         }
     }
@@ -71,7 +75,8 @@ public class IO extends UntypedActor{
             if(((Commands.MatchGlobals) message).getGameDocument() == null) {
                 Document gameDocument = getDocument(((Commands.MatchGlobals) message).getGameLink());
                 if (gameDocument == null) {
-                    getSelf().tell(message, getSender());
+                    //getSelf().tell(message, getSender());
+                    Distributor.ioRouter.route(message, getSender());
                     return;
                 }
                 else {
@@ -79,8 +84,10 @@ public class IO extends UntypedActor{
                 }
             }
             Document playersDocument = getDocument(((Commands.MatchGlobals) message).getGameLink() + "/player-stats#tabs-wrapper-anchor");
-            if(playersDocument == null)
-                getSelf().tell(message, getSender());
+            if(playersDocument == null) {
+                //getSelf().tell(message, getSender());
+                Distributor.ioRouter.route(message, getSender());
+            }
             else {
                 ((Commands.MatchGlobals) message).setPlayersDocument(playersDocument);
                 getContext().parent().tell(message, getSender());
@@ -91,7 +98,8 @@ public class IO extends UntypedActor{
             //log.info("Player Link = " + ((Commands.PlayerDetails) message).playerLink);
             Document playerDocument = getDocument(((Commands.PlayerDetails) message).playerLink);
             if(playerDocument == null) {
-                getSelf().tell(message, getSender());
+                //getSelf().tell(message, getSender());
+                Distributor.ioRouter.route(message, getSender());
             }
             else {
                 ((Commands.PlayerDetails) message).playerDocument = playerDocument;
@@ -101,8 +109,10 @@ public class IO extends UntypedActor{
         else {
             //log.info("Command Link request received on Port = " + this.socksPort);
             ((Commands.Global) message).document = getDocument(((Commands.Global) message).commandLink);
-            if (((Commands.Global) message).document == null)
-                getSelf().tell(message, getSender());
+            if (((Commands.Global) message).document == null) {
+                //getSelf().tell(message, getSender());
+                Distributor.ioRouter.route(message, getSender());
+            }
             else {
                 Distributor.childRouter.route(message, getSender());
             }

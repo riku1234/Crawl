@@ -45,6 +45,7 @@ public class Distributor extends UntypedActor {
     private ActorRef[] trackers = null;
 
     public static Router ioRouter = null; public static Router childRouter = null;
+    public static ActorRef perfActor = null;
 
     public Distributor() {
         /* Add Blacklist Links */
@@ -103,6 +104,9 @@ public class Distributor extends UntypedActor {
                 getContext().watch(trackers[i]);
                 trackers[i].tell("Setup", getSelf());
             }
+
+            perfActor = getContext().actorOf(Props.create(Perf.class), "Perf");
+            perfActor.tell("Setup-" + numTORProxies, getSelf());
         }
         else if(message instanceof String) {
             if(message.equals("NextMatch")) {

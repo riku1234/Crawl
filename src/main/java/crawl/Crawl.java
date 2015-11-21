@@ -40,6 +40,7 @@ public class Crawl {
 
     public static void main(String[] args) throws IOException, ParseException, org.json.simple.parser.ParseException {
         Persistence.createTables();
+        Persistence.addLeague(-99);
         final ActorSystem actorSystem = ActorSystem.create("Actor-System");
         final ActorRef distributor = actorSystem.actorOf(Props.create(Distributor.class).withDispatcher("DistributorDispatcher"), "Distributor");
         distributor.tell(new Commands().new StartCommand(), null);

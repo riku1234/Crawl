@@ -1,17 +1,49 @@
 package actors;
 
 import akka.actor.UntypedActor;
+import scala.concurrent.duration.Duration;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by gsm on 9/26/15.
  */
 public class Perf extends UntypedActor {
-    public static long success_count = 0; public static long failure_count = 0;
+    int[] io_success; int[] io_failure;
+    int numMatchesComplete;
+
     public void onReceive(Object message) throws Exception {
-        String msg = (String) message;
-        if(msg.equals("Success"))
-            success_count++;
-        else if(msg.equals("Failure"))
-            failure_count++;
+        if(message instanceof String) {
+            if(((String) message).startsWith("Setup")) {
+                int num_tors = Integer.parseInt(((String) message).split("-")[1].trim());
+                io_success = new int[num_tors];
+                io_failure = new int[num_tors];
+                numMatchesComplete = 0;
+                getContext().system().scheduler().scheduleOnce(
+                        Duration.create(5000, TimeUnit.MILLISECONDS),
+                        getSelf(), "Tick", getContext().dispatcher(), null);
+            }
+            else if(((String) message).startsWith("Success")) {
+                int port_num = Integer.parseInt(((String) message).split("-")[1].trim());
+                io_success[port_num - 9051]++;
+            }
+            else if(((String) message).startsWith("Failure")) {
+                int port_num = Integer.parseInt(((String) message).split("-")[1].trim());
+                io_failure[port_num - 9051]++;
+            }
+            else if(message.equals("MatchComplete")) {
+                numMatchesComplete++;
+            }
+            else if(message.equals("Tick")) {
+                System.out.println("Matches Complete = " + numMatchesComplete);
+                System.out.println("IO Stats .... ");
+                for(int i =0;i<io_success.length;i++) {
+                    System.out.println("Port = " + (9051 + i) + " Success = " + io_success[i] + " Failure = " + io_failure[i]);
+                }
+                getContext().system().scheduler().scheduleOnce(
+                        Duration.create(5000, TimeUnit.MILLISECONDS),
+                        getSelf(), "Tick", getContext().dispatcher(), null);
+            }
+        }
     }
 }

@@ -228,6 +228,8 @@ public class Tracker extends UntypedActor {
         long endTime = System.currentTimeMillis();
         log.info("Match " + matchGlobals.getGameLink() + " Details saved. Time taken = " + (endTime - startTime));
         startTime = System.currentTimeMillis();
+        if(Distributor.perfActor != null)
+            Distributor.perfActor.tell("MatchComplete", getSelf());
         getContext().parent().tell("NextMatch", getSelf());
     }
 }
