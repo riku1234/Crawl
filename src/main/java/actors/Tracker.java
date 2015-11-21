@@ -29,7 +29,7 @@ public class Tracker extends UntypedActor {
             }
         }
         else if(message instanceof Commands.ShotsCommand) {
-            log.info("Shots Command received by Tracker " + getSelf().path() + " Num Messages Remaining = " + ((Commands.ShotsCommand) message).playerDetails.matchGlobals.numMessagesRemaining);
+            //log.info("Shots Command received by Tracker " + getSelf().path() + " Num Messages Remaining = " + ((Commands.ShotsCommand) message).playerDetails.matchGlobals.numMessagesRemaining);
             //System.out.println("Adding Shots for Match=" + ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID() + " Team = " + ((Commands.ShotsCommand) message).playerDetails.team_name + " Player = " + ((Commands.ShotsCommand) message).playerDetails.FFT_player_id + " Shots = " + ((Commands.ShotsCommand) message).shots.size());
             if (!Persistence.addShots(((Commands.ShotsCommand) message).shots, ((Commands.ShotsCommand) message).playerDetails.matchGlobals.getFFT_Match_ID(), ((Commands.ShotsCommand) message).playerDetails.team_name, ((Commands.ShotsCommand) message).playerDetails.FFT_player_id, ((Commands.ShotsCommand) message).playerDetails.matchGlobals.getSeason())) {
                 crawl.cleanTerminate("Add shots Failed in Persistence.");

@@ -51,7 +51,7 @@ public class IO extends UntypedActor{
                 System.out.println("Size less than 100000. Re-loading. Size = " + document.toString().length());
                 throw new IOException();
             }
-            log.info("Document returned from Proxy Port = " + this.socksPort);
+            //log.info("Document returned from Proxy Port = " + this.socksPort);
             return document;
         } catch(IOException e) {
             //log.error("Document Exception ... ");
@@ -66,8 +66,8 @@ public class IO extends UntypedActor{
             this.socksPort = 9051 + this.torIndex;
         }
         else if(message instanceof Commands.MatchGlobals) {
-            log.info("Match Globals request received on Port = " + this.socksPort);
-            log.info("GameLink = " + ((Commands.MatchGlobals) message).getGameLink());
+            //log.info("Match Globals request received on Port = " + this.socksPort);
+            //log.info("GameLink = " + ((Commands.MatchGlobals) message).getGameLink());
             if(((Commands.MatchGlobals) message).getGameDocument() == null) {
                 Document gameDocument = getDocument(((Commands.MatchGlobals) message).getGameLink());
                 if (gameDocument == null) {
@@ -87,8 +87,8 @@ public class IO extends UntypedActor{
             }
         }
         else if(message instanceof Commands.PlayerDetails) {
-            log.info("Player Details request received on Port = " + this.socksPort);
-            log.info("Player Link = " + ((Commands.PlayerDetails) message).playerLink);
+            //log.info("Player Details request received on Port = " + this.socksPort);
+            //log.info("Player Link = " + ((Commands.PlayerDetails) message).playerLink);
             Document playerDocument = getDocument(((Commands.PlayerDetails) message).playerLink);
             if(playerDocument == null) {
                 getSelf().tell(message, getSender());

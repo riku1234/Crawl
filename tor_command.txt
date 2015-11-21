@@ -1,0 +1,10 @@
+tor --RunAsDaemon 0 --ControlPort 8119 --SocksPort 9051 --PidFile tor1/tor1.pid --DataDirectory tor1 -f tor1/torrc
+tor --RunAsDaemon 0 --ControlPort 8120 --SocksPort 9052 --PidFile tor2/tor2.pid --DataDirectory tor2 -f tor2/torrc
+tor --RunAsDaemon 0 --ControlPort 8121 --SocksPort 9053 --PidFile tor3/tor3.pid --DataDirectory tor3 -f tor3/torrc
+tor --RunAsDaemon 0 --ControlPort 8122 --SocksPort 9054 --PidFile tor4/tor4.pid --DataDirectory tor4 -f tor4/torrc
+tor --RunAsDaemon 0 --ControlPort 8123 --SocksPort 9055 --PidFile tor5/tor5.pid --DataDirectory tor5 -f tor5/torrc
+tor --RunAsDaemon 0 --ControlPort 8124 --SocksPort 9056 --PidFile tor6/tor6.pid --DataDirectory tor6 -f tor6/torrc
+tor --RunAsDaemon 0 --ControlPort 8125 --SocksPort 9057 --PidFile tor7/tor7.pid --DataDirectory tor7 -f tor7/torrc
+tor --RunAsDaemon 0 --ControlPort 8126 --SocksPort 9058 --PidFile tor8/tor8.pid --DataDirectory tor8 -f tor8/torrc
+tor --RunAsDaemon 0 --ControlPort 8127 --SocksPort 9059 --PidFile tor9/tor9.pid --DataDirectory tor9 -f tor9/torrc
+tor --RunAsDaemon 0 --ControlPort 8128 --SocksPort 9060 --PidFile tor10/tor10.pid --DataDirectory tor10 -f tor10/torrc

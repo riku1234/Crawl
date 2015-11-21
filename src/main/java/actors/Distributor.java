@@ -41,7 +41,7 @@ public class Distributor extends UntypedActor {
     private int[] numMatches = {490, 497, 1949, 1951, 1950};
     private int currentPrefixIndex = 0; private int currentMatchIndex = -1;
 
-    private int numTrackers = 10; private int numIOWorkers = 24; private int numChildWorkers = 24; private int numTORProxies = 10;
+    private int numTrackers = 10; private int numIOWorkers = 48; private int numChildWorkers = 48; private int numTORProxies = 10;
     private ActorRef[] trackers = null;
 
     public static Router ioRouter = null; public static Router childRouter = null;
@@ -79,7 +79,7 @@ public class Distributor extends UntypedActor {
 
     public void onReceive(Object message) {
         if(message instanceof Commands.StartCommand) {
-            log.info("Start message received by Distributor. Setting up actors.");
+            //log.info("Start message received by Distributor. Setting up actors.");
             List<Routee> ioRoutees = new ArrayList<>(numIOWorkers);
             for(int i=0;i<numIOWorkers;i++) {
                 ActorRef ioWorker = getContext().actorOf(Props.create(IO.class), "IO-" + i);
@@ -114,7 +114,7 @@ public class Distributor extends UntypedActor {
             }
         }
         else if(message instanceof Commands.MatchGlobals) {
-            log.info("Match Globals request received by Distributor.");
+            //log.info("Match Globals request received by Distributor.");
             if(!crawl.populateGameDetails((Commands.MatchGlobals) message)) {
                 crawl.cleanTerminate("Populate Game Details failed for GameLink = " + ((Commands.MatchGlobals) message).getGameLink());
             }
@@ -135,7 +135,7 @@ public class Distributor extends UntypedActor {
                     Elements temp = playerLinks.get(j);
                     for (int k = 0; k < temp.size(); k++) {
                         String playerLink = temp.get(k).attr("abs:href");
-                        log.info("Player Link = " + playerLink);
+                        //log.info("Player Link = " + playerLink);
                         //this.getPlayerDetails(playerLink, j, sender);
                         Commands.PlayerDetails playerDetails = commands.new PlayerDetails((Commands.MatchGlobals)message, playerLink, j);
                         ioRouter.route(playerDetails, getSender());
@@ -158,7 +158,7 @@ public class Distributor extends UntypedActor {
             }
         }
         else if(message instanceof Commands.PlayerDetails) {
-            log.info("Player Details request received by Distributor.");
+            //log.info("Player Details request received by Distributor.");
             if(!this.getPlayerDetails((Commands.PlayerDetails) message)) {
                 crawl.cleanTerminate("Skipping game = " + ((Commands.PlayerDetails) message).matchGlobals.getFFT_Match_ID());
             }
