@@ -13,9 +13,19 @@ public class Perf extends UntypedActor {
     int[] io_success_prev; int[] io_failure_prev;
     int numMatchesComplete;
 
+    private int num_child_messages = 0; private int num_distributor_messages = 0; private int num_tracker_messages = 0;
+
+    private final long start_time = System.currentTimeMillis();
+
     public void onReceive(Object message) throws Exception {
         if(message instanceof String) {
-            if(((String) message).startsWith("Setup")) {
+            if(message.equals("Distributor"))
+                num_distributor_messages++;
+            else if(message.equals("Child"))
+                num_child_messages++;
+            else if(message.equals("Tracker"))
+                num_tracker_messages++;
+            else if(((String) message).startsWith("Setup")) {
                 int num_tors = Integer.parseInt(((String) message).split("-")[1].trim());
                 io_success = new int[num_tors];
                 io_failure = new int[num_tors];
@@ -40,12 +50,27 @@ public class Perf extends UntypedActor {
                 numMatchesComplete++;
             }
             else if(message.equals("Tick")) {
+                System.out.println("\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+                System.out.println("Current Session Duration = " + ((System.currentTimeMillis() - start_time) / 1000) + "seconds");
+                System.out.println("Session: Distributor - " + num_distributor_messages + " Child - " + num_child_messages + " Tracker - " + num_tracker_messages);
+                num_distributor_messages = 0; num_child_messages = 0; num_tracker_messages = 0;
                 System.out.println("Matches Complete = " + numMatchesComplete);
                 System.out.println("IO Stats .... ");
+                long num_documents_success = 0; long num_documents_failure = 0;
+                long num_documents_success_session = 0; long num_documents_failure_session = 0;
                 for(int i =0;i<io_success.length;i++) {
+                    num_documents_success += io_success[i];
+                    num_documents_failure += io_failure[i];
+                    num_documents_success_session += (io_success[i] - io_success_prev[i]);
+                    num_documents_failure_session += (io_failure[i] - io_failure_prev[i]);
                     System.out.println("Port = " + (9051 + i) + " Success = " + io_success[i] + "(+" + (io_success[i] - io_success_prev[i]) + ")" + " Failure = " + io_failure[i] + "(+" + (io_failure[i] - io_failure_prev[i]) + ")");
                     io_success_prev[i] = io_success[i]; io_failure_prev[i] = io_failure[i];
                 }
+                System.out.println("Total: Success = " + num_documents_success + " Failure = " + num_documents_failure);
+                System.out.println("Session: Success = " + num_documents_success_session + " Failure = " + num_documents_failure_session);
+                if(numMatchesComplete != 0)
+                    System.out.println("Average time of Completion of a match = " + ((System.currentTimeMillis() - start_time) / numMatchesComplete) + "ms.");
+                System.out.println("###############################################################################");
                 getContext().system().scheduler().scheduleOnce(
                         Duration.create(20000, TimeUnit.MILLISECONDS),
                         getSelf(), "Tick", getContext().dispatcher(), null);

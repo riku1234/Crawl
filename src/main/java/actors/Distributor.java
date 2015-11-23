@@ -41,7 +41,7 @@ public class Distributor extends UntypedActor {
     private int[] numMatches = {490, 497, 1949, 1951, 1950};
     private int currentPrefixIndex = 0; private int currentMatchIndex = -1;
 
-    private int numTrackers = 10; private int numIOWorkers = 48; private int numChildWorkers = 48; private int numTORProxies = 10;
+    private int numTrackers = 10; private int numIOWorkers = 20; private int numChildWorkers = 16; private int numTORProxies = 10;
     private ActorRef[] trackers = null;
 
     public static Router ioRouter = null; public static Router childRouter = null;
@@ -63,6 +63,8 @@ public class Distributor extends UntypedActor {
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322006"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322005"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322035"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/5-2010/matches/343900");
+        blackLists.add("http://www.fourfourtwo.com/statszone/5-2010/matches/343949");
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360664"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360847"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360675"); /* Same player appears in 2 subs list */
@@ -95,6 +97,8 @@ public class Distributor extends UntypedActor {
     }
 
     public void onReceive(Object message) {
+        if(perfActor != null)
+            perfActor.tell("Distributor", getSelf());
         if(message instanceof Commands.StartCommand) {
             //log.info("Start message received by Distributor. Setting up actors.");
             List<Routee> ioRoutees = new ArrayList<>(numIOWorkers);
@@ -252,6 +256,7 @@ public class Distributor extends UntypedActor {
 
         if(!Persistence.addPlayer(team_name, playerName, FFT_player_id, playerDetails.matchGlobals.getFFT_Match_ID(), playerDetails.matchGlobals.getGameDate())) {
             System.out.println("Add Player failed for Team = " + team_name + " Player = " + playerName + " MatchID = " + playerDetails.matchGlobals.getFFT_Match_ID());
+            System.out.println("Player Link = " + playerDetails.playerLink);
             return false;
         }
 

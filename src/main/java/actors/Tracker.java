@@ -21,6 +21,8 @@ public class Tracker extends UntypedActor {
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
     public void onReceive(Object message) throws Exception {
+        if(Distributor.perfActor != null)
+            Distributor.perfActor.tell("Tracker", getSelf());
         if(message instanceof String) {
             if(message.equals("Setup")) {
                 log.info("Setup message received by Tracker " + getSelf().path() + " Asking Distributor for Next Match.");

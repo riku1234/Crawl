@@ -16,6 +16,8 @@ import org.jsoup.select.Elements;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,7 +40,16 @@ class MyComparator implements Comparator<JSONObject> { // Comparator to Sort Dat
 
 public class Crawl {
 
+    public static InetAddress server_address = null;
+
     public static void main(String[] args) throws IOException, ParseException, org.json.simple.parser.ParseException {
+        try {
+            server_address = InetAddress.getLocalHost();
+            System.out.println("Server IP = " + server_address.getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
         Persistence.createTables();
         final ActorSystem actorSystem = ActorSystem.create("Actor-System");
         final ActorRef distributor = actorSystem.actorOf(Props.create(Distributor.class).withDispatcher("DistributorDispatcher"), "Distributor");

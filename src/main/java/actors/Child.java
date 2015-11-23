@@ -12,6 +12,8 @@ public class Child extends UntypedActor{
     Crawl crawl = new Crawl();
 
     public void onReceive(Object message) throws Exception {
+        if(Distributor.perfActor != null)
+            Distributor.perfActor.tell("Child", getSelf());
         if(message instanceof Commands.ShotsCommand) {
             ((Commands.ShotsCommand) message).shots = crawl.shotsDetails(((Commands.ShotsCommand) message).document, ((Commands.ShotsCommand) message).index);
             getSender().tell(message, getSelf());
