@@ -54,6 +54,7 @@ public class IO extends UntypedActor{
             //log.info("Document returned from Proxy Port = " + this.socksPort);
             if(Distributor.perfActor != null)
                 Distributor.perfActor.tell("Success-" + socksPort, getSelf());
+
             return document;
         } catch(IOException e) {
             //log.error("Document Exception ... ");

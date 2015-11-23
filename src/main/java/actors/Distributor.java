@@ -49,6 +49,7 @@ public class Distributor extends UntypedActor {
 
     public Distributor() {
         /* Add Blacklist Links */
+
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321663"); /* Giggs appears in Subs more than once */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321693"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321780"); /* Same player appears in 2 subs list */
@@ -63,18 +64,33 @@ public class Distributor extends UntypedActor {
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322005"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322035"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360664"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360847"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360675"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360636"); /* No Data */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360805"); /* No Data */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360471"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360503"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360541"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/21-2012/matches/459522"); /* No Data */
+        blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449462");/* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449485"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449561"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/23-2012/matches/456391"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/24-2012/matches/438320"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2012/matches/442087"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2012/matches/442082"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/21-2012/matches/459570");/* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/8-2012/matches/442101"); /* Same player appears in 2 subs list */
+        blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449641");
+        blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449667");
+        blackLists.add("http://www.fourfourtwo.com/statszone/24-2012/matches/438375");
         blackLists.add("http://www.fourfourtwo.com/statszone/24-2014/matches/752029"); /* Header Problem, less tokens. */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321742"); /* Subs mismatch */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321900"); /* Subs missing */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360526"); /* Subs missing */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360834"); /* Subs missing */
         blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449613"); /* Subs missing */
+
         /* End .... */
     }
 
@@ -105,7 +121,7 @@ public class Distributor extends UntypedActor {
                 trackers[i].tell("Setup", getSelf());
             }
 
-            perfActor = getContext().actorOf(Props.create(Perf.class), "Perf");
+            perfActor = getContext().actorOf(Props.create(Perf.class).withDispatcher("PerfDispatcher"), "Perf");
             perfActor.tell("Setup-" + numTORProxies, getSelf());
         }
         else if(message instanceof String) {
