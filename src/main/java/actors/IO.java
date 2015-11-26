@@ -10,40 +10,28 @@ import org.jsoup.nodes.Document;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URL;
 
 /**
  * Created by gsm on 9/23/15.
  */
 public class IO extends UntypedActor{
+    LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private int torIndex = -1;
     private int socksPort = -1;
-    LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
     private Document getDocument(String link) {
 
         try {
-            URL url = new URL(link);
-            Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("127.0.0.1", this.socksPort));
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection(proxy);
-            httpURLConnection.setReadTimeout(10000); httpURLConnection.setConnectTimeout(10000);
-            httpURLConnection.connect();
 
-            String line = null;
-            StringBuffer tmp = new StringBuffer();
-            BufferedReader in = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-            while ((line = in.readLine()) != null) {
-                tmp.append(line);
-            }
+            Process curl_p = Runtime.getRuntime().exec("curl --socks5 127.0.0.1:" + socksPort + " -X GET " + link);
+            String line;
+            StringBuffer buffer = new StringBuffer();
+            BufferedReader br = new BufferedReader(new InputStreamReader(curl_p.getInputStream()));
+            while ((line = br.readLine()) != null)
+                buffer.append(line);
 
-            Document document = Jsoup.parse(String.valueOf(tmp), link);
+            Document document = Jsoup.parse(String.valueOf(buffer), link);
 
-            //Document document = Jsoup.connect(link).timeout(10000).get();
-            //Info.perfActor.tell("Success", getSelf());
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside IO getDocument. Success. Size = " + document.toString().length()+ "\n");
             if(document.toString().length() < 150000) {
                 System.out.println("FLAG -------- Size less. " + document.toString().length());
             }

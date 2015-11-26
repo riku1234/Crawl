@@ -32,20 +32,22 @@ import java.util.List;
  * Created by gsm on 11/8/15.
  */
 public class Distributor extends UntypedActor {
+    public static Router ioRouter = null;
+    public static Router childRouter = null;
+    public static ActorRef perfActor = null;
     private final Commands commands = new Commands();
     private final Crawl crawl = new Crawl();
-    private ArrayList<String> blackLists = new ArrayList<String>();
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
-
+    private ArrayList<String> blackLists = new ArrayList<String>();
     private String[] prefixes = {"2010_490/", "2011_497/", "2012_1949/", "2013_1951/", "2014_1950/"};
     private int[] numMatches = {490, 497, 1949, 1951, 1950};
-    private int currentPrefixIndex = 0; private int currentMatchIndex = -1;
-
-    private int numTrackers = 10; private int numIOWorkers = 20; private int numChildWorkers = 16; private int numTORProxies = 10;
+    private int currentPrefixIndex = 0;
+    private int currentMatchIndex = -1;
+    private int numTrackers = 10;
+    private int numIOWorkers = 20;
+    private int numChildWorkers = 16;
+    private int numTORProxies = 10;
     private ActorRef[] trackers = null;
-
-    public static Router ioRouter = null; public static Router childRouter = null;
-    public static ActorRef perfActor = null;
 
     public Distributor() {
         /* Add Blacklist Links */
@@ -65,6 +67,7 @@ public class Distributor extends UntypedActor {
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322035"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/5-2010/matches/343900");
         blackLists.add("http://www.fourfourtwo.com/statszone/5-2010/matches/343949");
+        blackLists.add("http://www.fourfourtwo.com/statszone/5-2010/matches/343901");
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360664"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360847"); /* Same player appears in 2 subs list */
         blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360675"); /* Same player appears in 2 subs list */

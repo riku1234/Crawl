@@ -7,14 +7,12 @@ import akka.actor.Props;
 import command.Commands;
 import fourfourtwo.Helper;
 import fourfourtwo.Persistence;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -54,6 +52,7 @@ public class Crawl {
         final ActorSystem actorSystem = ActorSystem.create("Actor-System");
         final ActorRef distributor = actorSystem.actorOf(Props.create(Distributor.class).withDispatcher("DistributorDispatcher"), "Distributor");
         distributor.tell(new Commands().new StartCommand(), null);
+
 
         //ArrayList<String> FFTResultsPage = new ArrayList<String>();
 
