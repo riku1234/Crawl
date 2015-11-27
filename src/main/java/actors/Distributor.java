@@ -18,9 +18,7 @@ import org.json.simple.parser.JSONParser;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,60 +41,26 @@ public class Distributor extends UntypedActor {
     private int[] numMatches = {490, 497, 1949, 1951, 1950};
     private int currentPrefixIndex = 0;
     private int currentMatchIndex = -1;
-    private int numTrackers = 10;
-    private int numIOWorkers = 20;
-    private int numChildWorkers = 16;
+    private int numTrackers = 5;
+    private int numIOWorkers = 10;
+    private int numChildWorkers = 10;
     private int numTORProxies = 10;
     private ActorRef[] trackers = null;
 
     public Distributor() {
         /* Add Blacklist Links */
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321663"); /* Giggs appears in Subs more than once */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321693"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321780"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321789"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321801"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321845"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321848"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321887"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321902"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321835"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322006"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322005"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322035"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/5-2010/matches/343900");
-        blackLists.add("http://www.fourfourtwo.com/statszone/5-2010/matches/343949");
-        blackLists.add("http://www.fourfourtwo.com/statszone/5-2010/matches/343901");
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360664"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360847"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360675"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360636"); /* No Data */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360805"); /* No Data */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360471"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360503"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360541"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/21-2012/matches/459522"); /* No Data */
-        blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449462");/* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449485"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449561"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/23-2012/matches/456391"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/24-2012/matches/438320"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2012/matches/442087"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2012/matches/442082"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/21-2012/matches/459570");/* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2012/matches/442101"); /* Same player appears in 2 subs list */
-        blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449641");
-        blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449667");
-        blackLists.add("http://www.fourfourtwo.com/statszone/24-2012/matches/438375");
-        blackLists.add("http://www.fourfourtwo.com/statszone/24-2014/matches/752029"); /* Header Problem, less tokens. */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321742"); /* Subs mismatch */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321900"); /* Subs missing */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360526"); /* Subs missing */
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360834"); /* Subs missing */
-        blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449613"); /* Subs missing */
-
-        /* End .... */
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("../blacklists.txt")));
+            String line;
+            while ((line = br.readLine()) != null)
+                blackLists.add(line);
+            br.close();
+            br = null;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onReceive(Object message) {
@@ -139,6 +103,7 @@ public class Distributor extends UntypedActor {
             else {
                 crawl.cleanTerminate("Strange Error inside onReceive of Distributor. Exiting.");
             }
+            message = null;
         }
         else if(message instanceof Commands.MatchGlobals) {
             //log.info("Match Globals request received by Distributor.");

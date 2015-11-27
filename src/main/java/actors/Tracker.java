@@ -17,8 +17,8 @@ import java.io.IOException;
 public class Tracker extends UntypedActor {
     private final Commands commands = new Commands();
     private final Crawl crawl = new Crawl();
-    private long startTime = -1;
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
+    private long startTime = -1;
 
     public void onReceive(Object message) throws Exception {
         if(Distributor.perfActor != null)
@@ -49,6 +49,7 @@ public class Tracker extends UntypedActor {
             }
             if (((Commands.ShotsCommand) message).playerDetails.matchGlobals.numMessagesRemaining == 0)
                 exitMatch(((Commands.Global) message).playerDetails.matchGlobals);
+
         }
         else if(message instanceof Commands.PenaltiesCommand) {
             //System.out.println("Adding Penalties for Match=" + ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID() + " Team = " + ((Commands.PenaltiesCommand) message).playerDetails.team_name + " Player = " + ((Commands.PenaltiesCommand) message).playerDetails.FFT_player_id + " Penalties = " + ((Commands.PenaltiesCommand) message).penalties.size());
