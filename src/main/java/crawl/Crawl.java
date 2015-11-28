@@ -918,8 +918,22 @@ public class Crawl {
         return list;
     }
 
-    public void cleanTerminate(String errorMessage) {
-        System.out.println(errorMessage);
-        System.exit(1);
+    public void cleanTerminate(Object... args) {
+        if (args.length == 1) {
+            System.out.println((String) args[0]);
+            System.exit(1);
+        } else if (args.length == 3) {
+            String message = (String) args[0];
+            String FFT_Match_ID = (String) args[1];
+            ActorRef distributor = (ActorRef) args[2];
+
+            System.out.println(message);
+            System.out.println("Match = " + FFT_Match_ID);
+            System.out.println("Sending the stop signal to Distributor.");
+            distributor.tell("Stop", null);
+        } else {
+            System.out.println("Strange Error in cleanTerminate. Exiting.");
+            System.exit(1);
+        }
     }
 }

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="83f46348-b279-4d62-bc3c-e9fda68c1709" name="Default" comment="2.3&#10;Added blacklists to file. No need to build everytime.">
+    <list default="true" id="83f46348-b279-4d62-bc3c-e9fda68c1709" name="Default" comment="2.4&#10;Configured num of actors based on number of cores.">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/crawl/Crawl.java" afterPath="$PROJECT_DIR$/src/main/java/crawl/Crawl.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/actors/Distributor.java" afterPath="$PROJECT_DIR$/src/main/java/actors/Distributor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/actors/Perf.java" afterPath="$PROJECT_DIR$/src/main/java/actors/Perf.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/actors/Tracker.java" afterPath="$PROJECT_DIR$/src/main/java/actors/Tracker.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/application.conf" afterPath="$PROJECT_DIR$/src/main/resources/application.conf" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/blacklists.txt" afterPath="$PROJECT_DIR$/blacklists.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="fa.iws" />
@@ -30,10 +32,11 @@
       <file leaf-file-name="Distributor.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/actors/Distributor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.89498806">
-              <caret line="107" column="50" selection-start-line="107" selection-start-column="50" selection-end-line="107" selection-end-column="50" />
+            <state vertical-scroll-proportion="0.6085919">
+              <caret line="165" column="13" selection-start-line="165" selection-start-column="13" selection-end-line="165" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#1507#1515#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -43,7 +46,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/actors/Child.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="22" column="49" selection-start-line="22" selection-start-column="49" selection-end-line="22" selection-end-column="49" />
+              <caret line="121" column="23" selection-start-line="121" selection-start-column="18" selection-end-line="121" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -53,7 +56,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/actors/IO.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="105" column="25" selection-start-line="105" selection-start-column="25" selection-end-line="105" selection-end-column="25" />
+              <caret line="16" column="9" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="9" />
               <folding />
             </state>
           </provider>
@@ -63,7 +66,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/actors/Tracker.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="29" column="57" selection-start-line="29" selection-start-column="57" selection-end-line="29" selection-end-column="57" />
+              <caret line="278" column="59" selection-start-line="278" selection-start-column="59" selection-end-line="278" selection-end-column="59" />
               <folding />
             </state>
           </provider>
@@ -73,7 +76,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/command/Commands.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="119" column="0" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
+              <caret line="418" column="37" selection-start-line="418" selection-start-column="33" selection-end-line="418" selection-end-column="37" />
               <folding>
                 <element signature="e#3796#3797#0" expanded="true" />
                 <element signature="e#3852#3853#0" expanded="true" />
@@ -86,7 +89,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/crawl/Crawl.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="925" column="0" selection-start-line="925" selection-start-column="0" selection-end-line="925" selection-end-column="0" />
+              <caret line="920" column="21" selection-start-line="920" selection-start-column="16" selection-end-line="920" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -106,7 +109,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/resources/application.conf">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <caret line="71" column="1" selection-start-line="71" selection-start-column="1" selection-end-line="71" selection-end-column="1" />
               <folding />
             </state>
           </provider>
@@ -116,7 +119,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/actors/Perf.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="58" column="20" selection-start-line="58" selection-start-column="20" selection-end-line="58" selection-end-column="20" />
+              <caret line="11" column="8" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -139,11 +142,11 @@
         <option value="$PROJECT_DIR$/src/main/java/actors/Child.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/actors/IO.java" />
+        <option value="$PROJECT_DIR$/src/main/java/actors/Perf.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/application.conf" />
         <option value="$PROJECT_DIR$/src/main/java/crawl/Crawl.java" />
         <option value="$PROJECT_DIR$/src/main/java/actors/Tracker.java" />
-        <option value="$PROJECT_DIR$/src/main/resources/application.conf" />
         <option value="$PROJECT_DIR$/src/main/java/actors/Distributor.java" />
-        <option value="$PROJECT_DIR$/src/main/java/actors/Perf.java" />
       </list>
     </option>
   </component>
@@ -711,7 +714,13 @@
       <option name="project" value="LOCAL" />
       <updated>1448662510367</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="2.4&#10;Configured num of actors based on number of cores.">
+      <created>1448670811128</created>
+      <option name="number" value="00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1448670811128</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -759,7 +768,8 @@
     <MESSAGE value="2.0" />
     <MESSAGE value="2.2" />
     <MESSAGE value="2.3&#10;Added blacklists to file. No need to build everytime." />
-    <option name="LAST_COMMIT_MESSAGE" value="2.3&#10;Added blacklists to file. No need to build everytime." />
+    <MESSAGE value="2.4&#10;Configured num of actors based on number of cores." />
+    <option name="LAST_COMMIT_MESSAGE" value="2.4&#10;Configured num of actors based on number of cores." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -795,6 +805,7 @@
           <caret line="110" column="77" selection-start-line="110" selection-start-column="77" selection-end-line="110" selection-end-column="77" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1507#1515#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -864,6 +875,7 @@
           <caret line="72" column="105" selection-start-line="47" selection-start-column="8" selection-end-line="72" selection-end-column="105" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1507#1515#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -933,6 +945,7 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1507#1515#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1002,6 +1015,7 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1507#1515#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1071,6 +1085,7 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1507#1515#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1130,6 +1145,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="27" column="59" selection-start-line="27" selection-start-column="59" selection-end-line="27" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/actors/Perf.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="11" column="8" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="71" column="1" selection-start-line="71" selection-start-column="1" selection-end-line="71" selection-end-column="1" />
           <folding />
         </state>
       </provider>
@@ -1142,18 +1173,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/actors/Child.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/crawl/Crawl.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="22" column="49" selection-start-line="22" selection-start-column="49" selection-end-line="22" selection-end-column="49" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/actors/IO.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="105" column="25" selection-start-line="105" selection-start-column="25" selection-end-line="105" selection-end-column="25" />
+          <caret line="920" column="21" selection-start-line="920" selection-start-column="16" selection-end-line="920" selection-end-column="21" />
           <folding />
         </state>
       </provider>
@@ -1161,7 +1184,7 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/command/Commands.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="119" column="0" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
+          <caret line="418" column="37" selection-start-line="418" selection-start-column="33" selection-end-line="418" selection-end-column="37" />
           <folding>
             <element signature="e#3796#3797#0" expanded="true" />
             <element signature="e#3852#3853#0" expanded="true" />
@@ -1172,41 +1195,34 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/actors/Tracker.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="29" column="57" selection-start-line="29" selection-start-column="57" selection-end-line="29" selection-end-column="57" />
+          <caret line="278" column="59" selection-start-line="278" selection-start-column="59" selection-end-line="278" selection-end-column="59" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/application.conf">
+    <entry file="file://$PROJECT_DIR$/src/main/java/actors/IO.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="16" column="9" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="9" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/crawl/Crawl.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/actors/Child.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="925" column="0" selection-start-line="925" selection-start-column="0" selection-end-line="925" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/actors/Perf.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="58" column="20" selection-start-line="58" selection-start-column="20" selection-end-line="58" selection-end-column="20" />
+          <caret line="121" column="23" selection-start-line="121" selection-start-column="18" selection-end-line="121" selection-end-column="23" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/actors/Distributor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.89498806">
-          <caret line="107" column="50" selection-start-line="107" selection-start-column="50" selection-end-line="107" selection-end-column="50" />
+        <state vertical-scroll-proportion="0.6085919">
+          <caret line="165" column="13" selection-start-line="165" selection-start-column="13" selection-end-line="165" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1507#1515#0" expanded="true" />
           </folding>
         </state>
       </provider>

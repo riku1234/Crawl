@@ -47,6 +47,7 @@ public class Distributor extends UntypedActor {
     private int currentPrefixIndex = 0;
     private int currentMatchIndex = -1;
     private ActorRef[] trackers = null;
+    private Boolean stopActorSystem = false;
 
     public Distributor() {
         /* Add Blacklist Links */
@@ -111,22 +112,28 @@ public class Distributor extends UntypedActor {
         else if(message instanceof String) {
             if(message.equals("NextMatch")) {
                 log.info("Next Match request received from tracker = " + getSender().path());
-                this.sendWork(getSender());
+                if (!stopActorSystem)
+                    this.sendWork(getSender());
+                else
+                    System.out.println("Stop Request Received. Not Sending more work....");
+            } else if (message.equals("Stop")) {
+                stopActorSystem = true;
             }
             else {
                 crawl.cleanTerminate("Strange Error inside onReceive of Distributor. Exiting.");
             }
-            message = null;
         }
         else if(message instanceof Commands.MatchGlobals) {
             //log.info("Match Globals request received by Distributor.");
             if(!crawl.populateGameDetails((Commands.MatchGlobals) message)) {
-                crawl.cleanTerminate("Populate Game Details failed for GameLink = " + ((Commands.MatchGlobals) message).getGameLink());
+                crawl.cleanTerminate("Populate Game Details failed for GameLink = " + ((Commands.MatchGlobals) message).getGameLink(), ((Commands.MatchGlobals) message).getFFT_Match_ID(), getSelf());
+                return;
             }
 
             List<Elements> playerLinks = crawl.getPlayerStatsLink(((Commands.MatchGlobals) message).getPlayersDocument());
             if(playerLinks == null || playerLinks.size() != 6) {
-                crawl.cleanTerminate("PlayerLinks is null. Error.");
+                crawl.cleanTerminate("PlayerLinks is null. Error.", ((Commands.MatchGlobals) message).getFFT_Match_ID(), getSelf());
+                return;
             }
 
             ((Commands.MatchGlobals) message).setNumMessagesRemaining(33 * (playerLinks.get(0).size() + playerLinks.get(1).size() + playerLinks.get(2).size() + playerLinks.get(4).size()));
@@ -165,7 +172,8 @@ public class Distributor extends UntypedActor {
         else if(message instanceof Commands.PlayerDetails) {
             //log.info("Player Details request received by Distributor.");
             if(!this.getPlayerDetails((Commands.PlayerDetails) message)) {
-                crawl.cleanTerminate("Skipping game = " + ((Commands.PlayerDetails) message).matchGlobals.getFFT_Match_ID());
+                crawl.cleanTerminate("Skipping game = " + ((Commands.PlayerDetails) message).matchGlobals.getFFT_Match_ID(), ((Commands.PlayerDetails) message).matchGlobals.getFFT_Match_ID(), getSelf());
+                return;
             }
         }
     }
