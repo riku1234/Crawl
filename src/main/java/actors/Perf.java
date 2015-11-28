@@ -17,25 +17,33 @@ public class Perf extends UntypedActor {
     int[] io_failure_prev;
     int numMatchesComplete;
     JSONObject sysConfObject = null;
-    private int num_child_messages = 0;
-    private int num_distributor_messages = 0;
-    private int num_tracker_messages = 0;
+    private int[] num_child_messages;
+    private int num_distributor_messages;
+    private int[] num_tracker_messages;
 
     public void onReceive(Object message) throws Exception {
         if(message instanceof String) {
             if(message.equals("Distributor"))
                 num_distributor_messages++;
-            else if(message.equals("Child"))
-                num_child_messages++;
-            else if(message.equals("Tracker"))
-                num_tracker_messages++;
+            else if (((String) message).startsWith("Child"))
+                num_child_messages[Integer.parseInt(((String) message).split("-")[1])]++;
+            else if (((String) message).startsWith("Tracker"))
+                num_tracker_messages[Integer.parseInt(((String) message).split("-")[1])]++;
             else if(((String) message).startsWith("Setup")) {
-                int num_tors = Integer.parseInt(((String) message).split("-")[1].trim());
+                String[] splits = ((String) message).split("-");
+
+                int num_tors = Integer.parseInt(splits[1]);
+                int num_child = Integer.parseInt(splits[2]);
+                int num_trackers = Integer.parseInt(splits[3]);
+
                 io_success = new int[num_tors];
                 io_failure = new int[num_tors];
 
                 io_success_prev = new int[num_tors];
                 io_failure_prev = new int[num_tors];
+
+                num_child_messages = new int[num_child];
+                num_tracker_messages = new int[num_trackers];
 
                 numMatchesComplete = 0;
                 getContext().system().scheduler().scheduleOnce(
@@ -55,13 +63,22 @@ public class Perf extends UntypedActor {
             }
             else if(message.equals("Tick")) {
 
+                System.out.println("\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
                 if (sysConfObject != null)
                     System.out.println("Cores = " + (int) sysConfObject.get("CORES") + "IO Workers = " + (int) sysConfObject.get("NUM_IO_WORKERS") + " Child Workers = " + (int) sysConfObject.get("NUM_CHILD_WORKERS") + " Trackers = " + (int) sysConfObject.get("NUM_TRACKER_WORKERS") + " Tor Proxies = " + (int) sysConfObject.get("NUM_TOR_PROXIES"));
-
-                System.out.println("\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
                 System.out.println("Current Session Duration = " + ((System.currentTimeMillis() - start_time) / 1000) + "seconds");
-                System.out.println("Session: Distributor - " + num_distributor_messages + " Child - " + num_child_messages + " Tracker - " + num_tracker_messages);
-                num_distributor_messages = 0; num_child_messages = 0; num_tracker_messages = 0;
+                System.out.println("Session: ");
+                System.out.println("Distributor - " + num_distributor_messages);
+                num_distributor_messages = 0;
+                for (int i = 0; i < num_child_messages.length; i++) {
+                    System.out.println(" Child - " + i + " = " + num_child_messages[i]);
+                    num_child_messages[i] = 0;
+                }
+                for (int i = 0; i < num_tracker_messages.length; i++) {
+                    System.out.println(" Tracker - " + i + " = " + num_tracker_messages[i]);
+                    num_tracker_messages[i] = 0;
+                }
+
                 System.out.println("Matches Complete = " + numMatchesComplete);
                 System.out.println("IO Stats .... ");
                 long num_documents_success = 0; long num_documents_failure = 0;

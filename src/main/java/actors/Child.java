@@ -10,10 +10,13 @@ import crawl.Crawl;
 
 public class Child extends UntypedActor{
     Crawl crawl = new Crawl();
-
+    private int index = -1;
     public void onReceive(Object message) throws Exception {
-        if(Distributor.perfActor != null)
-            Distributor.perfActor.tell("Child", getSelf());
+        if (index != -1 && Distributor.perfActor != null)
+            Distributor.perfActor.tell("Child" + index, getSelf());
+        if (message instanceof String) {
+            this.index = Integer.parseInt(((String) message).split("-")[1]);
+        }
         if(message instanceof Commands.ShotsCommand) {
             ((Commands.ShotsCommand) message).shots = crawl.shotsDetails(((Commands.ShotsCommand) message).document, ((Commands.ShotsCommand) message).index);
             getSender().tell(message, getSelf());

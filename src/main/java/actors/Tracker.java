@@ -19,12 +19,14 @@ public class Tracker extends UntypedActor {
     private final Crawl crawl = new Crawl();
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private long startTime = -1;
+    private int index = -1;
 
     public void onReceive(Object message) throws Exception {
-        if(Distributor.perfActor != null)
-            Distributor.perfActor.tell("Tracker", getSelf());
+        if (index != -1 && Distributor.perfActor != null)
+            Distributor.perfActor.tell("Tracker" + index, getSelf());
         if(message instanceof String) {
-            if(message.equals("Setup")) {
+            if (((String) message).startsWith("Setup")) {
+                this.index = Integer.parseInt(((String) message).split("-")[1]);
                 log.info("Setup message received by Tracker " + getSelf().path() + " Asking Distributor for Next Match.");
                 startTime = System.currentTimeMillis();
                 getSender().tell("NextMatch", getSelf());

@@ -85,6 +85,7 @@ public class Distributor extends UntypedActor {
             List<Routee> childRoutees = new ArrayList<>(numChildWorkers);
             for(int i=0;i<numChildWorkers;i++) {
                 ActorRef childWorker = getContext().actorOf(Props.create(Child.class), "Child-" + i);
+                childWorker.tell("Setup-" + i, getSelf());
                 getContext().watch(childWorker);
                 childRoutees.add(new ActorRefRoutee(childWorker));
             }
@@ -95,11 +96,11 @@ public class Distributor extends UntypedActor {
             for(int i=0;i<numTrackers;i++) {
                 trackers[i] = getContext().actorOf(Props.create(Tracker.class), "Tracker-" + i);
                 getContext().watch(trackers[i]);
-                trackers[i].tell("Setup", getSelf());
+                trackers[i].tell("Setup-" + i, getSelf());
             }
 
             perfActor = getContext().actorOf(Props.create(Perf.class).withDispatcher("PerfDispatcher"), "Perf");
-            perfActor.tell("Setup-" + numTORProxies, getSelf());
+            perfActor.tell("Setup-" + numTORProxies + "-" + numChildWorkers + "-" + numTrackers, getSelf());
             JSONObject sysConfObject = new JSONObject();
             sysConfObject.put("CORES", num_cores);
             sysConfObject.put("NUM_TOR_PROXIES", numTORProxies);
