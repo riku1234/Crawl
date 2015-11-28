@@ -13,7 +13,7 @@ public class Child extends UntypedActor{
     private int index = -1;
     public void onReceive(Object message) throws Exception {
         if (index != -1 && Distributor.perfActor != null)
-            Distributor.perfActor.tell("Child" + index, getSelf());
+            Distributor.perfActor.tell("Child-" + index, getSelf());
         if (message instanceof String) {
             this.index = Integer.parseInt(((String) message).split("-")[1]);
         } else if (message instanceof Commands.ShotsCommand) {

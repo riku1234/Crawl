@@ -23,7 +23,7 @@ public class Tracker extends UntypedActor {
 
     public void onReceive(Object message) throws Exception {
         if (index != -1 && Distributor.perfActor != null)
-            Distributor.perfActor.tell("Tracker" + index, getSelf());
+            Distributor.perfActor.tell("Tracker-" + index, getSelf());
         if(message instanceof String) {
             if (((String) message).startsWith("Setup")) {
                 this.index = Integer.parseInt(((String) message).split("-")[1]);
