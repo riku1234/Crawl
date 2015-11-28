@@ -35,16 +35,17 @@ public class Distributor extends UntypedActor {
     public static ActorRef perfActor = null;
     private final Commands commands = new Commands();
     private final Crawl crawl = new Crawl();
+    private final int num_cores = Runtime.getRuntime().availableProcessors();
+    private final int numTrackers = (int) Math.ceil(num_cores * 2.5);
+    private final int numTORProxies = 10;
+    private final int numIOWorkers = Math.max(numTORProxies, numTrackers);
+    private final int numChildWorkers = numTrackers;
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private ArrayList<String> blackLists = new ArrayList<String>();
     private String[] prefixes = {"2010_490/", "2011_497/", "2012_1949/", "2013_1951/", "2014_1950/"};
     private int[] numMatches = {490, 497, 1949, 1951, 1950};
     private int currentPrefixIndex = 0;
     private int currentMatchIndex = -1;
-    private int numTrackers = 5;
-    private int numIOWorkers = 10;
-    private int numChildWorkers = 10;
-    private int numTORProxies = 10;
     private ActorRef[] trackers = null;
 
     public Distributor() {
@@ -67,7 +68,9 @@ public class Distributor extends UntypedActor {
         if(perfActor != null)
             perfActor.tell("Distributor", getSelf());
         if(message instanceof Commands.StartCommand) {
+            System.out.println("Number of TOR Proxies = " + numTORProxies);
             //log.info("Start message received by Distributor. Setting up actors.");
+            System.out.println("Number of IO Workers = " + numIOWorkers);
             List<Routee> ioRoutees = new ArrayList<>(numIOWorkers);
             for(int i=0;i<numIOWorkers;i++) {
                 ActorRef ioWorker = getContext().actorOf(Props.create(IO.class), "IO-" + i);
@@ -77,6 +80,7 @@ public class Distributor extends UntypedActor {
             }
             ioRouter = new Router(new SmallestMailboxRoutingLogic(), ioRoutees);
 
+            System.out.println("Number of Child Workers = " + numChildWorkers);
             List<Routee> childRoutees = new ArrayList<>(numChildWorkers);
             for(int i=0;i<numChildWorkers;i++) {
                 ActorRef childWorker = getContext().actorOf(Props.create(Child.class), "Child-" + i);
@@ -85,6 +89,7 @@ public class Distributor extends UntypedActor {
             }
             childRouter = new Router(new SmallestMailboxRoutingLogic(), childRoutees);
 
+            System.out.println("Number of Tracker Workers = " + numTrackers);
             trackers = new ActorRef[numTrackers];
             for(int i=0;i<numTrackers;i++) {
                 trackers[i] = getContext().actorOf(Props.create(Tracker.class), "Tracker-" + i);
@@ -94,6 +99,14 @@ public class Distributor extends UntypedActor {
 
             perfActor = getContext().actorOf(Props.create(Perf.class).withDispatcher("PerfDispatcher"), "Perf");
             perfActor.tell("Setup-" + numTORProxies, getSelf());
+            JSONObject sysConfObject = new JSONObject();
+            sysConfObject.put("CORES", num_cores);
+            sysConfObject.put("NUM_TOR_PROXIES", numTORProxies);
+            sysConfObject.put("NUM_IO_WORKERS", numIOWorkers);
+            sysConfObject.put("NUM_CHILD_WORKERS", numChildWorkers);
+            sysConfObject.put("NUM_TRACKER_WORKERS", numTrackers);
+            perfActor.tell(sysConfObject, getSelf());
+
         }
         else if(message instanceof String) {
             if(message.equals("NextMatch")) {
@@ -158,7 +171,10 @@ public class Distributor extends UntypedActor {
     }
 
     private void sendWork(ActorRef tracker) {
-
+        long free_memory_before_gc = Runtime.getRuntime().freeMemory();
+        Runtime.getRuntime().gc();
+        long free_memory_after_gc = Runtime.getRuntime().freeMemory();
+        System.out.println("Memory freed by gc = " + (free_memory_after_gc - free_memory_before_gc));
         currentMatchIndex++;
 
         if(currentPrefixIndex < prefixes.length && currentMatchIndex >= numMatches[currentPrefixIndex]) {

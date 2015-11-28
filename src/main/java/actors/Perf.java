@@ -1,6 +1,7 @@
 package actors;
 
 import akka.actor.UntypedActor;
+import org.json.simple.JSONObject;
 import scala.concurrent.duration.Duration;
 
 import java.util.concurrent.TimeUnit;
@@ -9,13 +10,16 @@ import java.util.concurrent.TimeUnit;
  * Created by gsm on 9/26/15.
  */
 public class Perf extends UntypedActor {
-    int[] io_success; int[] io_failure;
-    int[] io_success_prev; int[] io_failure_prev;
-    int numMatchesComplete;
-
-    private int num_child_messages = 0; private int num_distributor_messages = 0; private int num_tracker_messages = 0;
-
     private final long start_time = System.currentTimeMillis();
+    int[] io_success;
+    int[] io_failure;
+    int[] io_success_prev;
+    int[] io_failure_prev;
+    int numMatchesComplete;
+    JSONObject sysConfObject = null;
+    private int num_child_messages = 0;
+    private int num_distributor_messages = 0;
+    private int num_tracker_messages = 0;
 
     public void onReceive(Object message) throws Exception {
         if(message instanceof String) {
@@ -50,6 +54,10 @@ public class Perf extends UntypedActor {
                 numMatchesComplete++;
             }
             else if(message.equals("Tick")) {
+
+                if (sysConfObject != null)
+                    System.out.println("Cores = " + (int) sysConfObject.get("CORES") + "IO Workers = " + (int) sysConfObject.get("NUM_IO_WORKERS") + " Child Workers = " + (int) sysConfObject.get("NUM_CHILD_WORKERS") + " Trackers = " + (int) sysConfObject.get("NUM_TRACKER_WORKERS") + " Tor Proxies = " + (int) sysConfObject.get("NUM_TOR_PROXIES"));
+
                 System.out.println("\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
                 System.out.println("Current Session Duration = " + ((System.currentTimeMillis() - start_time) / 1000) + "seconds");
                 System.out.println("Session: Distributor - " + num_distributor_messages + " Child - " + num_child_messages + " Tracker - " + num_tracker_messages);
@@ -75,6 +83,8 @@ public class Perf extends UntypedActor {
                         Duration.create(20000, TimeUnit.MILLISECONDS),
                         getSelf(), "Tick", getContext().dispatcher(), null);
             }
+        } else if (message instanceof JSONObject) {
+            this.sysConfObject = (JSONObject) message;
         }
     }
 }
