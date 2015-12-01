@@ -930,7 +930,7 @@ public class Crawl {
             System.out.println(message);
             System.out.println("Match = " + FFT_Match_ID);
             System.out.println("Sending the stop signal to Distributor.");
-            distributor.tell("Stop", null);
+            distributor.tell("Stop-" + FFT_Match_ID, null);
         } else {
             System.out.println("Strange Error in cleanTerminate. Exiting.");
             System.exit(1);

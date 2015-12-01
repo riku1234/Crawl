@@ -18,8 +18,12 @@ public class Perf extends UntypedActor {
     int numMatchesComplete;
     JSONObject sysConfObject = null;
     private int[] num_child_messages;
+    private int[] num_child_messages_prev;
     private int num_distributor_messages;
     private int[] num_tracker_messages;
+    private int[] num_tracker_messages_prev;
+    private boolean stopRequest = false;
+    private String stopMessage = "";
 
     public void onReceive(Object message) throws Exception {
         if(message instanceof String) {
@@ -43,7 +47,9 @@ public class Perf extends UntypedActor {
                 io_failure_prev = new int[num_tors];
 
                 num_child_messages = new int[num_child];
+                num_child_messages_prev = new int[num_child];
                 num_tracker_messages = new int[num_trackers];
+                num_tracker_messages_prev = new int[num_trackers];
 
                 numMatchesComplete = 0;
                 getContext().system().scheduler().scheduleOnce(
@@ -64,6 +70,8 @@ public class Perf extends UntypedActor {
             else if(message.equals("Tick")) {
 
                 System.out.println("\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+                if (this.stopRequest)
+                    System.out.println("Stop Requested. Message = " + this.stopMessage);
                 if (sysConfObject != null)
                     System.out.println("Cores = " + (int) sysConfObject.get("CORES") + "IO Workers = " + (int) sysConfObject.get("NUM_IO_WORKERS") + " Child Workers = " + (int) sysConfObject.get("NUM_CHILD_WORKERS") + " Trackers = " + (int) sysConfObject.get("NUM_TRACKER_WORKERS") + " Tor Proxies = " + (int) sysConfObject.get("NUM_TOR_PROXIES"));
                 System.out.println("Current Session Duration = " + ((System.currentTimeMillis() - start_time) / 1000) + "seconds");
@@ -71,12 +79,12 @@ public class Perf extends UntypedActor {
                 System.out.println("Distributor - " + num_distributor_messages);
                 num_distributor_messages = 0;
                 for (int i = 0; i < num_child_messages.length; i++) {
-                    System.out.println(" Child - " + i + " = " + num_child_messages[i]);
-                    num_child_messages[i] = 0;
+                    System.out.println(" Child - " + i + " = " + num_child_messages[i] + "(" + (num_child_messages[i] - num_child_messages_prev[i]) + ")");
+                    num_child_messages_prev[i] = num_child_messages[i];
                 }
                 for (int i = 0; i < num_tracker_messages.length; i++) {
-                    System.out.println(" Tracker - " + i + " = " + num_tracker_messages[i]);
-                    num_tracker_messages[i] = 0;
+                    System.out.println(" Tracker - " + i + " = " + num_tracker_messages[i] + "(" + (num_tracker_messages[i] - num_tracker_messages_prev[i]) + ")");
+                    num_tracker_messages_prev[i] = num_tracker_messages[i];
                 }
 
                 System.out.println("Matches Complete = " + numMatchesComplete);
@@ -99,6 +107,9 @@ public class Perf extends UntypedActor {
                 getContext().system().scheduler().scheduleOnce(
                         Duration.create(20000, TimeUnit.MILLISECONDS),
                         getSelf(), "Tick", getContext().dispatcher(), null);
+            } else if (((String) message).startsWith("Stop")) {
+                this.stopRequest = true;
+                this.stopMessage = (String) message;
             }
         } else if (message instanceof JSONObject) {
             this.sysConfObject = (JSONObject) message;

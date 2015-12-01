@@ -6,8 +6,10 @@ import akka.event.LoggingAdapter;
 import command.Commands;
 import crawl.Crawl;
 import fourfourtwo.Persistence;
+import scala.concurrent.duration.Duration;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 //import java.util.concurrent.Future;
 
@@ -20,16 +22,24 @@ public class Tracker extends UntypedActor {
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private long startTime = -1;
     private int index = -1;
+    private int num_messages_remaining = 0;
 
     public void onReceive(Object message) throws Exception {
         if (index != -1 && Distributor.perfActor != null)
             Distributor.perfActor.tell("Tracker-" + index, getSelf());
+
         if(message instanceof String) {
             if (((String) message).startsWith("Setup")) {
                 this.index = Integer.parseInt(((String) message).split("-")[1]);
                 log.info("Setup message received by Tracker " + getSelf().path() + " Asking Distributor for Next Match.");
                 startTime = System.currentTimeMillis();
                 getSender().tell("NextMatch", getSelf());
+                //getContext().system().scheduler().scheduleOnce(Duration.create(5000, TimeUnit.MILLISECONDS), getSelf(), "Tick", getContext().dispatcher(), null);
+            } else if (message.equals("Tick")) {
+                System.out.println("Tracker " + index + " Alive ... Messages Remaining = " + this.num_messages_remaining);
+                getContext().system().scheduler().scheduleOnce(
+                        Duration.create(10000, TimeUnit.MILLISECONDS),
+                        getSelf(), "Tick", getContext().dispatcher(), null);
             }
         }
         else if(message instanceof Commands.ShotsCommand) {
@@ -255,6 +265,10 @@ public class Tracker extends UntypedActor {
         else {
             crawl.cleanTerminate("Strange Error - 100");
         }
+
+
+        if (message instanceof Commands.Global)
+            this.num_messages_remaining = ((Commands.Global) message).playerDetails.matchGlobals.numMessagesRemaining;
     }
 
     private void exitMatch(Commands.MatchGlobals matchGlobals) throws IOException {

@@ -5,10 +5,7 @@ import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
-import akka.routing.ActorRefRoutee;
-import akka.routing.Routee;
-import akka.routing.Router;
-import akka.routing.SmallestMailboxRoutingLogic;
+import akka.routing.*;
 import command.Commands;
 import crawl.Crawl;
 import fourfourtwo.Helper;
@@ -36,7 +33,7 @@ public class Distributor extends UntypedActor {
     private final Commands commands = new Commands();
     private final Crawl crawl = new Crawl();
     private final int num_cores = Runtime.getRuntime().availableProcessors();
-    private final int numTrackers = (int) Math.ceil(num_cores * 2.5);
+    private final int numTrackers = (int) Math.ceil(num_cores * 1.5);
     private final int numTORProxies = 10;
     private final int numIOWorkers = Math.max(numTORProxies, numTrackers);
     private final int numChildWorkers = numTrackers;
@@ -89,7 +86,7 @@ public class Distributor extends UntypedActor {
                 getContext().watch(childWorker);
                 childRoutees.add(new ActorRefRoutee(childWorker));
             }
-            childRouter = new Router(new SmallestMailboxRoutingLogic(), childRoutees);
+            childRouter = new Router(new RoundRobinRoutingLogic(), childRoutees);
 
             System.out.println("Number of Tracker Workers = " + numTrackers);
             trackers = new ActorRef[numTrackers];
@@ -117,8 +114,9 @@ public class Distributor extends UntypedActor {
                     this.sendWork(getSender());
                 else
                     System.out.println("Stop Request Received. Not Sending more work....");
-            } else if (message.equals("Stop")) {
+            } else if (((String) message).startsWith("Stop")) {
                 stopActorSystem = true;
+                perfActor.tell((String) message, getSelf());
             }
             else {
                 crawl.cleanTerminate("Strange Error inside onReceive of Distributor. Exiting.");
