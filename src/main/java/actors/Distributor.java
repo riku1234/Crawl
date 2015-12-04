@@ -5,7 +5,10 @@ import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
-import akka.routing.*;
+import akka.routing.ActorRefRoutee;
+import akka.routing.Routee;
+import akka.routing.Router;
+import akka.routing.SmallestMailboxRoutingLogic;
 import command.Commands;
 import crawl.Crawl;
 import fourfourtwo.Helper;
@@ -71,7 +74,7 @@ public class Distributor extends UntypedActor {
             System.out.println("Number of IO Workers = " + numIOWorkers);
             List<Routee> ioRoutees = new ArrayList<>(numIOWorkers);
             for(int i=0;i<numIOWorkers;i++) {
-                ActorRef ioWorker = getContext().actorOf(Props.create(IO.class), "IO-" + i);
+                ActorRef ioWorker = getContext().actorOf(Props.create(IO.class).withDispatcher("IODispatcher"), "IO-" + i);
                 ioWorker.tell("Setup-" + (i % numTORProxies), getSelf());
                 getContext().watch(ioWorker);
                 ioRoutees.add(new ActorRefRoutee(ioWorker));
@@ -81,17 +84,17 @@ public class Distributor extends UntypedActor {
             System.out.println("Number of Child Workers = " + numChildWorkers);
             List<Routee> childRoutees = new ArrayList<>(numChildWorkers);
             for(int i=0;i<numChildWorkers;i++) {
-                ActorRef childWorker = getContext().actorOf(Props.create(Child.class), "Child-" + i);
+                ActorRef childWorker = getContext().actorOf(Props.create(Child.class).withDispatcher("ChildDispatcher"), "Child-" + i);
                 childWorker.tell("Setup-" + i, getSelf());
                 getContext().watch(childWorker);
                 childRoutees.add(new ActorRefRoutee(childWorker));
             }
-            childRouter = new Router(new RoundRobinRoutingLogic(), childRoutees);
+            childRouter = new Router(new SmallestMailboxRoutingLogic(), childRoutees);
 
             System.out.println("Number of Tracker Workers = " + numTrackers);
             trackers = new ActorRef[numTrackers];
             for(int i=0;i<numTrackers;i++) {
-                trackers[i] = getContext().actorOf(Props.create(Tracker.class), "Tracker-" + i);
+                trackers[i] = getContext().actorOf(Props.create(Tracker.class).withDispatcher("TrackerDispatcher"), "Tracker-" + i);
                 getContext().watch(trackers[i]);
                 trackers[i].tell("Setup-" + i, getSelf());
             }
