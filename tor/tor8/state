@@ -1,0 +1,101 @@
+# Tor state file last generated on 2015-12-05 18:01:02 local time
+# Other times below are in UTC
+# You *do not* need to edit this file.
+
+EntryGuard Unnamed 1322D90EA6EDA85B3A8566F2C04F2D8C5C7C1EF1 DirCache
+EntryGuardUnlistedSince 2015-11-23 00:45:23
+EntryGuardAddedBy 1322D90EA6EDA85B3A8566F2C04F2D8C5C7C1EF1 0.2.6.10 2015-11-09 07:42:47
+EntryGuard modupe 3CE90527D5712296B58E7EB7CD57F7D388D25FBB DirCache
+EntryGuardAddedBy 3CE90527D5712296B58E7EB7CD57F7D388D25FBB 0.2.6.10 2015-11-17 11:50:29
+EntryGuardPathBias 161.968750 157.953125 153.992188 3.929688 0.031250 12.484375
+EntryGuardPathUseBias 62.867188 62.865966
+EntryGuard minty002 9B1F5187DFBA89DC24B37EA7BF896C12B43A27AE DirCache
+EntryGuardAddedBy 9B1F5187DFBA89DC24B37EA7BF896C12B43A27AE 0.2.6.10 2015-10-31 03:19:11
+EntryGuardPathBias 30.000000 30.000000 29.000000 1.000000 0.000000 0.000000
+EntryGuardPathUseBias 21.000000 21.000000
+EntryGuard Hal9001 43947D1F7271B43585DAB8CA3CDEFDB967BA0E66 DirCache
+EntryGuardAddedBy 43947D1F7271B43585DAB8CA3CDEFDB967BA0E66 0.2.6.10 2015-11-14 17:52:06
+EntryGuardPathBias 16.000000 16.000000 16.000000 0.000000 0.000000 0.000000
+EntryGuardPathUseBias 14.000000 14.000000
+EntryGuard T0Relay1 23C1585A1214D4BB0945882972BEEC1A025CB36A DirCache
+EntryGuardDownSince 2015-12-04 09:11:23 2015-12-04 09:11:23
+EntryGuardAddedBy 23C1585A1214D4BB0945882972BEEC1A025CB36A 0.2.6.10 2015-11-04 21:14:30
+EntryGuard pym A65E1523F313405BB60E4AA136A69EFA504C4F60 DirCache
+EntryGuardDownSince 2015-12-04 09:11:24 2015-12-04 09:11:24
+EntryGuardAddedBy A65E1523F313405BB60E4AA136A69EFA504C4F60 0.2.6.10 2015-10-27 13:51:49
+EntryGuard torpidsFRdigicube 4436A57FFE36F09368718BCFFF750EB86A4E00B9 DirCache
+EntryGuardDownSince 2015-12-04 09:20:03 2015-12-04 09:20:03
+EntryGuardAddedBy 4436A57FFE36F09368718BCFFF750EB86A4E00B9 0.2.6.10 2015-11-14 20:22:40
+TorVersion Tor 0.2.6.10 (git-58c51dc6087b0936)
+LastWritten 2015-12-06 02:01:02
+TotalBuildTimes 464
+CircuitBuildAbandonedCount 42
+CircuitBuildTimeBin 475 1
+CircuitBuildTimeBin 525 2
+CircuitBuildTimeBin 575 4
+CircuitBuildTimeBin 625 6
+CircuitBuildTimeBin 675 4
+CircuitBuildTimeBin 725 8
+CircuitBuildTimeBin 775 15
+CircuitBuildTimeBin 825 36
+CircuitBuildTimeBin 875 25
+CircuitBuildTimeBin 925 26
+CircuitBuildTimeBin 975 26
+CircuitBuildTimeBin 1025 39
+CircuitBuildTimeBin 1075 19
+CircuitBuildTimeBin 1125 22
+CircuitBuildTimeBin 1175 14
+CircuitBuildTimeBin 1225 9
+CircuitBuildTimeBin 1275 14
+CircuitBuildTimeBin 1325 5
+CircuitBuildTimeBin 1375 6
+CircuitBuildTimeBin 1425 4
+CircuitBuildTimeBin 1475 2
+CircuitBuildTimeBin 1525 4
+CircuitBuildTimeBin 1575 5
+CircuitBuildTimeBin 1625 2
+CircuitBuildTimeBin 1675 2
+CircuitBuildTimeBin 1725 1
+CircuitBuildTimeBin 1775 2
+CircuitBuildTimeBin 1825 1
+CircuitBuildTimeBin 1875 1
+CircuitBuildTimeBin 1925 8
+CircuitBuildTimeBin 1975 3
+CircuitBuildTimeBin 2025 4
+CircuitBuildTimeBin 2075 6
+CircuitBuildTimeBin 2125 5
+CircuitBuildTimeBin 2175 3
+CircuitBuildTimeBin 2225 5
+CircuitBuildTimeBin 2275 6
+CircuitBuildTimeBin 2325 4
+CircuitBuildTimeBin 2375 11
+CircuitBuildTimeBin 2425 4
+CircuitBuildTimeBin 2475 7
+CircuitBuildTimeBin 2525 9
+CircuitBuildTimeBin 2575 6
+CircuitBuildTimeBin 2625 3
+CircuitBuildTimeBin 2675 2
+CircuitBuildTimeBin 2725 1
+CircuitBuildTimeBin 2775 2
+CircuitBuildTimeBin 2825 1
+CircuitBuildTimeBin 2875 2
+CircuitBuildTimeBin 2925 1
+CircuitBuildTimeBin 2975 3
+CircuitBuildTimeBin 3025 2
+CircuitBuildTimeBin 3075 1
+CircuitBuildTimeBin 3125 1
+CircuitBuildTimeBin 3175 1
+CircuitBuildTimeBin 3275 1
+CircuitBuildTimeBin 3325 1
+CircuitBuildTimeBin 3425 1
+CircuitBuildTimeBin 3625 1
+CircuitBuildTimeBin 3675 1
+CircuitBuildTimeBin 3775 1
+CircuitBuildTimeBin 3975 2
+CircuitBuildTimeBin 4225 1
+CircuitBuildTimeBin 4275 1
+CircuitBuildTimeBin 4725 1
+CircuitBuildTimeBin 4775 1
+CircuitBuildTimeBin 5525 1
+CircuitBuildTimeBin 6375 2
+CircuitBuildTimeBin 9575 1
