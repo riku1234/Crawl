@@ -299,8 +299,14 @@ public class Crawl {
         String home_team_name = doc.select("span.home-head").text();
         String away_team_name = doc.select("span.away-head").text();
         String full_time_score = doc.select("span.score").text();
-        Double home_team_possession = Double.parseDouble(new StringTokenizer(doc.select("div.summary-chart svg text").get(0).text(), "%").nextToken());
-        Double away_team_possession = Double.parseDouble(new StringTokenizer(doc.select("div.summary-chart svg text").get(1).text(), "%").nextToken());
+
+        String home_poss = doc.select("div.summary-chart svg text").get(0).text();
+        String away_poss = doc.select("div.summary-chart svg text").get(1).text();
+
+        StringTokenizer st = new StringTokenizer(home_poss, "%");
+        Double home_team_possession = (st.hasMoreTokens()) ? Double.parseDouble(st.nextToken()) : 0.0;
+        st = new StringTokenizer(away_poss, "%");
+        Double away_team_possession = (st.hasMoreTokens()) ? Double.parseDouble(st.nextToken()) : 0.0;
         Elements homeRedCardElements = doc.select("div.home span.red_card");
         Elements awayRedCardElements = doc.select("div.away span.red_card");
 

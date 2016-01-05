@@ -42,8 +42,8 @@ public class Distributor extends UntypedActor {
     private final int numChildWorkers = 5;
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private ArrayList<String> blackLists = new ArrayList<String>();
-    private String[] prefixes = {"2011_497/", "2012_1949/", "2013_1951/", "2014_1950/"};
-    private int[] numMatches = {497, 1949, 1951, 1950};
+    private String[] prefixes = {"2012_1949/"/*, "2013_1951/", "2014_1950/"*/};
+    private int[] numMatches = {1949/*, 1951, 1950*/};
     private int currentPrefixIndex = 0;
     private int currentMatchIndex = -1;
     private ActorRef[] trackers = null;
