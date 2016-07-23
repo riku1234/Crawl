@@ -2,7 +2,6 @@ command/Commands$BlockedCrossesCommand.class
 command/Commands$WorkerRoute.class
 command/Commands$CornersCommand.class
 command/Commands$Global.class
-command/Commands$ShortPassesCommand.class
 command/Commands$TacklesCommand.class
 command/Commands$AssistsCommand.class
 actors/Tracker.class
@@ -18,7 +17,6 @@ actors/IO.class
 command/Commands$AerialDuelsCommand.class
 crawl/Crawl.class
 command/Commands$CrossesCommand.class
-command/Commands$LongPassesCommand.class
 command/Commands$StartCommand.class
 command/Commands$MatchGlobals.class
 command/Commands$PlayerDetails.class

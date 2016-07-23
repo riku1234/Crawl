@@ -17,21 +17,24 @@ public class Commands implements Serializable{
     }
 
     public class MatchGlobals implements Serializable {
-        private String gameLink;
         public Long leagueID;
+        public int numMessagesRemaining;
+        public HashMap<String, String> homeSubstitutions;
+        public HashMap<String, String> awaySubstitutions;
+        private String gameLink;
         private String FFT_Match_ID;
         private String season;
         private Date gameDate;
         private Document gameDocument;
         private Document playersDocument;
         private String stadium;
-        private String home_team_name; private String away_team_name;
-        private double home_possession; private double away_possession;
-        private HashMap<String, String> home_red_cards; private HashMap<String, String> away_red_cards;
+        private String home_team_name;
+        private String away_team_name;
+        private double home_possession;
+        private double away_possession;
+        private HashMap<String, String> home_red_cards;
+        private HashMap<String, String> away_red_cards;
         private String fullTimeScore;
-        public int numMessagesRemaining;
-        public HashMap<String, String> homeSubstitutions;
-        public HashMap<String, String> awaySubstitutions;
 
         public MatchGlobals(String gameLink, Long leagueID, String FFT_Match_ID, String season, Date gameDate, String stadium) {
             this.gameLink = gameLink;
@@ -49,20 +52,20 @@ public class Commands implements Serializable{
             this.awaySubstitutions = new HashMap<>();
         }
 
-        public void setGameDocument(Document gameDocument) {
-            this.gameDocument = gameDocument;
-        }
-
         public Document getGameDocument() {
             return this.gameDocument;
         }
 
-        public void setPlayersDocument(Document playersDocument) {
-            this.playersDocument = playersDocument;
+        public void setGameDocument(Document gameDocument) {
+            this.gameDocument = gameDocument;
         }
 
         public Document getPlayersDocument() {
             return this.playersDocument;
+        }
+
+        public void setPlayersDocument(Document playersDocument) {
+            this.playersDocument = playersDocument;
         }
 
         public String getGameLink() {
@@ -113,12 +116,12 @@ public class Commands implements Serializable{
             return this.season;
         }
 
-        public void setNumMessagesRemaining(int numMessagesRemaining) {
-            this.numMessagesRemaining = numMessagesRemaining;
-        }
-
         public int getNumMessagesRemaining() {
             return this.numMessagesRemaining;
+        }
+
+        public void setNumMessagesRemaining(int numMessagesRemaining) {
+            this.numMessagesRemaining = numMessagesRemaining;
         }
 
         public HashMap<String, String> getHomeRedCards() {
@@ -141,8 +144,6 @@ public class Commands implements Serializable{
         public String playerLink;
         public String FFT_player_id;
         public String team_name;
-        public int numShotsComplete;
-        public int numPassesComplete;
         public Document playerDocument;
         public int j;
 
@@ -152,8 +153,6 @@ public class Commands implements Serializable{
             this.j = j;
             this.FFT_player_id = "";
             this.team_name = "";
-            this.numShotsComplete = 0;
-            this.numPassesComplete = 0;
             this.playerDocument = null;
         }
     }
@@ -291,30 +290,6 @@ public class Commands implements Serializable{
                 this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "1_PASS_1101#tabs-wrapper-anchor";
             else
                 this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "1_PASS_1102#tabs-wrapper-anchor";
-        }
-    }
-
-    public class LongPassesCommand extends Global implements Serializable{
-        //public PlayerDetails playerDetails;
-        public String longpasses;
-        //public Document document;
-
-        public LongPassesCommand(PlayerDetails playerDetails) {
-            this.playerDetails = playerDetails;
-            this.longpasses = null;
-            this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "1_PASS_12#tabs-wrapper-anchor";
-        }
-    }
-
-    public class ShortPassesCommand extends Global implements Serializable{
-        //public PlayerDetails playerDetails;
-        public String shortpasses;
-        //public Document document;
-
-        public ShortPassesCommand(PlayerDetails playerDetails) {
-            this.playerDetails = playerDetails;
-            this.shortpasses = null;
-            this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "1_PASS_13#tabs-wrapper-anchor";
         }
     }
 

@@ -50,16 +50,7 @@ public class Tracker extends UntypedActor {
                 return;
             }
             ((Commands.ShotsCommand) message).playerDetails.matchGlobals.setNumMessagesRemaining(((Commands.ShotsCommand) message).playerDetails.matchGlobals.getNumMessagesRemaining() - 1);
-            ((Commands.ShotsCommand) message).playerDetails.numShotsComplete++;
-            if(((Commands.ShotsCommand) message).playerDetails.numShotsComplete == 4) {
-                //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "4th Shot Command Received for Player = " + ((Commands.ShotsCommand) message).playerDetails.FFT_player_id + " Starting 5th.\n");
-                Distributor.ioRouter.route(commands.new ShotsCommand(((Commands.ShotsCommand) message).playerDetails, 5), getSelf());
-            }
-            else if(((Commands.ShotsCommand) message).playerDetails.numShotsComplete == 5) {
-                //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "5th Shot Command Received for Player = " + ((Commands.ShotsCommand) message).playerDetails.FFT_player_id + " Starting Others.\n");
-                Distributor.ioRouter.route(commands.new PenaltiesCommand(((Commands.ShotsCommand) message).playerDetails), getSelf());
-                Distributor.ioRouter.route(commands.new FreekickshotsCommand(((Commands.ShotsCommand) message).playerDetails), getSelf());
-            }
+
             if (((Commands.ShotsCommand) message).playerDetails.matchGlobals.numMessagesRemaining == 0)
                 exitMatch(((Commands.Global) message).playerDetails.matchGlobals);
 
@@ -87,11 +78,7 @@ public class Tracker extends UntypedActor {
         }
         else if(message instanceof Commands.PassesCommand) {
             //System.out.println("Adding Passes for Match=" + ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID() + " Team = " + ((Commands.PassesCommand) message).playerDetails.team_name + " Player = " + ((Commands.PassesCommand) message).playerDetails.FFT_player_id + " Passes = " + ((Commands.PassesCommand) message).passes.size());
-            ((Commands.PassesCommand) message).playerDetails.numPassesComplete++;
-            if(((Commands.PassesCommand) message).playerDetails.numPassesComplete == 3) {
-                //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + "3rd Pass Command Received for Player = " + ((Commands.PassesCommand) message).playerDetails.FFT_player_id + " Starting 4th.\n");
-                Distributor.ioRouter.route(commands.new PassesCommand(((Commands.PassesCommand) message).playerDetails, 4), getSelf());
-            }
+
             if (!Persistence.addPasses(((Commands.PassesCommand) message).passes, ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID(), ((Commands.PassesCommand) message).playerDetails.team_name, ((Commands.PassesCommand) message).playerDetails.FFT_player_id, ((Commands.Global) message).playerDetails.matchGlobals.getSeason())) {
                 crawl.cleanTerminate("Add passes Failed in Persistence.", ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID(), getContext().parent());
                 return;
@@ -121,24 +108,6 @@ public class Tracker extends UntypedActor {
         else if(message instanceof Commands.ChancesCreatedCommand) {
             if (!Persistence.addChancesCreated(((Commands.ChancesCreatedCommand) message).chancescreated, ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID(), ((Commands.ChancesCreatedCommand) message).playerDetails.team_name, ((Commands.ChancesCreatedCommand) message).playerDetails.FFT_player_id, ((Commands.Global) message).playerDetails.matchGlobals.getSeason())) {
                 crawl.cleanTerminate("Add chances created Failed in Persistence.", ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID(), getContext().parent());
-                return;
-            }
-            ((Commands.Global) message).playerDetails.matchGlobals.numMessagesRemaining--;
-            if (((Commands.Global) message).playerDetails.matchGlobals.numMessagesRemaining == 0)
-                exitMatch(((Commands.Global) message).playerDetails.matchGlobals);
-        }
-        else if(message instanceof Commands.LongPassesCommand) {
-            if (!Persistence.addLongPasses(((Commands.LongPassesCommand) message).longpasses, ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID(), ((Commands.LongPassesCommand) message).playerDetails.team_name, ((Commands.LongPassesCommand) message).playerDetails.FFT_player_id, ((Commands.Global) message).playerDetails.matchGlobals.getSeason())) {
-                crawl.cleanTerminate("Add long passes Failed in Persistence.", ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID(), getContext().parent());
-                return;
-            }
-            ((Commands.Global) message).playerDetails.matchGlobals.numMessagesRemaining--;
-            if (((Commands.Global) message).playerDetails.matchGlobals.numMessagesRemaining == 0)
-                exitMatch(((Commands.Global) message).playerDetails.matchGlobals);
-        }
-        else if(message instanceof Commands.ShortPassesCommand) {
-            if (!Persistence.addShortPasses(((Commands.ShortPassesCommand) message).shortpasses, ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID(), ((Commands.ShortPassesCommand) message).playerDetails.team_name, ((Commands.ShortPassesCommand) message).playerDetails.FFT_player_id, ((Commands.Global) message).playerDetails.matchGlobals.getSeason())) {
-                crawl.cleanTerminate("Add short passes Failed in Persistence.", ((Commands.Global) message).playerDetails.matchGlobals.getFFT_Match_ID(), getContext().parent());
                 return;
             }
             ((Commands.Global) message).playerDetails.matchGlobals.numMessagesRemaining--;

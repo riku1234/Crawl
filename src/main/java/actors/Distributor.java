@@ -36,14 +36,14 @@ public class Distributor extends UntypedActor {
     private final Commands commands = new Commands();
     private final Crawl crawl = new Crawl();
     private final int num_cores = Runtime.getRuntime().availableProcessors();
-    private final int numTrackers = 5;
+    private final int numTrackers = num_cores;
     private final int numTORProxies = 10;
     private final int numIOWorkers = Math.max(numTORProxies, numTrackers);
-    private final int numChildWorkers = 5;
+    private final int numChildWorkers = num_cores;
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private ArrayList<String> blackLists = new ArrayList<String>();
-    private String[] prefixes = {"2012_1949/"/*, "2013_1951/", "2014_1950/"*/};
-    private int[] numMatches = {1949/*, 1951, 1950*/};
+    private String[] prefixes = {"2010_490", "2011_497", "2012_1949/", "2013_1951/", "2014_1950/"};
+    private int[] numMatches = {490, 497, 1949, 1951, 1950};
     private int currentPrefixIndex = 0;
     private int currentMatchIndex = -1;
     private ActorRef[] trackers = null;
@@ -138,7 +138,7 @@ public class Distributor extends UntypedActor {
                 return;
             }
 
-            ((Commands.MatchGlobals) message).setNumMessagesRemaining(33 * (playerLinks.get(0).size() + playerLinks.get(1).size() + playerLinks.get(2).size() + playerLinks.get(4).size()));
+            ((Commands.MatchGlobals) message).setNumMessagesRemaining(31 * (playerLinks.get(0).size() + playerLinks.get(1).size() + playerLinks.get(2).size() + playerLinks.get(4).size()));
 
             for (int j = 0; j < playerLinks.size(); j++) {
                 Boolean noTask = false;
@@ -333,16 +333,18 @@ public class Distributor extends UntypedActor {
         ioRouter.route(commands.new ShotsCommand(playerDetails, 2), getSender());
         ioRouter.route(commands.new ShotsCommand(playerDetails, 3), getSender());
         ioRouter.route(commands.new ShotsCommand(playerDetails, 4), getSender());
+        ioRouter.route(commands.new ShotsCommand(playerDetails, 5), getSelf());
+        ioRouter.route(commands.new PenaltiesCommand(playerDetails), getSelf());
+        ioRouter.route(commands.new FreekickshotsCommand(playerDetails), getSelf());
         ioRouter.route(commands.new PassesCommand(playerDetails, 1), getSender());
         ioRouter.route(commands.new PassesCommand(playerDetails, 2), getSender());
         ioRouter.route(commands.new PassesCommand(playerDetails, 3), getSender());
+        ioRouter.route(commands.new PassesCommand(playerDetails, 4), getSelf());
         ioRouter.route(commands.new AssistsCommand(playerDetails, 1), getSender());
         ioRouter.route(commands.new AssistsCommand(playerDetails, 2), getSender());
         ioRouter.route(commands.new ReceivedPassesCommand(playerDetails), getSender());
         ioRouter.route(commands.new ChancesCreatedCommand(playerDetails, 1), getSender());
         ioRouter.route(commands.new ChancesCreatedCommand(playerDetails, 2), getSender());
-        ioRouter.route(commands.new LongPassesCommand(playerDetails), getSender());
-        ioRouter.route(commands.new ShortPassesCommand(playerDetails), getSender());
         ioRouter.route(commands.new CrossesCommand(playerDetails), getSender());
         ioRouter.route(commands.new TakeOnsCommand(playerDetails), getSender());
         ioRouter.route(commands.new CornersCommand(playerDetails), getSender());

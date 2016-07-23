@@ -45,16 +45,6 @@ public class Child extends UntypedActor{
             //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. CHANCESCREATED. Index = " + ((Commands.ChancesCreatedCommand) message).index + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " Chances = " + ((Commands.ChancesCreatedCommand) message).chancescreated.size() + "\n");
             getSender().tell(message, getSelf());
         }
-        else if(message instanceof Commands.LongPassesCommand) {
-            ((Commands.LongPassesCommand) message).longpasses = crawl.getLongPassesDetails(((Commands.LongPassesCommand) message).document);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. LONGPASSES. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " LongPasses = " + ((Commands.LongPassesCommand) message).longpasses + "\n");
-            getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.ShortPassesCommand) {
-            ((Commands.ShortPassesCommand) message).shortpasses = crawl.getShortPassesDetails(((Commands.ShortPassesCommand) message).document);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. SHORTPASSES. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " ShortPasses = " + ((Commands.ShortPassesCommand) message).shortpasses + "\n");
-            getSender().tell(message, getSelf());
-        }
         else if(message instanceof Commands.CrossesCommand) {
             ((Commands.CrossesCommand) message).crosses = crawl.crossesDetails(((Commands.CrossesCommand) message).document);
             //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. CROSSES. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " Crosses = " + ((Commands.CrossesCommand) message).crosses.size() + "\n");
