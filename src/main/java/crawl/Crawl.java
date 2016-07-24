@@ -48,10 +48,16 @@ public class Crawl {
             e.printStackTrace();
         }
 
+
+        int num_trackers = Integer.parseInt(args[0]);
+        int num_child = Integer.parseInt(args[1]);
+        int num_io = Integer.parseInt(args[2]);
+        int num_tor = Integer.parseInt(args[3]);
+
         Persistence.createTables();
         final ActorSystem actorSystem = ActorSystem.create("Actor-System");
         final ActorRef distributor = actorSystem.actorOf(Props.create(Distributor.class).withDispatcher("DistributorDispatcher"), "Distributor");
-        distributor.tell(new Commands().new StartCommand(), null);
+        distributor.tell(new Commands().new StartCommand(num_trackers, num_child, num_io, num_tor), null);
 
 
         //ArrayList<String> FFTResultsPage = new ArrayList<String>();
