@@ -34,7 +34,7 @@ public class Tracker extends UntypedActor {
                 log.info("Setup message received by Tracker " + getSelf().path() + " Asking Distributor for Next Match.");
                 startTime = System.currentTimeMillis();
                 getSender().tell("NextMatch", getSelf());
-                //getContext().system().scheduler().scheduleOnce(Duration.create(5000, TimeUnit.MILLISECONDS), getSelf(), "Tick", getContext().dispatcher(), null);
+                getContext().system().scheduler().scheduleOnce(Duration.create(5000, TimeUnit.MILLISECONDS), getSelf(), "Tick", getContext().dispatcher(), null);
             } else if (message.equals("Tick")) {
                 System.out.println("Tracker " + index + " Alive ... Messages Remaining = " + this.num_messages_remaining);
                 getContext().system().scheduler().scheduleOnce(
@@ -49,9 +49,8 @@ public class Tracker extends UntypedActor {
                 crawl.cleanTerminate("Add shots Failed in Persistence.", ((Commands.ShotsCommand) message).playerDetails.matchGlobals.getFFT_Match_ID(), getContext().parent());
                 return;
             }
-            ((Commands.ShotsCommand) message).playerDetails.matchGlobals.setNumMessagesRemaining(((Commands.ShotsCommand) message).playerDetails.matchGlobals.getNumMessagesRemaining() - 1);
-
-            if (((Commands.ShotsCommand) message).playerDetails.matchGlobals.numMessagesRemaining == 0)
+            ((Commands.Global) message).playerDetails.matchGlobals.numMessagesRemaining--;
+            if (((Commands.Global) message).playerDetails.matchGlobals.numMessagesRemaining == 0)
                 exitMatch(((Commands.Global) message).playerDetails.matchGlobals);
 
         }
