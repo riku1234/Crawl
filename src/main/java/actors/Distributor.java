@@ -36,10 +36,10 @@ public class Distributor extends UntypedActor {
     private final Commands commands = new Commands();
     private final Crawl crawl = new Crawl();
     private final int num_cores = Runtime.getRuntime().availableProcessors();
-    private final int numTrackers = num_cores;
-    private final int numTORProxies = 10;
+    private final int numTrackers = num_cores * 2;
+    private final int numTORProxies = 20;
     private final int numIOWorkers = Math.max(numTORProxies, numTrackers);
-    private final int numChildWorkers = num_cores;
+    private final int numChildWorkers = num_cores * 2;
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private ArrayList<String> blackLists = new ArrayList<String>();
     private String[] prefixes = {"2010_490/", "2011_497/", "2012_1949/", "2013_1951/", "2014_1950/"};
