@@ -12,8 +12,7 @@ import org.jsoup.nodes.Document;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 
 /**
  * Created by gsm on 9/23/15.
@@ -22,13 +21,14 @@ public class IO extends UntypedActor{
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private int torIndex = -1;
     private int socksPort = -1;
+    private Proxy proxy;
 
     private String getHTTPResponse(String url) {
 
         try {
             URL obj = new URL(url);
 
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection(proxy);
 
             con.setRequestMethod("GET");
 
@@ -91,6 +91,8 @@ public class IO extends UntypedActor{
             System.out.println("Actor " + this.toString() + " receiving message " + message);
             this.torIndex = Integer.parseInt(((String) message).split("-")[1]);
             this.socksPort = 9051 + this.torIndex;
+            SocketAddress addr = new InetSocketAddress("127.0.0.1", this.socksPort);
+            this.proxy = new Proxy(Proxy.Type.HTTP, addr);
         } else if (message instanceof MatchGlobals) {
             //log.info("Match Globals request received on Port = " + this.socksPort);
             //log.info("GameLink = " + ((MatchGlobals) message).getGameLink());
