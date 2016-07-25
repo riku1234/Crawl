@@ -42,6 +42,7 @@ public class Tracker extends UntypedActor {
             }
 
             if (((ShotsCommand) message).index < 5) {
+                System.out.println("Received Shots Command for index = " + ((ShotsCommand) message).index);
                 Distributor.ioRouter.route(new ShotsCommand(((ShotsCommand) message).playerDetails, ((ShotsCommand) message).index + 1), getSender());
             } else {
                 Distributor.ioRouter.route(new PenaltiesCommand(((ShotsCommand) message).playerDetails), getSelf());
