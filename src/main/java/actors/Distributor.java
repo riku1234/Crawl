@@ -9,8 +9,11 @@ import akka.routing.ActorRefRoutee;
 import akka.routing.Routee;
 import akka.routing.Router;
 import akka.routing.SmallestMailboxRoutingLogic;
-import command.Commands;
 import crawl.Crawl;
+import defs.MatchGlobals;
+import defs.PlayerDetails;
+import defs.commands.ShotsCommand;
+import defs.commands.StartCommand;
 import fourfourtwo.Helper;
 import fourfourtwo.Persistence;
 import org.json.simple.JSONObject;
@@ -33,7 +36,6 @@ public class Distributor extends UntypedActor {
     public static Router ioRouter = null;
     public static Router childRouter = null;
     public static ActorRef perfActor = null;
-    private final Commands commands = new Commands();
     private final Crawl crawl = new Crawl();
     private final int num_cores = Runtime.getRuntime().availableProcessors();
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
@@ -68,11 +70,11 @@ public class Distributor extends UntypedActor {
     public void onReceive(Object message) {
         if(perfActor != null)
             perfActor.tell("Distributor", getSelf());
-        if(message instanceof Commands.StartCommand) {
-            this.numTrackers = ((Commands.StartCommand) message).num_trackers;
-            this.numChildWorkers = ((Commands.StartCommand) message).num_child;
-            this.numIOWorkers = ((Commands.StartCommand) message).num_io;
-            this.numTORProxies = ((Commands.StartCommand) message).num_tor;
+        if (message instanceof StartCommand) {
+            this.numTrackers = ((StartCommand) message).num_trackers;
+            this.numChildWorkers = ((StartCommand) message).num_child;
+            this.numIOWorkers = ((StartCommand) message).num_io;
+            this.numTORProxies = ((StartCommand) message).num_tor;
 
             System.out.println("Number of TOR Proxies = " + numTORProxies);
             //log.info("Start message received by Distributor. Setting up actors.");
@@ -129,21 +131,18 @@ public class Distributor extends UntypedActor {
             else {
                 crawl.cleanTerminate("Strange Error inside onReceive of Distributor. Exiting.");
             }
-        }
-        else if(message instanceof Commands.MatchGlobals) {
+        } else if (message instanceof MatchGlobals) {
             //log.info("Match Globals request received by Distributor.");
-            if(!crawl.populateGameDetails((Commands.MatchGlobals) message)) {
-                crawl.cleanTerminate("Populate Game Details failed for GameLink = " + ((Commands.MatchGlobals) message).getGameLink(), ((Commands.MatchGlobals) message).getFFT_Match_ID(), getSelf());
+            if (!crawl.populateGameDetails((MatchGlobals) message)) {
+                crawl.cleanTerminate("Populate Game Details failed for GameLink = " + ((MatchGlobals) message).gameLink, ((MatchGlobals) message).FFT_Match_ID, getSelf());
                 return;
             }
 
-            List<Elements> playerLinks = crawl.getPlayerStatsLink(((Commands.MatchGlobals) message).getPlayersDocument());
+            List<Elements> playerLinks = crawl.getPlayerStatsLink(((MatchGlobals) message).playersDocument);
             if(playerLinks == null || playerLinks.size() != 6) {
-                crawl.cleanTerminate("PlayerLinks is null. Error.", ((Commands.MatchGlobals) message).getFFT_Match_ID(), getSelf());
+                crawl.cleanTerminate("PlayerLinks is null. Error.", ((MatchGlobals) message).FFT_Match_ID, getSelf());
                 return;
             }
-
-            ((Commands.MatchGlobals) message).setNumMessagesRemaining(31 * (playerLinks.get(0).size() + playerLinks.get(1).size() + playerLinks.get(2).size() + playerLinks.get(4).size()));
 
             for (int j = 0; j < playerLinks.size(); j++) {
                 Boolean noTask = false;
@@ -156,7 +155,7 @@ public class Distributor extends UntypedActor {
                         String playerLink = temp.get(k).attr("abs:href");
                         //log.info("Player Link = " + playerLink);
                         //this.getPlayerDetails(playerLink, j, sender);
-                        Commands.PlayerDetails playerDetails = commands.new PlayerDetails((Commands.MatchGlobals)message, playerLink, j);
+                        PlayerDetails playerDetails = new PlayerDetails((MatchGlobals) message, playerLink, j);
                         ioRouter.route(playerDetails, getSender());
                     }
                 }
@@ -166,20 +165,19 @@ public class Distributor extends UntypedActor {
                 String homeTeamSubInLink = playerLinks.get(2).get(j).attr("abs:href");
                 String homeTeamSubOutLink = playerLinks.get(3).get(j).attr("abs:href");
 
-                ((Commands.MatchGlobals) message).homeSubstitutions.put(homeTeamSubInLink, homeTeamSubOutLink);
+                ((MatchGlobals) message).homeSubstitutions.put(homeTeamSubInLink, homeTeamSubOutLink);
             }
 
             for (int j = 0; j < playerLinks.get(4).size(); j++) {
                 String awayTeamSubInLink = playerLinks.get(4).get(j).attr("abs:href");
                 String awayTeamSubOutLink = playerLinks.get(5).get(j).attr("abs:href");
 
-                ((Commands.MatchGlobals) message).awaySubstitutions.put(awayTeamSubInLink, awayTeamSubOutLink);
+                ((MatchGlobals) message).awaySubstitutions.put(awayTeamSubInLink, awayTeamSubOutLink);
             }
-        }
-        else if(message instanceof Commands.PlayerDetails) {
+        } else if (message instanceof PlayerDetails) {
             //log.info("Player Details request received by Distributor.");
-            if(!this.getPlayerDetails((Commands.PlayerDetails) message)) {
-                crawl.cleanTerminate("Skipping game = " + ((Commands.PlayerDetails) message).matchGlobals.getFFT_Match_ID(), ((Commands.PlayerDetails) message).matchGlobals.getFFT_Match_ID(), getSelf());
+            if (!this.getPlayerDetails((PlayerDetails) message)) {
+                crawl.cleanTerminate("Skipping game = " + ((PlayerDetails) message).matchGlobals.FFT_Match_ID, ((PlayerDetails) message).matchGlobals.FFT_Match_ID, getSelf());
                 return;
             }
         }
@@ -227,7 +225,7 @@ public class Distributor extends UntypedActor {
                 Persistence.addLeague(leagueID);
                 String season = (String) jsonObject.get("Season");
                 Date gameDate = df.parse((String) jsonObject.get("Date"));
-                Commands.MatchGlobals matchGlobals = commands.new MatchGlobals(gameLink, leagueID, FFT_Match_ID, season, gameDate, stadium);
+                MatchGlobals matchGlobals = new MatchGlobals(gameLink, leagueID, FFT_Match_ID, season, gameDate, stadium);
                 log.info("Starting GameLink = " + gameLink);
                 ioRouter.route(matchGlobals, tracker);
             } catch (FileNotFoundException e) {
@@ -242,7 +240,7 @@ public class Distributor extends UntypedActor {
         }
     }
 
-    private boolean getPlayerDetails(Commands.PlayerDetails playerDetails) {
+    private boolean getPlayerDetails(PlayerDetails playerDetails) {
         //System.out.println("Player Link = " + playerLink);
         String[] playerLinkSplits = playerDetails.playerLink.split("/");
         String FFT_player_id = playerLinkSplits[8];
@@ -253,8 +251,8 @@ public class Distributor extends UntypedActor {
 
         playerDetails.FFT_player_id = FFT_player_id; playerDetails.team_name = team_name;
 
-        if(!Persistence.addPlayer(team_name, playerName, FFT_player_id, playerDetails.matchGlobals.getFFT_Match_ID(), playerDetails.matchGlobals.getGameDate())) {
-            System.out.println("Add Player failed for Team = " + team_name + " Player = " + playerName + " MatchID = " + playerDetails.matchGlobals.getFFT_Match_ID());
+        if (!Persistence.addPlayer(team_name, playerName, FFT_player_id, playerDetails.matchGlobals.FFT_Match_ID, playerDetails.matchGlobals.gameDate)) {
+            System.out.println("Add Player failed for Team = " + team_name + " Player = " + playerName + " MatchID = " + playerDetails.matchGlobals.FFT_Match_ID);
             System.out.println("Player Link = " + playerDetails.playerLink);
             return false;
         }
@@ -262,68 +260,68 @@ public class Distributor extends UntypedActor {
         String[] playerNameSplits = playerName.split(" ");
         switch(playerDetails.j) {
             case 0:
-                if(!Persistence.addStartingXIs(playerDetails.matchGlobals.getFFT_Match_ID(), team_name, FFT_player_id, playerDetails.matchGlobals.getSeason())) {
-                    System.out.println("Add Starting XI Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.getFFT_Match_ID());
+                if (!Persistence.addStartingXIs(playerDetails.matchGlobals.FFT_Match_ID, team_name, FFT_player_id, playerDetails.matchGlobals.season)) {
+                    System.out.println("Add Starting XI Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.FFT_Match_ID);
                     return false;
                 }
                 for(String s : playerNameSplits) {
-                    if(playerDetails.matchGlobals.getHomeRedCards().containsKey(s)) {
+                    if (playerDetails.matchGlobals.home_red_cards.containsKey(s)) {
                         System.out.println("Red Card to Player Short = " + s + " Long = " + playerName);
-                        String time = playerDetails.matchGlobals.getHomeRedCards().get(s);
-                        playerDetails.matchGlobals.getHomeRedCards().remove(s);
-                        if(!Persistence.addRedCard(playerDetails.matchGlobals.getFFT_Match_ID(), team_name, FFT_player_id, playerDetails.matchGlobals.getSeason(), time)) {
-                            System.out.println("Add Home Red Card Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.getFFT_Match_ID());
+                        String time = playerDetails.matchGlobals.home_red_cards.get(s);
+                        playerDetails.matchGlobals.home_red_cards.remove(s);
+                        if (!Persistence.addRedCard(playerDetails.matchGlobals.FFT_Match_ID, team_name, FFT_player_id, playerDetails.matchGlobals.season, time)) {
+                            System.out.println("Add Home Red Card Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.FFT_Match_ID);
                             return false;
                         }
                     }
                 }
                 break;
             case 1:
-                if(!Persistence.addStartingXIs(playerDetails.matchGlobals.getFFT_Match_ID(), team_name, FFT_player_id, playerDetails.matchGlobals.getSeason())) {
-                    System.out.println("Add Starting XI Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.getFFT_Match_ID());
+                if (!Persistence.addStartingXIs(playerDetails.matchGlobals.FFT_Match_ID, team_name, FFT_player_id, playerDetails.matchGlobals.season)) {
+                    System.out.println("Add Starting XI Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.FFT_Match_ID);
                     return false;
                 }
                 for(String s : playerNameSplits) {
-                    if(playerDetails.matchGlobals.getAwayRedCards().containsKey(s)) {
+                    if (playerDetails.matchGlobals.away_red_cards.containsKey(s)) {
                         System.out.println("Red Card to Player Short = " + s + " Long = " + playerName);
-                        String time = playerDetails.matchGlobals.getAwayRedCards().get(s);
-                        playerDetails.matchGlobals.getAwayRedCards().remove(s);
-                        if(!Persistence.addRedCard(playerDetails.matchGlobals.getFFT_Match_ID(), team_name, FFT_player_id, playerDetails.matchGlobals.getSeason(), time)) {
-                            System.out.println("Add Away Red Card Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.getFFT_Match_ID());
+                        String time = playerDetails.matchGlobals.away_red_cards.get(s);
+                        playerDetails.matchGlobals.away_red_cards.remove(s);
+                        if (!Persistence.addRedCard(playerDetails.matchGlobals.FFT_Match_ID, team_name, FFT_player_id, playerDetails.matchGlobals.season, time)) {
+                            System.out.println("Add Away Red Card Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.FFT_Match_ID);
                             return false;
                         }
                     }
                 }
                 break;
             case 2:
-                if(!Persistence.addSUBs(playerDetails.matchGlobals.getFFT_Match_ID(), team_name, FFT_player_id, playerDetails.matchGlobals.getSeason())) {
-                    System.out.println("Add SUB Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.getFFT_Match_ID());
+                if (!Persistence.addSUBs(playerDetails.matchGlobals.FFT_Match_ID, team_name, FFT_player_id, playerDetails.matchGlobals.season)) {
+                    System.out.println("Add SUB Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.FFT_Match_ID);
                     return false;
                 }
                 for(String s : playerNameSplits) {
-                    if(playerDetails.matchGlobals.getHomeRedCards().containsKey(s)) {
+                    if (playerDetails.matchGlobals.home_red_cards.containsKey(s)) {
                         System.out.println("Red Card to Player Short = " + s + " Long = " + playerName);
-                        String time = playerDetails.matchGlobals.getHomeRedCards().get(s);
-                        playerDetails.matchGlobals.getHomeRedCards().remove(s);
-                        if(!Persistence.addRedCard(playerDetails.matchGlobals.getFFT_Match_ID(), team_name, FFT_player_id, playerDetails.matchGlobals.getSeason(), time)) {
-                            System.out.println("Add Home Red Card Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.getFFT_Match_ID());
+                        String time = playerDetails.matchGlobals.home_red_cards.get(s);
+                        playerDetails.matchGlobals.home_red_cards.remove(s);
+                        if (!Persistence.addRedCard(playerDetails.matchGlobals.FFT_Match_ID, team_name, FFT_player_id, playerDetails.matchGlobals.season, time)) {
+                            System.out.println("Add Home Red Card Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.FFT_Match_ID);
                             return false;
                         }
                     }
                 }
                 break;
             case 4:
-                if(!Persistence.addSUBs(playerDetails.matchGlobals.getFFT_Match_ID(), team_name, FFT_player_id, playerDetails.matchGlobals.getSeason())) {
-                    System.out.println("Add SUB Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.getFFT_Match_ID());
+                if (!Persistence.addSUBs(playerDetails.matchGlobals.FFT_Match_ID, team_name, FFT_player_id, playerDetails.matchGlobals.season)) {
+                    System.out.println("Add SUB Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.FFT_Match_ID);
                     return false;
                 }
                 for(String s : playerNameSplits) {
-                    if(playerDetails.matchGlobals.getAwayRedCards().containsKey(s)) {
+                    if (playerDetails.matchGlobals.away_red_cards.containsKey(s)) {
                         System.out.println("Red Card to Player Short = " + s + " Long = " + playerName);
-                        String time = playerDetails.matchGlobals.getAwayRedCards().get(s);
-                        playerDetails.matchGlobals.getAwayRedCards().remove(s);
-                        if(!Persistence.addRedCard(playerDetails.matchGlobals.getFFT_Match_ID(), team_name, FFT_player_id, playerDetails.matchGlobals.getSeason(), time)) {
-                            System.out.println("Add Away Red Card Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.getFFT_Match_ID());
+                        String time = playerDetails.matchGlobals.away_red_cards.get(s);
+                        playerDetails.matchGlobals.away_red_cards.remove(s);
+                        if (!Persistence.addRedCard(playerDetails.matchGlobals.FFT_Match_ID, team_name, FFT_player_id, playerDetails.matchGlobals.season, time)) {
+                            System.out.println("Add Away Red Card Failed for Player ID = " + FFT_player_id + " Team = " + team_name + " MatchID = " + playerDetails.matchGlobals.FFT_Match_ID);
                             return false;
                         }
                     }
@@ -334,37 +332,7 @@ public class Distributor extends UntypedActor {
                 return false;
         }
 
-        ioRouter.route(commands.new ShotsCommand(playerDetails, 1), getSender());
-        //ioRouter.route(commands.new ShotsCommand(playerDetails, 2), getSender());
-        //ioRouter.route(commands.new ShotsCommand(playerDetails, 3), getSender());
-        //ioRouter.route(commands.new ShotsCommand(playerDetails, 4), getSender());
-        //ioRouter.route(commands.new ShotsCommand(playerDetails, 5), getSelf());
-        //ioRouter.route(commands.new PenaltiesCommand(playerDetails), getSelf());
-        //ioRouter.route(commands.new FreekickshotsCommand(playerDetails), getSelf());
-        //ioRouter.route(commands.new PassesCommand(playerDetails, 1), getSender());
-        //ioRouter.route(commands.new PassesCommand(playerDetails, 2), getSender());
-        //ioRouter.route(commands.new PassesCommand(playerDetails, 3), getSender());
-        //ioRouter.route(commands.new PassesCommand(playerDetails, 4), getSelf());
-        //ioRouter.route(commands.new AssistsCommand(playerDetails, 1), getSender());
-        //ioRouter.route(commands.new AssistsCommand(playerDetails, 2), getSender());
-        //ioRouter.route(commands.new ReceivedPassesCommand(playerDetails), getSender());
-        //ioRouter.route(commands.new ChancesCreatedCommand(playerDetails, 1), getSender());
-        //ioRouter.route(commands.new ChancesCreatedCommand(playerDetails, 2), getSender());
-        //ioRouter.route(commands.new CrossesCommand(playerDetails), getSender());
-        //ioRouter.route(commands.new TakeOnsCommand(playerDetails), getSender());
-        //ioRouter.route(commands.new CornersCommand(playerDetails), getSender());
-        //ioRouter.route(commands.new OffsidePassesCommand(playerDetails), getSender());
-        //ioRouter.route(commands.new BallRecoveriesCommand(playerDetails), getSender());
-        //ioRouter.route(commands.new TacklesCommand(playerDetails), getSender());
-        //ioRouter.route(commands.new InterceptionsCommand(playerDetails), getSender());
-        //ioRouter.route(commands.new BlocksCommand(playerDetails), getSender());
-        //ioRouter.route(commands.new ClearancesCommand(playerDetails), getSender());
-        //ioRouter.route(commands.new AerialDuelsCommand(playerDetails), getSender());
-        //ioRouter.route(commands.new BlockedCrossesCommand(playerDetails), getSender());
-        //ioRouter.route(commands.new DefensiveErrorsCommand(playerDetails, 1), getSender());
-        //ioRouter.route(commands.new DefensiveErrorsCommand(playerDetails, 2), getSender());
-        //ioRouter.route(commands.new FoulsCommand(playerDetails, 1), getSender());
-        //ioRouter.route(commands.new FoulsCommand(playerDetails, 2), getSender());
+        ioRouter.route(new ShotsCommand(playerDetails, 1), getSender());
 
         return true;
     }

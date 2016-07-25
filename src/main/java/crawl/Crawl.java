@@ -4,7 +4,8 @@ import actors.Distributor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import command.Commands;
+import defs.MatchGlobals;
+import defs.commands.StartCommand;
 import fourfourtwo.Helper;
 import fourfourtwo.Persistence;
 import org.json.simple.JSONObject;
@@ -57,7 +58,7 @@ public class Crawl {
         Persistence.createTables();
         final ActorSystem actorSystem = ActorSystem.create("Actor-System");
         final ActorRef distributor = actorSystem.actorOf(Props.create(Distributor.class).withDispatcher("DistributorDispatcher"), "Distributor");
-        distributor.tell(new Commands().new StartCommand(num_trackers, num_child, num_io, num_tor), null);
+        distributor.tell(new StartCommand(num_trackers, num_child, num_io, num_tor), null);
 
 
         //ArrayList<String> FFTResultsPage = new ArrayList<String>();
@@ -299,9 +300,9 @@ public class Crawl {
         jsonObject.put("Date", game_date);
     }
 
-    public boolean populateGameDetails(Commands.MatchGlobals matchGlobals) {
+    public boolean populateGameDetails(MatchGlobals matchGlobals) {
 
-        Document doc = matchGlobals.getGameDocument();
+        Document doc = matchGlobals.gameDocument;
         String home_team_name = doc.select("span.home-head").text();
         String away_team_name = doc.select("span.away-head").text();
         String full_time_score = doc.select("span.score").text();
@@ -316,26 +317,28 @@ public class Crawl {
         Elements homeRedCardElements = doc.select("div.home span.red_card");
         Elements awayRedCardElements = doc.select("div.away span.red_card");
 
-        matchGlobals.setHome_team_name(home_team_name); matchGlobals.setAway_team_name(away_team_name);
-        matchGlobals.setHome_possession(home_team_possession); matchGlobals.setAway_possession(away_team_possession);
-        matchGlobals.setFullTimeScore(full_time_score);
+        matchGlobals.home_team_name = home_team_name;
+        matchGlobals.away_team_name = away_team_name;
+        matchGlobals.home_possession = home_team_possession;
+        matchGlobals.away_possession = away_team_possession;
+        matchGlobals.fullTimeScore = full_time_score;
 
         for(int i=0;i<homeRedCardElements.size();i++) {
             String text = homeRedCardElements.get(i).text();
             String[] splits = text.split(" ");
-            matchGlobals.addHomeRedCard(splits[0].trim(), splits[1].trim());
+            matchGlobals.home_red_cards.put(splits[0].trim(), splits[1].trim());
             System.out.println("Home Red added. Name = " + splits[0] + " Time = " + splits[1]);
         }
 
         for(int i=0;i<awayRedCardElements.size();i++) {
             String text = awayRedCardElements.get(i).text();
             String[] splits = text.split(" ");
-            matchGlobals.addAwayRedCard(splits[1].trim(), splits[0].trim());
+            matchGlobals.away_red_cards.put(splits[1].trim(), splits[0].trim());
             System.out.println("Away Red added. Name = " + splits[1] + " Time = " + splits[0]);
         }
 
-        if(!Persistence.addMatch(matchGlobals.getStadium(), matchGlobals.getGameDate(), matchGlobals.leagueID, home_team_name, away_team_name, full_time_score, matchGlobals.getFFT_Match_ID(), matchGlobals.getSeason(), home_team_possession, away_team_possession)) {
-            System.out.println("Add Match Unsuccessful for GameLink = " + matchGlobals.getGameLink());
+        if (!Persistence.addMatch(matchGlobals.stadium, matchGlobals.gameDate, matchGlobals.leagueID, home_team_name, away_team_name, full_time_score, matchGlobals.FFT_Match_ID, matchGlobals.season, home_team_possession, away_team_possession)) {
+            System.out.println("Add Match Unsuccessful for GameLink = " + matchGlobals.gameLink);
             return false;
         }
         return true;

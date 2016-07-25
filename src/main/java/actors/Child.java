@@ -1,8 +1,8 @@
 package actors;
 
 import akka.actor.UntypedActor;
-import command.Commands;
 import crawl.Crawl;
+import defs.commands.*;
 
 /**
  * Created by gsm on 9/11/15.
@@ -16,98 +16,79 @@ public class Child extends UntypedActor{
             Distributor.perfActor.tell("Child-" + index, getSelf());
         if (message instanceof String) {
             this.index = Integer.parseInt(((String) message).split("-")[1]);
-        } else if (message instanceof Commands.ShotsCommand) {
-            ((Commands.ShotsCommand) message).shots = crawl.shotsDetails(((Commands.ShotsCommand) message).document, ((Commands.ShotsCommand) message).index);
+        } else if (message instanceof ShotsCommand) {
+            ((ShotsCommand) message).shots = crawl.shotsDetails(((ShotsCommand) message).document, ((ShotsCommand) message).index);
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.PenaltiesCommand) {
-            ((Commands.PenaltiesCommand) message).penalties = crawl.penaltyDetails(((Commands.PenaltiesCommand) message).document);
+        } else if (message instanceof PenaltiesCommand) {
+            ((PenaltiesCommand) message).penalties = crawl.penaltyDetails(((PenaltiesCommand) message).document);
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.FreekickshotsCommand) {
-            ((Commands.FreekickshotsCommand) message).freekickshots = crawl.freekickShotsDetails(((Commands.FreekickshotsCommand) message).document);
+        } else if (message instanceof FreekickshotsCommand) {
+            ((FreekickshotsCommand) message).freekickshots = crawl.freekickShotsDetails(((FreekickshotsCommand) message).document);
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.PassesCommand) {
-            ((Commands.PassesCommand) message).passes = crawl.passDetails(((Commands.PassesCommand) message).document, ((Commands.PassesCommand) message).index);
+        } else if (message instanceof PassesCommand) {
+            ((PassesCommand) message).passes = crawl.passDetails(((PassesCommand) message).document, ((PassesCommand) message).index);
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.AssistsCommand) {
-            ((Commands.AssistsCommand) message).assists = crawl.assistDetails(((Commands.AssistsCommand) message).document, ((Commands.AssistsCommand) message).index);
+        } else if (message instanceof AssistsCommand) {
+            ((AssistsCommand) message).assists = crawl.assistDetails(((AssistsCommand) message).document, ((AssistsCommand) message).index);
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.ReceivedPassesCommand) {
-            ((Commands.ReceivedPassesCommand) message).receivedpasses = crawl.receivedPassDetails(((Commands.ReceivedPassesCommand) message).document);
+        } else if (message instanceof ReceivedPassesCommand) {
+            ((ReceivedPassesCommand) message).receivedpasses = crawl.receivedPassDetails(((ReceivedPassesCommand) message).document);
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.ChancesCreatedCommand) {
-            ((Commands.ChancesCreatedCommand) message).chancescreated = crawl.chancesCreatedDetails(((Commands.ChancesCreatedCommand) message).document, ((Commands.ChancesCreatedCommand) message).index);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. CHANCESCREATED. Index = " + ((Commands.ChancesCreatedCommand) message).index + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " Chances = " + ((Commands.ChancesCreatedCommand) message).chancescreated.size() + "\n");
+        } else if (message instanceof ChancesCreatedCommand) {
+            ((ChancesCreatedCommand) message).chancescreated = crawl.chancesCreatedDetails(((ChancesCreatedCommand) message).document, ((ChancesCreatedCommand) message).index);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. CHANCESCREATED. Index = " + ((ChancesCreatedCommand) message).index + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " Chances = " + ((ChancesCreatedCommand) message).chancescreated.size() + "\n");
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.CrossesCommand) {
-            ((Commands.CrossesCommand) message).crosses = crawl.crossesDetails(((Commands.CrossesCommand) message).document);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. CROSSES. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " Crosses = " + ((Commands.CrossesCommand) message).crosses.size() + "\n");
+        } else if (message instanceof CrossesCommand) {
+            ((CrossesCommand) message).crosses = crawl.crossesDetails(((CrossesCommand) message).document);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. CROSSES. " + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " Crosses = " + ((CrossesCommand) message).crosses.size() + "\n");
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.TakeOnsCommand) {
-            ((Commands.TakeOnsCommand) message).takeons = crawl.takeOnsDetails(((Commands.TakeOnsCommand) message).document);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. TAKEONS. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " TakeOns = " + ((Commands.TakeOnsCommand) message).takeons.size() + "\n");
+        } else if (message instanceof TakeOnsCommand) {
+            ((TakeOnsCommand) message).takeons = crawl.takeOnsDetails(((TakeOnsCommand) message).document);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. TAKEONS. " + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " TakeOns = " + ((TakeOnsCommand) message).takeons.size() + "\n");
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.CornersCommand) {
-            ((Commands.CornersCommand) message).corners = crawl.cornersDetails(((Commands.CornersCommand) message).document);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. CORNERS. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " Corners = " + ((Commands.CornersCommand) message).corners.size() + "\n");
+        } else if (message instanceof CornersCommand) {
+            ((CornersCommand) message).corners = crawl.cornersDetails(((CornersCommand) message).document);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. CORNERS. " + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " Corners = " + ((CornersCommand) message).corners.size() + "\n");
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.OffsidePassesCommand) {
-            ((Commands.OffsidePassesCommand) message).offsidepasses = crawl.offsidePassesDetails(((Commands.OffsidePassesCommand) message).document);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. OFFSIDEPASSES. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " OffsidePasses = " + ((Commands.OffsidePassesCommand) message).offsidepasses.size() + "\n");
+        } else if (message instanceof OffsidePassesCommand) {
+            ((OffsidePassesCommand) message).offsidepasses = crawl.offsidePassesDetails(((OffsidePassesCommand) message).document);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. OFFSIDEPASSES. " + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " OffsidePasses = " + ((OffsidePassesCommand) message).offsidepasses.size() + "\n");
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.BallRecoveriesCommand) {
-            ((Commands.BallRecoveriesCommand) message).ballrecoveries = crawl.ballRecoveriesDetails(((Commands.BallRecoveriesCommand) message).document);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. BALLRECOVERIES. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " BallRecoveries = " + ((Commands.BallRecoveriesCommand) message).ballrecoveries.size() + "\n");
+        } else if (message instanceof BallRecoveriesCommand) {
+            ((BallRecoveriesCommand) message).ballrecoveries = crawl.ballRecoveriesDetails(((BallRecoveriesCommand) message).document);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. BALLRECOVERIES. " + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " BallRecoveries = " + ((BallRecoveriesCommand) message).ballrecoveries.size() + "\n");
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.TacklesCommand) {
-            ((Commands.TacklesCommand) message).tackles = crawl.tacklesDetails(((Commands.TacklesCommand) message).document);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. TACKLES. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " Tackles = " + ((Commands.TacklesCommand) message).tackles.size() + "\n");
+        } else if (message instanceof TacklesCommand) {
+            ((TacklesCommand) message).tackles = crawl.tacklesDetails(((TacklesCommand) message).document);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. TACKLES. " + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " Tackles = " + ((TacklesCommand) message).tackles.size() + "\n");
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.InterceptionsCommand) {
-            ((Commands.InterceptionsCommand) message).interceptions = crawl.interceptionsDetails(((Commands.InterceptionsCommand) message).document);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. INTERCEPTIONS. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " Interceptions = " + ((Commands.InterceptionsCommand) message).interceptions.size() + "\n");
+        } else if (message instanceof InterceptionsCommand) {
+            ((InterceptionsCommand) message).interceptions = crawl.interceptionsDetails(((InterceptionsCommand) message).document);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. INTERCEPTIONS. " + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " Interceptions = " + ((InterceptionsCommand) message).interceptions.size() + "\n");
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.BlocksCommand) {
-            ((Commands.BlocksCommand) message).blocks = crawl.blocksDetails(((Commands.BlocksCommand) message).document);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. BLOCKS. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " Blocks = " + ((Commands.BlocksCommand) message).blocks.size() + "\n");
+        } else if (message instanceof BlocksCommand) {
+            ((BlocksCommand) message).blocks = crawl.blocksDetails(((BlocksCommand) message).document);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. BLOCKS. " + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " Blocks = " + ((BlocksCommand) message).blocks.size() + "\n");
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.ClearancesCommand) {
-            ((Commands.ClearancesCommand) message).clearances = crawl.clearancesDetails(((Commands.ClearancesCommand) message).document);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. CLEARANCES. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " Clearances = " + ((Commands.ClearancesCommand) message).clearances.size() + "\n");
+        } else if (message instanceof ClearancesCommand) {
+            ((ClearancesCommand) message).clearances = crawl.clearancesDetails(((ClearancesCommand) message).document);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. CLEARANCES. " + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " Clearances = " + ((ClearancesCommand) message).clearances.size() + "\n");
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.AerialDuelsCommand) {
-            ((Commands.AerialDuelsCommand) message).aerialduels = crawl.aerialDuelsDetails(((Commands.AerialDuelsCommand) message).document);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. AERIALDUELS. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " Aerial Duels = " + ((Commands.AerialDuelsCommand) message).aerialduels.size() + "\n");
+        } else if (message instanceof AerialDuelsCommand) {
+            ((AerialDuelsCommand) message).aerialduels = crawl.aerialDuelsDetails(((AerialDuelsCommand) message).document);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. AERIALDUELS. " + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " Aerial Duels = " + ((AerialDuelsCommand) message).aerialduels.size() + "\n");
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.BlockedCrossesCommand) {
-            ((Commands.BlockedCrossesCommand) message).blockedcrosses = crawl.blockedCrossesDetails(((Commands.BlockedCrossesCommand) message).document);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. BLOCKEDCROSSES. " + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " BlockedCrosses = " + ((Commands.BlockedCrossesCommand) message).blockedcrosses.size() + "\n");
+        } else if (message instanceof BlockedCrossesCommand) {
+            ((BlockedCrossesCommand) message).blockedcrosses = crawl.blockedCrossesDetails(((BlockedCrossesCommand) message).document);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. BLOCKEDCROSSES. " + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " BlockedCrosses = " + ((BlockedCrossesCommand) message).blockedcrosses.size() + "\n");
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.DefensiveErrorsCommand) {
-            ((Commands.DefensiveErrorsCommand) message).defensiveerrors = crawl.defensiveErrorsDetails(((Commands.DefensiveErrorsCommand) message).document, ((Commands.DefensiveErrorsCommand) message).index);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. DEFENSIVEERRORS. Index = " + ((Commands.DefensiveErrorsCommand) message).index + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " DefensiveErrors = " + ((Commands.DefensiveErrorsCommand) message).defensiveerrors.size() + "\n");
+        } else if (message instanceof DefensiveErrorsCommand) {
+            ((DefensiveErrorsCommand) message).defensiveerrors = crawl.defensiveErrorsDetails(((DefensiveErrorsCommand) message).document, ((DefensiveErrorsCommand) message).index);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. DEFENSIVEERRORS. Index = " + ((DefensiveErrorsCommand) message).index + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " DefensiveErrors = " + ((DefensiveErrorsCommand) message).defensiveerrors.size() + "\n");
             getSender().tell(message, getSelf());
-        }
-        else if(message instanceof Commands.FoulsCommand) {
-            ((Commands.FoulsCommand) message).fouls = crawl.foulsDetails(((Commands.FoulsCommand) message).document, ((Commands.FoulsCommand) message).index);
-            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. FOULS. Index = " + ((Commands.FoulsCommand) message).index + "PlayerLink = " + ((Commands.Global) message).playerDetails.playerLink + " Player ID = " + ((Commands.Global) message).playerDetails.FFT_player_id + " Team = " + ((Commands.Global) message).playerDetails.team_name + " Fouls = " + ((Commands.FoulsCommand) message).fouls.size() + "\n");
+        } else if (message instanceof FoulsCommand) {
+            ((FoulsCommand) message).fouls = crawl.foulsDetails(((FoulsCommand) message).document, ((FoulsCommand) message).index);
+            //Info.fileWriter.write("\n" + System.currentTimeMillis() + " ==> " + " Inside onReceive of Child. FOULS. Index = " + ((FoulsCommand) message).index + "PlayerLink = " + ((Global) message).playerDetails.playerLink + " Player ID = " + ((Global) message).playerDetails.FFT_player_id + " Team = " + ((Global) message).playerDetails.team_name + " Fouls = " + ((FoulsCommand) message).fouls.size() + "\n");
             getSender().tell(message, getSelf());
         }
         else {
