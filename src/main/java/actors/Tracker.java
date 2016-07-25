@@ -42,8 +42,7 @@ public class Tracker extends UntypedActor {
             }
 
             if (((ShotsCommand) message).index < 5) {
-                System.out.println("Received Shots Command for index = " + ((ShotsCommand) message).index);
-                Distributor.ioRouter.route(new ShotsCommand(((ShotsCommand) message).playerDetails, ((ShotsCommand) message).index + 1), getSender());
+                Distributor.ioRouter.route(new ShotsCommand(((ShotsCommand) message).playerDetails, ((ShotsCommand) message).index + 1), getSelf());
             } else {
                 Distributor.ioRouter.route(new PenaltiesCommand(((ShotsCommand) message).playerDetails), getSelf());
             }
@@ -60,7 +59,7 @@ public class Tracker extends UntypedActor {
                 crawl.cleanTerminate("Add FKshots Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
-            Distributor.ioRouter.route(new PassesCommand(((FreekickshotsCommand) message).playerDetails, 1), getSender());
+            Distributor.ioRouter.route(new PassesCommand(((FreekickshotsCommand) message).playerDetails, 1), getSelf());
         } else if (message instanceof PassesCommand) {
             //System.out.println("Adding Passes for Match=" + ((Global) message).playerDetails.matchGlobals.FFT_Match_ID + " Team = " + ((PassesCommand) message).playerDetails.team_name + " Player = " + ((PassesCommand) message).playerDetails.FFT_player_id + " Passes = " + ((PassesCommand) message).passes.size());
 
@@ -69,9 +68,9 @@ public class Tracker extends UntypedActor {
                 return;
             }
             if (((PassesCommand) message).index < 4) {
-                Distributor.ioRouter.route(new PassesCommand(((PassesCommand) message).playerDetails, ((PassesCommand) message).index + 1), getSender());
+                Distributor.ioRouter.route(new PassesCommand(((PassesCommand) message).playerDetails, ((PassesCommand) message).index + 1), getSelf());
             } else {
-                Distributor.ioRouter.route(new AssistsCommand(((PassesCommand) message).playerDetails, 1), getSender());
+                Distributor.ioRouter.route(new AssistsCommand(((PassesCommand) message).playerDetails, 1), getSelf());
             }
         } else if (message instanceof AssistsCommand) {
             if (!Persistence.addAssists(((AssistsCommand) message).assists, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((AssistsCommand) message).playerDetails.team_name, ((AssistsCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
@@ -79,101 +78,101 @@ public class Tracker extends UntypedActor {
                 return;
             }
             if (((AssistsCommand) message).index == 1) {
-                Distributor.ioRouter.route(new AssistsCommand(((AssistsCommand) message).playerDetails, 2), getSender());
+                Distributor.ioRouter.route(new AssistsCommand(((AssistsCommand) message).playerDetails, 2), getSelf());
             } else {
-                Distributor.ioRouter.route(new ReceivedPassesCommand(((AssistsCommand) message).playerDetails), getSender());
+                Distributor.ioRouter.route(new ReceivedPassesCommand(((AssistsCommand) message).playerDetails), getSelf());
             }
         } else if (message instanceof ReceivedPassesCommand) {
             if (!Persistence.addReceivedPasses(((ReceivedPassesCommand) message).receivedpasses, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((ReceivedPassesCommand) message).playerDetails.team_name, ((ReceivedPassesCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add received passes Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
-            Distributor.ioRouter.route(new ChancesCreatedCommand(((ReceivedPassesCommand) message).playerDetails, 1), getSender());
+            Distributor.ioRouter.route(new ChancesCreatedCommand(((ReceivedPassesCommand) message).playerDetails, 1), getSelf());
         } else if (message instanceof ChancesCreatedCommand) {
             if (!Persistence.addChancesCreated(((ChancesCreatedCommand) message).chancescreated, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((ChancesCreatedCommand) message).playerDetails.team_name, ((ChancesCreatedCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add chances created Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
             if (((ChancesCreatedCommand) message).index == 1) {
-                Distributor.ioRouter.route(new ChancesCreatedCommand(((ChancesCreatedCommand) message).playerDetails, 2), getSender());
+                Distributor.ioRouter.route(new ChancesCreatedCommand(((ChancesCreatedCommand) message).playerDetails, 2), getSelf());
             } else {
-                Distributor.ioRouter.route(new CrossesCommand(((ChancesCreatedCommand) message).playerDetails), getSender());
+                Distributor.ioRouter.route(new CrossesCommand(((ChancesCreatedCommand) message).playerDetails), getSelf());
             }
         } else if (message instanceof CrossesCommand) {
             if (!Persistence.addCrosses(((CrossesCommand) message).crosses, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((CrossesCommand) message).playerDetails.team_name, ((CrossesCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add crosses Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
-            Distributor.ioRouter.route(new TakeOnsCommand(((CrossesCommand) message).playerDetails), getSender());
+            Distributor.ioRouter.route(new TakeOnsCommand(((CrossesCommand) message).playerDetails), getSelf());
         } else if (message instanceof TakeOnsCommand) {
             if (!Persistence.addTakeOns(((TakeOnsCommand) message).takeons, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((TakeOnsCommand) message).playerDetails.team_name, ((TakeOnsCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add takeons Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
-            Distributor.ioRouter.route(new CornersCommand(((TakeOnsCommand) message).playerDetails), getSender());
+            Distributor.ioRouter.route(new CornersCommand(((TakeOnsCommand) message).playerDetails), getSelf());
         } else if (message instanceof CornersCommand) {
             if (!Persistence.addCorners(((CornersCommand) message).corners, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((CornersCommand) message).playerDetails.team_name, ((CornersCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add corners Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
-            Distributor.ioRouter.route(new OffsidePassesCommand(((CornersCommand) message).playerDetails), getSender());
+            Distributor.ioRouter.route(new OffsidePassesCommand(((CornersCommand) message).playerDetails), getSelf());
         } else if (message instanceof OffsidePassesCommand) {
             if (!Persistence.addOffsidePasses(((OffsidePassesCommand) message).offsidepasses, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((OffsidePassesCommand) message).playerDetails.team_name, ((OffsidePassesCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add offside passes Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
-            Distributor.ioRouter.route(new BallRecoveriesCommand(((OffsidePassesCommand) message).playerDetails), getSender());
+            Distributor.ioRouter.route(new BallRecoveriesCommand(((OffsidePassesCommand) message).playerDetails), getSelf());
         } else if (message instanceof BallRecoveriesCommand) {
             if (!Persistence.addBallRecoveries(((BallRecoveriesCommand) message).ballrecoveries, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((BallRecoveriesCommand) message).playerDetails.team_name, ((BallRecoveriesCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add ball recoveries Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
-            Distributor.ioRouter.route(new TacklesCommand(((BallRecoveriesCommand) message).playerDetails), getSender());
+            Distributor.ioRouter.route(new TacklesCommand(((BallRecoveriesCommand) message).playerDetails), getSelf());
         } else if (message instanceof TacklesCommand) {
             if (!Persistence.addTackles(((TacklesCommand) message).tackles, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((TacklesCommand) message).playerDetails.team_name, ((TacklesCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add tackles Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
-            Distributor.ioRouter.route(new InterceptionsCommand(((TacklesCommand) message).playerDetails), getSender());
+            Distributor.ioRouter.route(new InterceptionsCommand(((TacklesCommand) message).playerDetails), getSelf());
         } else if (message instanceof InterceptionsCommand) {
             if (!Persistence.addInterceptions(((InterceptionsCommand) message).interceptions, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((InterceptionsCommand) message).playerDetails.team_name, ((InterceptionsCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add interceptions Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
-            Distributor.ioRouter.route(new BlocksCommand(((InterceptionsCommand) message).playerDetails), getSender());
+            Distributor.ioRouter.route(new BlocksCommand(((InterceptionsCommand) message).playerDetails), getSelf());
         } else if (message instanceof BlocksCommand) {
             if (!Persistence.addBlocks(((BlocksCommand) message).blocks, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((BlocksCommand) message).playerDetails.team_name, ((BlocksCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add blocks Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
-            Distributor.ioRouter.route(new ClearancesCommand(((BlocksCommand) message).playerDetails), getSender());
+            Distributor.ioRouter.route(new ClearancesCommand(((BlocksCommand) message).playerDetails), getSelf());
         } else if (message instanceof ClearancesCommand) {
             if (!Persistence.addClearances(((ClearancesCommand) message).clearances, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((ClearancesCommand) message).playerDetails.team_name, ((ClearancesCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add clearances Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
-            Distributor.ioRouter.route(new AerialDuelsCommand(((ClearancesCommand) message).playerDetails), getSender());
+            Distributor.ioRouter.route(new AerialDuelsCommand(((ClearancesCommand) message).playerDetails), getSelf());
         } else if (message instanceof AerialDuelsCommand) {
             if (!Persistence.addAerialDuels(((AerialDuelsCommand) message).aerialduels, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((AerialDuelsCommand) message).playerDetails.team_name, ((AerialDuelsCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add aerial duels Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
-            Distributor.ioRouter.route(new BlockedCrossesCommand(((AerialDuelsCommand) message).playerDetails), getSender());
+            Distributor.ioRouter.route(new BlockedCrossesCommand(((AerialDuelsCommand) message).playerDetails), getSelf());
         } else if (message instanceof BlockedCrossesCommand) {
             if (!Persistence.addBlockedCrosses(((BlockedCrossesCommand) message).blockedcrosses, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((BlockedCrossesCommand) message).playerDetails.team_name, ((BlockedCrossesCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add blocked crosses Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
-            Distributor.ioRouter.route(new DefensiveErrorsCommand(((BlockedCrossesCommand) message).playerDetails, 1), getSender());
+            Distributor.ioRouter.route(new DefensiveErrorsCommand(((BlockedCrossesCommand) message).playerDetails, 1), getSelf());
         } else if (message instanceof DefensiveErrorsCommand) {
             if (!Persistence.addDefensiveErrors(((DefensiveErrorsCommand) message).defensiveerrors, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((DefensiveErrorsCommand) message).playerDetails.team_name, ((DefensiveErrorsCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
                 crawl.cleanTerminate("Add defensive errors Failed in Persistence.", ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, getContext().parent());
                 return;
             }
             if (((DefensiveErrorsCommand) message).index == 1) {
-                Distributor.ioRouter.route(new DefensiveErrorsCommand(((DefensiveErrorsCommand) message).playerDetails, 2), getSender());
+                Distributor.ioRouter.route(new DefensiveErrorsCommand(((DefensiveErrorsCommand) message).playerDetails, 2), getSelf());
             } else {
-                Distributor.ioRouter.route(new FoulsCommand(((DefensiveErrorsCommand) message).playerDetails, 1), getSender());
+                Distributor.ioRouter.route(new FoulsCommand(((DefensiveErrorsCommand) message).playerDetails, 1), getSelf());
             }
         } else if (message instanceof FoulsCommand) {
             if (!Persistence.addFouls(((FoulsCommand) message).fouls, ((Global) message).playerDetails.matchGlobals.FFT_Match_ID, ((FoulsCommand) message).playerDetails.team_name, ((FoulsCommand) message).playerDetails.FFT_player_id, ((Global) message).playerDetails.matchGlobals.season)) {
@@ -181,7 +180,7 @@ public class Tracker extends UntypedActor {
                 return;
             }
             if (((FoulsCommand) message).index == 1) {
-                Distributor.ioRouter.route(new FoulsCommand(((FoulsCommand) message).playerDetails, 2), getSender());
+                Distributor.ioRouter.route(new FoulsCommand(((FoulsCommand) message).playerDetails, 2), getSelf());
             } else {
                 exitMatch(((Global) message).playerDetails.matchGlobals);
             }
