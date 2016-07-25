@@ -238,6 +238,7 @@ public class Commands implements Serializable{
         public PassesCommand(PlayerDetails playerDetails, int index) {
             this.playerDetails = playerDetails;
             this.passes = null;
+            this.document = null;
             this.index = index;
             switch (index) {
                 case 1:
@@ -265,6 +266,7 @@ public class Commands implements Serializable{
         public AssistsCommand(PlayerDetails playerDetails, int index) {
             this.playerDetails = playerDetails;
             this.assists = null;
+            this.document = null;
             this.index = index;
             if(index == 1)
                 this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "1_PASS_0901#tabs-wrapper-anchor";
@@ -281,6 +283,7 @@ public class Commands implements Serializable{
         public ReceivedPassesCommand(PlayerDetails playerDetails) {
             this.playerDetails = playerDetails;
             this.receivedpasses = null;
+            this.document = null;
             this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "1_PASS_07#tabs-wrapper-anchor";
         }
     }
@@ -294,6 +297,7 @@ public class Commands implements Serializable{
         public ChancesCreatedCommand(PlayerDetails playerDetails, int index) {
             this.playerDetails = playerDetails;
             this.chancescreated = null;
+            this.document = null;
             this.index = index;
             if(index == 1)
                 this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "1_PASS_1101#tabs-wrapper-anchor";
@@ -310,6 +314,7 @@ public class Commands implements Serializable{
         public CrossesCommand(PlayerDetails playerDetails) {
             this.playerDetails = playerDetails;
             this.crosses = null;
+            this.document = null;
             this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "2_ATTACK_01#tabs-wrapper-anchor";
         }
     }
@@ -322,6 +327,7 @@ public class Commands implements Serializable{
         public TakeOnsCommand(PlayerDetails playerDetails) {
             this.playerDetails = playerDetails;
             this.takeons = null;
+            this.document = null;
             this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "2_ATTACK_02#tabs-wrapper-anchor";
         }
     }
@@ -334,6 +340,7 @@ public class Commands implements Serializable{
         public CornersCommand(PlayerDetails playerDetails) {
             this.playerDetails = playerDetails;
             this.corners = null;
+            this.document = null;
             this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "2_ATTACK_03#tabs-wrapper-anchor";
         }
     }
@@ -346,6 +353,7 @@ public class Commands implements Serializable{
         public OffsidePassesCommand(PlayerDetails playerDetails) {
             this.playerDetails = playerDetails;
             this.offsidepasses = null;
+            this.document = null;
             this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "2_ATTACK_04#tabs-wrapper-anchor";
         }
     }
@@ -358,6 +366,7 @@ public class Commands implements Serializable{
         public BallRecoveriesCommand(PlayerDetails playerDetails) {
             this.playerDetails = playerDetails;
             this.ballrecoveries = null;
+            this.document = null;
             this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "2_ATTACK_05#tabs-wrapper-anchor";
         }
     }
@@ -370,6 +379,7 @@ public class Commands implements Serializable{
         public TacklesCommand(PlayerDetails playerDetails) {
             this.playerDetails = playerDetails;
             this.tackles = null;
+            this.document = null;
             this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "3_DEFENCE_01#tabs-wrapper-anchor";
         }
     }
@@ -382,6 +392,7 @@ public class Commands implements Serializable{
         public InterceptionsCommand(PlayerDetails playerDetails) {
             this.playerDetails = playerDetails;
             this.interceptions = null;
+            this.document = null;
             this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "3_DEFENCE_02#tabs-wrapper-anchor";
         }
     }
@@ -394,6 +405,7 @@ public class Commands implements Serializable{
         public BlocksCommand(PlayerDetails playerDetails) {
             this.playerDetails = playerDetails;
             this.blocks = null;
+            this.document = null;
             this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "3_DEFENCE_03#tabs-wrapper-anchor";
         }
     }
@@ -406,6 +418,7 @@ public class Commands implements Serializable{
         public ClearancesCommand(PlayerDetails playerDetails) {
             this.playerDetails = playerDetails;
             this.clearances = null;
+            this.document = null;
             this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "3_DEFENCE_04#tabs-wrapper-anchor";
         }
     }
@@ -418,6 +431,7 @@ public class Commands implements Serializable{
         public AerialDuelsCommand(PlayerDetails playerDetails) {
             this.playerDetails = playerDetails;
             this.aerialduels = null;
+            this.document = null;
             this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "3_DEFENCE_06#tabs-wrapper-anchor";
         }
     }
@@ -430,6 +444,7 @@ public class Commands implements Serializable{
         public BlockedCrossesCommand(PlayerDetails playerDetails) {
             this.playerDetails = playerDetails;
             this.blockedcrosses = null;
+            this.document = null;
             this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "3_DEFENCE_07#tabs-wrapper-anchor";
         }
     }
@@ -443,6 +458,7 @@ public class Commands implements Serializable{
         public DefensiveErrorsCommand(PlayerDetails playerDetails, int index) {
             this.playerDetails = playerDetails;
             this.defensiveerrors = null;
+            this.document = null;
             this.index = index;
             if(index == 1)
                 this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "3_DEFENCE_10#tabs-wrapper-anchor";
@@ -460,6 +476,7 @@ public class Commands implements Serializable{
         public FoulsCommand(PlayerDetails playerDetails, int index) {
             this.playerDetails = playerDetails;
             this.fouls = null;
+            this.document = null;
             this.index = index;
             if(index == 1)
                 this.commandLink = playerDetails.playerLink.substring(0, playerDetails.playerLink.length() - 30) + "4_FOULS_01#tabs-wrapper-anchor";
