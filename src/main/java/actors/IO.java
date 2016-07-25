@@ -46,7 +46,9 @@ public class IO extends UntypedActor{
             }
             in.close();
 
-            System.out.println("Response Code = " + responseCode);
+            if (responseCode != 200)
+                return null;
+
             return String.valueOf(response);
         } catch (Exception e) {
             return null;
