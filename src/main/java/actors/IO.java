@@ -92,7 +92,7 @@ public class IO extends UntypedActor{
             this.torIndex = Integer.parseInt(((String) message).split("-")[1]);
             this.socksPort = 9051 + this.torIndex;
             SocketAddress addr = new InetSocketAddress("127.0.0.1", this.socksPort);
-            this.proxy = new Proxy(Proxy.Type.HTTP, addr);
+            this.proxy = new Proxy(Proxy.Type.SOCKS, addr);
         } else if (message instanceof MatchGlobals) {
             //log.info("Match Globals request received on Port = " + this.socksPort);
             //log.info("GameLink = " + ((MatchGlobals) message).getGameLink());
