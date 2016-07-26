@@ -20,6 +20,7 @@ public class MatchGlobals implements Serializable {
     public double home_possession, away_possession;
     public HashMap<String, String> home_red_cards, away_red_cards;
     public String fullTimeScore;
+    public int num_players;
 
     public MatchGlobals(String gameLink, Long leagueID, String FFT_Match_ID, String season, Date gameDate, String stadium) {
         this.gameLink = gameLink;

@@ -191,7 +191,10 @@ public class Tracker extends UntypedActor {
     }
 
     private void exitMatch(MatchGlobals matchGlobals) throws IOException {
-        //System.out.println("Game: " + ((Global) message).playerDetails.matchGlobals.FFT_Match_ID + " details saved.");
+        matchGlobals.num_players--;
+
+        if (matchGlobals.num_players != 0)
+            return;
 
         if (!matchGlobals.FFT_Match_ID.equals("") && !Persistence.gameSaved(matchGlobals.FFT_Match_ID))
             crawl.cleanTerminate("Game " + matchGlobals.FFT_Match_ID + " Could not be Saved.");

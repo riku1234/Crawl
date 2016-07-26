@@ -144,6 +144,8 @@ public class Distributor extends UntypedActor {
                 return;
             }
 
+            ((MatchGlobals) message).num_players = (playerLinks.get(0).size() + playerLinks.get(1).size() + playerLinks.get(2).size() + playerLinks.get(4).size());
+
             for (int j = 0; j < playerLinks.size(); j++) {
                 Boolean noTask = false;
                 if(j == 3 || j == 5)
