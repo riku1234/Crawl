@@ -21,10 +21,11 @@ public class Tracker extends UntypedActor {
     LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private long startTime = -1;
     private int index = -1;
+    private int matches_complete = 0;
 
     public void onReceive(Object message) throws Exception {
         if (index != -1 && Distributor.perfActor != null)
-            Distributor.perfActor.tell("Tracker-" + index, getSelf());
+            Distributor.perfActor.tell("Tracker-" + index + "-" + matches_complete, getSelf());
 
         if(message instanceof String) {
             if (((String) message).startsWith("Setup")) {
@@ -213,6 +214,7 @@ public class Tracker extends UntypedActor {
         }
         long endTime = System.currentTimeMillis();
         log.info("Match " + matchGlobals.gameLink + " Details saved. Time taken = " + (endTime - startTime));
+        this.matches_complete++;
         startTime = System.currentTimeMillis();
         if(Distributor.perfActor != null)
             Distributor.perfActor.tell("MatchComplete", getSelf());

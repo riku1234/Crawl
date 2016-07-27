@@ -22,6 +22,7 @@ public class Perf extends UntypedActor {
     private int num_distributor_messages;
     private int[] num_tracker_messages;
     private int[] num_tracker_messages_prev;
+    private int[] num_matches_complete;
     private boolean stopRequest = false;
     private String stopMessage = "";
 
@@ -31,8 +32,10 @@ public class Perf extends UntypedActor {
                 num_distributor_messages++;
             else if (((String) message).startsWith("Child"))
                 num_child_messages[Integer.parseInt(((String) message).split("-")[1])]++;
-            else if (((String) message).startsWith("Tracker"))
+            else if (((String) message).startsWith("Tracker")) {
                 num_tracker_messages[Integer.parseInt(((String) message).split("-")[1])]++;
+                num_matches_complete[Integer.parseInt(((String) message).split("-")[1])] = Integer.parseInt(((String) message).split("-")[2]);
+            }
             else if(((String) message).startsWith("Setup")) {
                 String[] splits = ((String) message).split("-");
 
@@ -50,6 +53,7 @@ public class Perf extends UntypedActor {
                 num_child_messages_prev = new int[num_child];
                 num_tracker_messages = new int[num_trackers];
                 num_tracker_messages_prev = new int[num_trackers];
+                num_matches_complete = new int[num_trackers];
 
                 numMatchesComplete = 0;
                 getContext().system().scheduler().scheduleOnce(
@@ -83,7 +87,7 @@ public class Perf extends UntypedActor {
                     num_child_messages_prev[i] = num_child_messages[i];
                 }
                 for (int i = 0; i < num_tracker_messages.length; i++) {
-                    System.out.println(" Tracker - " + i + " = " + num_tracker_messages[i] + "(" + (num_tracker_messages[i] - num_tracker_messages_prev[i]) + ")");
+                    System.out.println(" Tracker - " + i + " = " + num_tracker_messages[i] + "(" + (num_tracker_messages[i] - num_tracker_messages_prev[i]) + ")" + " match_complete = " + num_matches_complete[i]);
                     num_tracker_messages_prev[i] = num_tracker_messages[i];
                 }
 
