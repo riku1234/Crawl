@@ -26,8 +26,8 @@ public class Main {
          */
 
         if (args[0].equals("Games")) {
-            String results_page_file = args[1];
-            String prepend = args[2];
+            String results_page_file = String.valueOf(args[1]);
+            String prepend = String.valueOf(args[2]);
             if (!prepend.endsWith("/")) {
                 prepend = prepend + "/";
             }
@@ -42,7 +42,7 @@ public class Main {
             new Crawl().addGameDetails(FFTResultsPage, prepend);
         } else if (args[0].equals("Data")) {
 
-            String prefix_page = args[1];
+            String prefix_page = String.valueOf(args[1]);
             BufferedReader br = new BufferedReader(new FileReader(prefix_page));
             String[] lines = (String[]) br.lines().toArray();
 
