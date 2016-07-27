@@ -37,45 +37,6 @@ public class Crawl {
 
     public void addGameDetails(ArrayList<String> FFTResultsPage, String prepend) throws IOException, ParseException {
 
-        /* English Premier League Begin ... */
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/8-2010");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/8-2011");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/8-2012");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/8-2013");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/8-2014");
-        /*English Premier League End ... */
-
-        /*Serie A Begin ... */
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/21-2012");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/21-2013");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/21-2014");
-        /* Serie A End ... */
-
-        /* Bundesliga Begin ... */
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/22-2012");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/22-2013");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/22-2014");
-        /* Bundesliga End ... */
-
-        /* La Liga Begin ... */
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/23-2012");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/23-2013");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/23-2014");
-        /* La Liga End ... */
-
-        /* Ligue 1 Begin ... */
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/24-2012");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/24-2013");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/24-2014");
-        /* Ligue 1 End ... */
-
-        /* UEFA Champions League */
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/5-2010");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/5-2011");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/5-2012");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/5-2013");
-        //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/5-2014");
-
         ArrayList<JSONObject> games = new ArrayList<>();
         JSONArray jsonArray = new JSONArray();
 
@@ -125,7 +86,7 @@ public class Crawl {
                     if(document.toString().length() < 150000) {
                         System.out.println("FLAG --- SIZE LESS " + document.toString().length());
                     }
-                    if(document.toString().length() < 100000) {
+                    if (document.toString().length() < 70000) {
                         System.out.println("Size less than 100000. Re-loading. Size = " + document.toString().length());
                         throw new IOException();
                     }
