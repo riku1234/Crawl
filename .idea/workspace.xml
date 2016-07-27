@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="83f46348-b279-4d62-bc3c-e9fda68c1709" name="Default" comment="3.3&#10;Final version with everything from command line.">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/crawl/Crawl.class" afterPath="$PROJECT_DIR$/target/classes/crawl/Crawl.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/crawl/MyComparator.class" afterPath="$PROJECT_DIR$/target/classes/crawl/MyComparator.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/fa-1.0.jar" afterPath="$PROJECT_DIR$/target/fa-1.0.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/original-fa-1.0.jar" afterPath="$PROJECT_DIR$/target/original-fa-1.0.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
@@ -45,8 +43,8 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="424">
-              <caret line="61" column="39" selection-start-line="61" selection-start-column="39" selection-end-line="61" selection-end-column="39" />
+            <state relative-caret-position="304">
+              <caret line="53" column="74" selection-start-line="53" selection-start-column="74" selection-end-line="53" selection-end-column="74" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -878,7 +876,14 @@
       <option name="project" value="LOCAL" />
       <updated>1469612729967</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="3.3&#10;Final version with everything from command line.">
+      <created>1469612943313</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1469612943313</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1413,8 +1418,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="424">
-          <caret line="61" column="39" selection-start-line="61" selection-start-column="39" selection-end-line="61" selection-end-column="39" />
+        <state relative-caret-position="304">
+          <caret line="53" column="74" selection-start-line="53" selection-start-column="74" selection-end-line="53" selection-end-column="74" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

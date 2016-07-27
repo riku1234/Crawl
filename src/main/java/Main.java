@@ -44,14 +44,14 @@ public class Main {
 
             String prefix_page = String.valueOf(args[1]);
             BufferedReader br = new BufferedReader(new FileReader(prefix_page));
-            String[] lines = (String[]) br.lines().toArray();
+            Object[] lines = br.lines().toArray();
 
             String[] prefixes = new String[lines.length];
             int[] num_matches = new int[lines.length];
 
             for (int i = 0; i < lines.length; i++) {
-                prefixes[i] = lines[i].split(",")[0];
-                num_matches[i] = Integer.parseInt(lines[i].split(",")[1]);
+                prefixes[i] = String.valueOf(lines[i]).split(",")[0];
+                num_matches[i] = Integer.parseInt(String.valueOf(lines[i]).split(",")[1]);
             }
 
             int num_trackers = Integer.parseInt(args[2]);
