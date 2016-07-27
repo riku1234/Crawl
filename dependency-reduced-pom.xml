@@ -22,7 +22,7 @@
                   <resource>reference.conf</resource>
                 </transformer>
                 <transformer>
-                  <mainClass>crawl.Crawl</mainClass>
+                  <mainClass>Main</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -56,7 +56,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          <mainClass>crawl.Crawl</mainClass>
+          <mainClass>Main</mainClass>
           <includeProjectDependencies>true</includeProjectDependencies>
           <includePluginDependencies>true</includePluginDependencies>
         </configuration>
@@ -88,7 +88,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>${project.basedir}/target/dependency/</classpathPrefix>
-              <mainClass>crawl.Crawl</mainClass>
+              <mainClass>Main</mainClass>
             </manifest>
           </archive>
         </configuration>

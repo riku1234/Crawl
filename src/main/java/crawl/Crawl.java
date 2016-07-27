@@ -1,22 +1,18 @@
 package crawl;
 
-import actors.Distributor;
 import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
 import defs.MatchGlobals;
-import defs.commands.StartCommand;
 import fourfourtwo.Helper;
 import fourfourtwo.Persistence;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.FileWriter;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,29 +35,7 @@ class MyComparator implements Comparator<JSONObject> { // Comparator to Sort Dat
 
 public class Crawl {
 
-    public static InetAddress server_address = null;
-
-    public static void main(String[] args) throws IOException, ParseException, org.json.simple.parser.ParseException {
-        try {
-            server_address = InetAddress.getLocalHost();
-            System.out.println("Server IP = " + server_address.getHostAddress());
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
-
-        int num_trackers = Integer.parseInt(args[0]);
-        int num_child = Integer.parseInt(args[1]);
-        int num_io = Integer.parseInt(args[2]);
-        int num_tor = Integer.parseInt(args[3]);
-
-        Persistence.createTables();
-        final ActorSystem actorSystem = ActorSystem.create("Actor-System");
-        final ActorRef distributor = actorSystem.actorOf(Props.create(Distributor.class).withDispatcher("DistributorDispatcher"), "Distributor");
-        distributor.tell(new StartCommand(num_trackers, num_child, num_io, num_tor), null);
-
-
-        //ArrayList<String> FFTResultsPage = new ArrayList<String>();
+    public void addGameDetails(ArrayList<String> FFTResultsPage, String prepend) throws IOException, ParseException {
 
         /* English Premier League Begin ... */
         //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/8-2010");
@@ -101,91 +75,9 @@ public class Crawl {
         //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/5-2012");
         //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/5-2013");
         //FFTResultsPage.add("http://www.fourfourtwo.com/statszone/results/5-2014");
-/*
 
-        Crawl crawl = new Crawl();
         ArrayList<JSONObject> games = new ArrayList<>();
         JSONArray jsonArray = new JSONArray();
-
-        ArrayList<String> blackLists = new ArrayList<>();
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321663"); */
-/* Giggs appears in Subs more than once *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321693"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321780"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321789"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321801"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321845"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321848"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321887"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321902"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321835"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322006"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322005"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/322035"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360664"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360636"); */
-/* No Data *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360805"); */
-/* No Data *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360471"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360503"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360541"); */
-/* Same player appears in 2 subs list *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/21-2012/matches/459522"); */
-/* No Data *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/24-2014/matches/752029"); */
-/* Header Problem, less tokens. *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321742"); */
-/* Subs mismatch *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2010/matches/321900"); */
-/* Subs missing *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360526"); */
-/* Subs missing *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/8-2011/matches/360834"); */
-/* Subs missing *//*
-
-        blackLists.add("http://www.fourfourtwo.com/statszone/22-2012/matches/449613"); */
-/* Subs missing *//*
-
 
         for (int l = 0; l < FFTResultsPage.size(); l++) {
             String FFTresultsPage = FFTResultsPage.get(l);
@@ -194,24 +86,18 @@ public class Crawl {
             long league_id = Long.parseLong(leagueToken.substring(leagueToken.lastIndexOf('/') + 1, leagueToken.length()));
             String season = temp1.nextToken();
             System.out.println("League: " + Helper.getLeagueName(league_id) + " Season = " + season);
-            ArrayList<String> gameLinks = crawl.getGameLinks(FFTResultsPage.get(l));
+            ArrayList<String> gameLinks = this.getGameLinks(FFTResultsPage.get(l));
             for (int i = gameLinks.size() - 1; i >= 0; i--) {
-
-                if (blackLists.contains(gameLinks.get(i))) {
-                    System.out.println("Game " + gameLinks.get(i) + " blacklisted. ");
-                    continue;
-                }
-
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("LeagueID", league_id);
                 jsonObject.put("Season", season);
                 String gameLink = gameLinks.get(i);
                 jsonObject.put("GameLink", gameLink);
-                crawl.populateJSON(jsonObject, gameLink);
+                this.populateJSON(jsonObject, gameLink);
                 games.add(jsonObject);
             }
         }
-        String prepend = "2014/";
+
         JSONObject jsonObjects = new JSONObject();
         System.out.println("Starting sorting all the game links based on Date object");
         games.sort(new MyComparator());
@@ -227,11 +113,6 @@ public class Crawl {
             out.flush();
             out.close();
         }
-*/
-
-        //System.exit(0);
-
-
     }
 
     public Document getDocument(String link) {

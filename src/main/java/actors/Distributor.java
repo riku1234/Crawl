@@ -71,6 +71,8 @@ public class Distributor extends UntypedActor {
         if(perfActor != null)
             perfActor.tell("Distributor", getSelf());
         if (message instanceof StartCommand) {
+            this.prefixes = ((StartCommand) message).prefixes;
+            this.numMatches = ((StartCommand) message).num_matches;
             this.numTrackers = ((StartCommand) message).num_trackers;
             this.numChildWorkers = ((StartCommand) message).num_child;
             this.numIOWorkers = ((StartCommand) message).num_io;

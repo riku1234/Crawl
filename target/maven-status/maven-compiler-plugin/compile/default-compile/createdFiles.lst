@@ -8,6 +8,7 @@ actors/Child.class
 crawl/Test.class
 defs/commands/DefensiveErrorsCommand.class
 defs/MatchGlobals.class
+Main.class
 defs/commands/TacklesCommand.class
 defs/commands/CornersCommand.class
 actors/Distributor.class
