@@ -4,6 +4,7 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import crawl.Crawl;
 import defs.commands.StartCommand;
+import fourfourtwo.Helper;
 import fourfourtwo.Persistence;
 
 import java.io.BufferedReader;
@@ -40,7 +41,11 @@ public class Main {
             }
 
             new Crawl().addGameDetails(FFTResultsPage, prepend);
-        } else if (args[0].equals("Data")) {
+        } else if (String.valueOf(args[0]).startsWith("Data")) {
+
+            if (String.valueOf(args[0]).equals("Data-Dup")) {
+                Helper.setDBURL("jdbc:postgresql://104.196.124.93:5432/FFT_DATA_DUP?user=gsm&password=0909");
+            }
 
             String prefix_page = String.valueOf(args[1]);
             BufferedReader br = new BufferedReader(new FileReader(prefix_page));
