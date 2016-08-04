@@ -44,7 +44,7 @@ public class Main {
         } else if (String.valueOf(args[0]).startsWith("Data")) {
 
             if (String.valueOf(args[0]).equals("Data-Dup")) {
-                Helper.setDBURL("jdbc:postgresql://104.196.124.93:5432/FFT_DATA_DUP?user=gsm&password=0909");
+                Helper.setDBURL("jdbc:postgresql://10.142.0.2:5432/FFT_DATA_DUP?user=gsm&password=0909");
             }
 
             String prefix_page = String.valueOf(args[1]);
